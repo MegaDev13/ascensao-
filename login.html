@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ascensão — Login</title>
+  <link rel="stylesheet" href="./css/app.css">
+</head>
+<body class="auth-page">
+  <main class="auth-shell" aria-label="Autenticação Ascensão">
+    <section class="auth-hero">
+      <div>
+        <div class="auth-kicker">CRA-NET // GitHub Pages + Supabase</div>
+        <h1>ASCENSÃO</h1>
+        <p>Registro cognitivo seguro para jogadores e mestres. Autenticação exclusivamente por e-mail e senha, persistência completa em Supabase, histórico de versões e painel de mestre.</p>
+      </div>
+      <p><strong>Sem 2FA, MFA, OTP, SMS ou login social.</strong><br>Depois do login, jogadores acessam apenas suas fichas. Mestres acessam o painel completo.</p>
+    </section>
+
+    <section class="auth-panel">
+      <div class="auth-tabs" role="tablist" aria-label="Alternar login e cadastro">
+        <button type="button" class="active" data-auth-tab="login">Login</button>
+        <button type="button" data-auth-tab="signup">Cadastro</button>
+      </div>
+
+      <form id="login-form" class="auth-form active" data-auth-form="login">
+        <label>E-mail
+          <input name="email" type="email" autocomplete="email" required placeholder="voce@email.com">
+        </label>
+        <label>Senha
+          <input name="password" type="password" autocomplete="current-password" required placeholder="••••••••">
+        </label>
+        <button class="primary" type="submit">Entrar</button>
+      </form>
+
+      <form id="signup-form" class="auth-form" data-auth-form="signup">
+        <label>Nome
+          <input name="nome" type="text" autocomplete="name" required placeholder="Nome do jogador">
+        </label>
+        <label>E-mail
+          <input name="email" type="email" autocomplete="email" required placeholder="voce@email.com">
+        </label>
+        <label>Senha
+          <input name="password" type="password" autocomplete="new-password" required minlength="6" placeholder="Mínimo 6 caracteres">
+        </label>
+        <button class="primary" type="submit">Criar cadastro</button>
+      </form>
+
+      <p id="auth-message" class="auth-message" role="status"></p>
+    </section>
+  </main>
+
+  <script type="module" src="./js/login.js"></script>
+</body>
+</html>

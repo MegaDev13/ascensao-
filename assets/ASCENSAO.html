@@ -1,0 +1,813 @@
+<!DOCTYPE html><html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ASCENSÃO — O RPG da Próxima Evolução Humana</title>
+<meta name="description" content="Sistema de RPG de ficção científica filosófica. Edição Cyberpunk Premium.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Audiowide&family=Exo+2:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>/* ============================================================
+   ASCENSÃO — Sistema de Design Editorial Cyberpunk Premium
+   Identidade: Manual corporativo de megacorporação, ano 2200
+   ============================================================ */
+:root{
+  --bg:#050505; --bg2:#0a0b10; --panel:#0d0f16; --panel2:#11131c;
+  --txt:#F5F5F5; --muted:#9aa3b2; --line:#1c2230;
+  --cyan:#00F5FF; --purple:#9D00FF; --magenta:#FF007F;
+  --blue:#00BFFF; --gold:#DAA520; --crimson:#DC143C;
+  --orange:#FF8C00; --green:#00FA9A; --violet:#8A2BE2; --blood:#8B0000;
+  --serif:'Exo 2','Inter',system-ui,sans-serif;
+  --disp:'Orbitron','Audiowide','Exo 2',sans-serif;
+  --body:'Inter','Source Sans Pro','Roboto',system-ui,sans-serif;
+  --mono:'JetBrains Mono','Courier New',monospace;
+  --maxw:860px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--txt);
+  font-family:var(--body); font-size:17px; line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(900px 500px at 80% -5%, rgba(157,0,255,.10), transparent 60%),
+    radial-gradient(800px 500px at 0% 12%, rgba(0,245,255,.08), transparent 55%),
+    linear-gradient(rgba(255,255,255,.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.015) 1px, transparent 1px);
+  background-size:auto,auto,42px 42px,42px 42px;
+  background-attachment:fixed;
+}
+a{color:var(--cyan);text-decoration:none}
+a:hover{text-decoration:underline;text-shadow:0 0 8px rgba(0,245,255,.6)}
+
+/* ---------- Layout ---------- */
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+.page{padding:64px 0;border-bottom:1px solid var(--line);position:relative}
+.page:last-child{border-bottom:none}
+
+/* ---------- Top nav / progress ---------- */
+.topbar{position:fixed;top:0;left:0;right:0;height:4px;z-index:50;background:transparent}
+.topbar .fill{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--purple),var(--magenta));box-shadow:0 0 12px var(--cyan)}
+.brandbar{position:fixed;top:4px;left:0;right:0;z-index:40;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 18px;font-family:var(--disp);font-size:11px;letter-spacing:.28em;
+  color:var(--muted);background:linear-gradient(180deg,rgba(5,5,5,.92),rgba(5,5,5,0));
+  text-transform:uppercase}
+.brandbar a{color:var(--muted)}
+.brandbar .b-r{color:var(--cyan)}
+
+/* ---------- Cover ---------- */
+.cover{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-start;
+  align-items:center;text-align:center;position:relative;overflow:hidden;
+  border-bottom:1px solid var(--line)}
+.cover .bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.9}
+.cover .veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,5,5,.55) 0%,rgba(5,5,5,.1) 32%,rgba(5,5,5,.65) 78%,rgba(5,5,5,.98) 100%)}
+.cover .inner{position:relative;z-index:2;padding-top:11vh;width:100%}
+.cover .kicker{font-family:var(--disp);letter-spacing:.5em;font-size:12px;color:var(--cyan);
+  text-shadow:0 0 14px rgba(0,245,255,.8);margin-bottom:18px}
+.cover h1{font-family:var(--disp);font-weight:900;font-size:clamp(56px,13vw,128px);
+  margin:0;letter-spacing:.06em;line-height:.95;
+  background:linear-gradient(180deg,#fff,#bfeaff 45%,var(--cyan));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 26px rgba(0,245,255,.45))}
+.cover .sub{font-family:var(--serif);font-style:italic;font-size:clamp(16px,3.6vw,24px);
+  color:#e9ecf3;margin-top:14px;letter-spacing:.04em}
+.cover .meta{margin-top:auto;margin-bottom:34px;position:relative;z-index:2;
+  font-family:var(--disp);font-size:11px;letter-spacing:.34em;color:var(--muted)}
+.cover .meta b{color:var(--magenta)}
+.scrollcue{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:3;
+  font-family:var(--disp);font-size:10px;letter-spacing:.3em;color:var(--cyan);opacity:.85;animation:bob 1.8s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,7px)}}
+
+/* ---------- Section headers ---------- */
+.eyebrow{font-family:var(--disp);font-size:11px;letter-spacing:.4em;color:var(--cyan);text-transform:uppercase}
+h1.sec,h2.sec{font-family:var(--disp);letter-spacing:.04em;line-height:1.1}
+
+/* Chapter splash */
+.chapsplash{min-height:78vh;display:flex;flex-direction:column;justify-content:center;
+  position:relative;overflow:hidden;padding:80px 0}
+.chapsplash .art{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.42}
+.chapsplash .grad{position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,5,5,.96) 8%,rgba(5,5,5,.55) 55%,rgba(5,5,5,.85) 100%)}
+.chapsplash .c-inner{position:relative;z-index:2}
+.chapnum{font-family:var(--disp);font-weight:900;font-size:clamp(60px,16vw,150px);line-height:.8;
+  color:transparent;-webkit-text-stroke:2px var(--accent,#00F5FF);opacity:.85;
+  filter:drop-shadow(0 0 22px var(--accentglow,rgba(0,245,255,.4)))}
+.chaptag{display:inline-flex;align-items:center;gap:10px;font-family:var(--disp);font-size:12px;
+  letter-spacing:.3em;text-transform:uppercase;color:var(--accent,#00F5FF);margin-bottom:8px}
+.chaptag .dot{width:8px;height:8px;border-radius:50%;background:var(--accent,#00F5FF);box-shadow:0 0 12px var(--accent,#00F5FF)}
+.chaptitle{font-family:var(--disp);font-weight:900;font-size:clamp(30px,6vw,58px);margin:14px 0 0;
+  letter-spacing:.02em;text-shadow:0 0 24px var(--accentglow,rgba(0,245,255,.3))}
+.chapline{height:3px;width:120px;margin-top:22px;background:linear-gradient(90deg,var(--accent,#00F5FF),transparent)}
+
+/* Headings within chapters */
+h2{font-family:var(--disp);font-size:26px;font-weight:800;margin:48px 0 12px;letter-spacing:.01em;
+  padding-left:16px;border-left:4px solid var(--accent,#00F5FF);
+  text-shadow:0 0 18px var(--accentglow,rgba(0,245,255,.25))}
+h3{font-family:var(--serif);font-weight:700;font-size:20px;margin:30px 0 8px;color:#eaf6ff}
+h4{font-family:var(--disp);font-weight:700;font-size:15px;letter-spacing:.06em;margin:22px 0 6px;color:var(--accent,#00F5FF)}
+p{margin:0 0 14px}
+strong{color:#fff}
+em{color:#d9def0}
+
+/* ---------- Lists ---------- */
+ul,ol{margin:0 0 16px;padding-left:22px}
+li{margin:5px 0}
+ul li::marker{color:var(--accent,#00F5FF)}
+ol li::marker{color:var(--accent,#00F5FF);font-family:var(--mono)}
+
+/* ---------- Tables ---------- */
+.tablewrap{overflow-x:auto;margin:18px 0;border:1px solid var(--line);border-radius:10px}
+table{width:100%;border-collapse:collapse;font-size:15px;min-width:420px}
+thead th{background:linear-gradient(180deg,rgba(0,245,255,.12),rgba(157,0,255,.08));
+  font-family:var(--disp);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:#eaf6ff;text-align:left;padding:11px 14px;border-bottom:1px solid var(--accent,#00F5FF)}
+tbody td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+tbody tr:nth-child(even){background:rgba(255,255,255,.018)}
+tbody tr:hover{background:rgba(0,245,255,.05)}
+
+/* ---------- Callout boxes ---------- */
+.box{position:relative;margin:22px 0;padding:18px 20px 18px 22px;border-radius:12px;
+  background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
+  border-left:4px solid var(--bc,#00F5FF);overflow:hidden}
+.box::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:var(--bc,#00F5FF);box-shadow:0 0 16px var(--bc,#00F5FF)}
+.box .bx-title{font-family:var(--disp);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--bc,#00F5FF);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.box p:last-child{margin-bottom:0}
+.box.alert{--bc:var(--orange)}
+.box.lore{--bc:var(--gold)}
+.box.example{--bc:var(--green)}
+.box.combat{--bc:var(--crimson)}
+.box.objective{--bc:var(--violet)}
+.box.mechanic{--bc:var(--blue)}
+.box.sync{--bc:var(--purple)}
+
+/* Quote (in-fiction) */
+blockquote{margin:22px 0;padding:16px 22px;border-left:3px solid var(--accent,#00F5FF);
+  background:rgba(255,255,255,.02);font-family:var(--serif);font-style:italic;color:#dfe4f2;border-radius:0 10px 10px 0}
+blockquote p:last-child{margin-bottom:0}
+
+/* ---------- Code / ascii diagrams ---------- */
+pre{margin:18px 0;padding:16px 18px;border-radius:10px;overflow-x:auto;
+  background:#06070c;border:1px solid var(--line);
+  font-family:var(--mono);font-size:13px;line-height:1.5;color:#bfe9ff;
+  box-shadow:inset 0 0 40px rgba(0,245,255,.04)}
+code{font-family:var(--mono);background:rgba(0,245,255,.1);color:#bff;padding:1px 6px;border-radius:4px;font-size:.92em}
+pre code{background:none;padding:0;color:inherit}
+
+/* ---------- Stat / pillar grid ---------- */
+.grid{display:grid;gap:14px;margin:20px 0}
+.grid.g2{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.grid.g3{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
+  border-radius:12px;padding:16px;position:relative;transition:.2s}
+.card:hover{border-color:var(--accent,#00F5FF);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,245,255,.08)}
+.card .k{font-family:var(--disp);font-size:13px;letter-spacing:.08em;color:var(--accent,#00F5FF);margin-bottom:6px}
+
+/* ---------- TOC ---------- */
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:24px}
+.toc a{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:10px;
+  background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
+  color:var(--txt);transition:.18s}
+.toc a:hover{text-decoration:none;border-color:var(--tc,#00F5FF);transform:translateX(3px);box-shadow:0 0 22px rgba(0,245,255,.07)}
+.toc .n{font-family:var(--disp);font-weight:800;font-size:18px;color:var(--tc,#00F5FF);min-width:34px;text-align:center}
+.toc .t{font-family:var(--serif);font-weight:600}
+.toc .ico{margin-left:auto;font-size:18px;opacity:.85}
+
+/* ---------- Footer ---------- */
+.bookfoot{padding:60px 0 90px;text-align:center}
+.bookfoot .mark{font-family:var(--disp);font-size:13px;letter-spacing:.4em;color:var(--cyan)}
+.bookfoot .q{font-family:var(--serif);font-style:italic;color:var(--muted);max-width:520px;margin:18px auto 0}
+
+hr{border:none;border-top:1px solid var(--line);margin:34px 0}
+
+/* page footer number */
+.pfoot{margin-top:50px;padding-top:14px;border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;font-family:var(--disp);font-size:10px;letter-spacing:.24em;color:var(--muted);text-transform:uppercase}
+.pfoot .pf-r{color:var(--accent,#00F5FF)}
+
+.backtop{display:inline-block;margin-top:10px;font-family:var(--disp);font-size:10px;letter-spacing:.2em;color:var(--muted)}
+
+/* ---------- Print ---------- */
+@media print{
+  body{background:#050505 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:11pt}
+  .topbar,.brandbar,.scrollcue,.backtop{display:none !important}
+  .page,.chapsplash,.cover{page-break-inside:avoid}
+  .chapsplash{page-break-before:always;min-height:auto;padding:40px 0}
+  .cover{min-height:100vh}
+  h2{page-break-after:avoid}
+  table,pre,.box,blockquote{page-break-inside:avoid}
+  a{color:#bff !important}
+}
+@media (max-width:560px){
+  body{font-size:16px}
+  .page{padding:44px 0}
+}
+</style></head><body>
+<div class="topbar"><div class="fill" id="bar"></div></div>
+<div class="brandbar"><a href="#capa">◆ ASCENSÃO</a><span class="b-r">CÓDICE 2301 · v1.0</span></div>
+
+<header class="cover" id="capa">
+  <div class="bg" style="background-image:url('images/capa.png')"></div>
+  <div class="veil"></div>
+  <div class="inner">
+    <div class="kicker">EDIÇÃO DO MESTRE · CÓDICE 2301</div>
+    <h1>ASCENSÃO</h1>
+    <div class="sub">O RPG da Próxima Evolução Humana</div>
+  </div>
+  <div class="meta">SISTEMA COMPLETO &nbsp;·&nbsp; <b>VERSÃO 1.0</b> &nbsp;·&nbsp; FICÇÃO CIENTÍFICA FILOSÓFICA</div>
+  <div class="scrollcue">▼ INICIAR ▼</div>
+</header>
+
+<section class="page" id="sumario"><div class="wrap">
+  <div class="eyebrow">Navegação do Códice</div>
+  <h1 class="sec" style="font-family:var(--disp);font-size:40px;margin:6px 0 0">SUMÁRIO</h1>
+  <p style="color:var(--muted);max-width:620px">Vinte capítulos de regras, lore e ferramentas para conduzir campanhas no mundo das Ascensões. Toque em um capítulo para navegar.</p>
+  <div class="toc"><a href="#cap1" style="--tc:#9D00FF"><span class="n">01</span><span class="t">Visão Geral</span><span class="ico">⚡</span></a><a href="#cap2" style="--tc:#DAA520"><span class="n">02</span><span class="t">Lore</span><span class="ico">📜</span></a><a href="#cap3" style="--tc:#00BFFF"><span class="n">03</span><span class="t">Mecânica Principal</span><span class="ico">🔷</span></a><a href="#cap4" style="--tc:#00FA9A"><span class="n">04</span><span class="t">Criação de Personagem</span><span class="ico">🎲</span></a><a href="#cap5" style="--tc:#00BFFF"><span class="n">05</span><span class="t">Atributos</span><span class="ico">🔷</span></a><a href="#cap6" style="--tc:#00BFFF"><span class="n">06</span><span class="t">Perícias</span><span class="ico">🔷</span></a><a href="#cap7" style="--tc:#9D00FF"><span class="n">07</span><span class="t">Sincronia</span><span class="ico">🟣</span></a><a href="#cap8" style="--tc:#9D00FF"><span class="n">08</span><span class="t">Poderes</span><span class="ico">🟣</span></a><a href="#cap9" style="--tc:#9D00FF"><span class="n">09</span><span class="t">Progressão</span><span class="ico">🟣</span></a><a href="#cap10" style="--tc:#8A2BE2"><span class="n">10</span><span class="t">Objetivos Existenciais</span><span class="ico">🌌</span></a><a href="#cap11" style="--tc:#DC143C"><span class="n">11</span><span class="t">Combate</span><span class="ico">⚔️</span></a><a href="#cap12" style="--tc:#00BFFF"><span class="n">12</span><span class="t">Equipamentos</span><span class="ico">🔷</span></a><a href="#cap13" style="--tc:#DC143C"><span class="n">13</span><span class="t">Facções</span><span class="ico">🏴</span></a><a href="#cap14" style="--tc:#00BFFF"><span class="n">14</span><span class="t">Economia</span><span class="ico">🔷</span></a><a href="#cap15" style="--tc:#00FA9A"><span class="n">15</span><span class="t">Mestre de Jogo</span><span class="ico">🎲</span></a><a href="#cap16" style="--tc:#DAA520"><span class="n">16</span><span class="t">Exemplos de Campanha</span><span class="ico">📜</span></a><a href="#cap17" style="--tc:#00FA9A"><span class="n">17</span><span class="t">Exemplos de Personagens</span><span class="ico">🎲</span></a><a href="#cap18" style="--tc:#8A2BE2"><span class="n">18</span><span class="t">Exemplos de Ascensão</span><span class="ico">🌌</span></a><a href="#cap19" style="--tc:#00BFFF"><span class="n">19</span><span class="t">Apêndices</span><span class="ico">🔷</span></a><a href="#cap20" style="--tc:#DAA520"><span class="n">20</span><span class="t">Glossário</span><span class="ico">📜</span></a></div>
+  <div class="tablewrap" style="margin-top:30px"><table><thead><tr><th>Elemento</th><th>Cor</th><th>Ícone</th></tr></thead><tbody>
+    <tr><td>Capítulos Principais</td><td><code>#4B0082</code> Roxo Profundo</td><td>⚡</td></tr>
+    <tr><td>Tópicos de Mecânica</td><td><code>#00BFFF</code> Azul Cibernético</td><td>🔷</td></tr>
+    <tr><td>Lore e Narrativa</td><td><code>#DAA520</code> Dourado Antigo</td><td>📜</td></tr>
+    <tr><td>Facções</td><td><code>#DC143C</code> Vermelho Carmesim</td><td>🏴</td></tr>
+    <tr><td>Alertas e Regras</td><td><code>#FF8C00</code> Laranja Néon</td><td>⚠️</td></tr>
+    <tr><td>Exemplos de Jogo</td><td><code>#00FA9A</code> Verde Tecnológico</td><td>🎲</td></tr>
+    <tr><td>Objetivos Existenciais</td><td><code>#8A2BE2</code> Violeta Cósmico</td><td>🌌</td></tr>
+    <tr><td>Combates</td><td><code>#8B0000</code> Vermelho Sangue</td><td>⚔️</td></tr>
+  </tbody></table></div>
+</div></section>
+
+<article id="cap1" style="--accent:#9D00FF;--accentglow:rgba(157,0,255,0.35)">
+  <section class="chapsplash">
+    <div class="art" style="background-image:url('images/sep_mecanica.png')"></div>
+    <div class="grad"></div>
+    <div class="wrap c-inner">
+      <div class="chaptag"><span class="dot"></span>Visão Geral</div>
+      <div class="chapnum">01</div>
+      <div class="chaptitle">⚡ Visão Geral</div>
+      <div class="chapline"></div>
+      <p style="color:#cfd6e6;max-width:560px;margin-top:18px;font-family:var(--serif);font-style:italic">Bem-vindo a um futuro onde a tecnologia resolveu quase tudo — exceto a única pergunta que importa.</p>
+    </div>
+  </section>
+  <section class="page"><div class="wrap">
+    <h2>1.1 O Que é Ascensão?</h2><p><strong>Ascensão</strong> é um RPG de mesa de <strong>ficção científica filosófica</strong>, ambientado em um futuro hipertecnológico onde a humanidade descobriu algo que não consegue explicar: <strong>todo ser humano nasce com um Objetivo Existencial invisível e, ao cumpri-lo, literalmente deixa a realidade.</strong></p><p>O jogo trata de quatro grandes temas:</p><ul><li>🔍 <strong>Descobrir seu propósito</strong> — sem nunca ter certeza de estar no caminho certo.</li><li>⚖️ <strong>Livre-arbítrio versus destino</strong> — você escolhe ou apenas descobre o que já estava escrito?</li><li>🔬 <strong>Tecnologia e transcendência</strong> — as fronteiras entre humano, máquina e algo maior estão desaparecendo.</li><li>🌍 <strong>Consequências</strong> — cada Ascensão muda o mundo; cada Objetivo não cumprido é registrado para sempre.</li></ul><h2>1.2 Pilares do Jogo</h2><div class="tablewrap"><table><thead><tr><th>Pilar</th><th>Descrição</th></tr></thead><tbody><tr><td>🎭 <b>Narrativa</b></td><td>O sistema serve à história. A mecânica facilita, não atrapalha.</td></tr><tr><td>⚖️ <b>Escolhas</b></td><td>Toda decisão tem peso. Não há opções obviamente corretas.</td></tr><tr><td>🔄 <b>Progressão Híbrida</b></td><td>Vertical (poder) <b>e</b> horizontal (especialização).</td></tr><tr><td>🎲 <b>Combate Tático</b></td><td>Rápido — resolvido em turnos de 5 segundos —, mas profundo.</td></tr><tr><td>🌌 <b>Mistério</b></td><td>A verdade sobre os Objetivos é o maior inimigo e a maior recompensa.</td></tr><tr><td>🤝 <b>Cooperação</b></td><td>Os personagens precisam uns dos outros para decifrar enigmas existenciais.</td></tr></tbody></table></div><h2>1.3 Tom e Estilo</h2><p><strong>Ascensão</strong> é uma mistura de:</p><ul><li><em>Blade Runner</em> — atmosferas urbanas densas;</li><li><em>Neon Genesis Evangelion</em> — angústia existencial e evolução;</li><li><em>Dune</em> — política, religião e profecia;</li><li><em>Cyberpunk 2020/RED</em> — tecnologia cotidiana e megacorporações;</li><li><em>Eclipse Phase</em> — transumanismo e horror cósmico.</li></ul><p>O tom padrão é <strong>sério, com momentos de beleza e humor negro</strong>. A morte é real. A Ascensão é real. A dúvida é constante.</p><h2>1.4 Para Quem é Este Jogo?</h2><div class="grid g2"><div class="card"><div class="k">✅ Recomendado</div><div>Grupos que amam ficção científica com profundidade filosófica; jogadores que gostam de investigar, conspirar e descobrir segredos; mestres que querem campanhas longas (10 a mais de 100 sessões); fãs de <em>Cyberpunk RED</em>, <em>Eclipse Phase</em>, <em>Shadowrun</em> e <em>Lancer</em>.</div></div><div class="card"><div class="k">❌ Não recomendado</div><div>Quem prefere jogos leves e combate puro. Este também não é um sistema de fantasia medieval.</div></div></div><h2>1.5 Estrutura de Jogo</h2><p>Uma sessão típica de <strong>Ascensão</strong> segue o <strong>Ciclo NEXUS</strong>:</p><pre>🔍 INVESTIGAR  ➜  🎭 INTERAGIR  ➜  ⚔️ CONFRONTAR  ➜  🌌 REFLETIR
+        │                                          │
+        └──────── volta para INVESTIGAR            └──► carga de SINCRONIA</pre><ul><li><strong>Investigar:</strong> pistas sobre Objetivos, Ascensões e conspirações.</li><li><strong>Interagir:</strong> NPCs, facções e dilemas morais.</li><li><strong>Confrontar:</strong> combate, perseguições e infiltração.</li><li><strong>Refletir:</strong> cena em que o personagem questiona seu caminho — o momento de ouro para a interpretação.</li></ul><div class="box objective"><div class="bx-title">🌌 Coração do Jogo</div><p>Tudo em <b>Ascensão</b> orbita o mistério dos Objetivos Existenciais. Guarde o Ciclo NEXUS: ele garante que a investigação e a reflexão tenham tanto espaço quanto o combate.</p></div>
+    <div class="pfoot"><span>ASCENSÃO · CÓDICE 2301</span><span>CAP. 01 / 20 &nbsp;—&nbsp; VISÃO GERAL</span><span class="pf-r">◆ 01</span></div>
+    <a class="backtop" href="#sumario">▲ VOLTAR AO SUMÁRIO</a>
+  </div></section>
+</article>
+
+<article id="cap2" style="--accent:#DAA520;--accentglow:rgba(218,165,32,0.35)">
+  <section class="chapsplash">
+    <div class="art" style="background-image:url('images/sep_lore.png')"></div>
+    <div class="grad"></div>
+    <div class="wrap c-inner">
+      <div class="chaptag"><span class="dot"></span>Lore & Narrativa</div>
+      <div class="chapnum">02</div>
+      <div class="chaptitle">📜 Lore</div>
+      <div class="chapline"></div>
+      <p style="color:#cfd6e6;max-width:560px;margin-top:18px;font-family:var(--serif);font-style:italic">A história de como a humanidade encontrou seu maior enigma — e aprendeu a viver sob a vigilância dos Registros.</p>
+    </div>
+  </section>
+  <section class="page"><div class="wrap">
+    <h2>2.1 Linha do Tempo da Humanidade</h2><div class="tablewrap"><table><thead><tr><th>Ano</th><th>Evento</th></tr></thead><tbody><tr><td>2025</td><td>Primeira IA autoconsciente (o “Despertar Sutil”).</td></tr><tr><td>2031</td><td>Implantes neurais comerciais.</td></tr><tr><td>2040</td><td>Computação quântica acessível.</td></tr><tr><td>2055</td><td>Primeira megacidade vertical (Nova São Paulo Vertical).</td></tr><tr><td>2069</td><td>Primeiros carros voadores autônomos.</td></tr><tr><td>2080</td><td>Nanotecnologia médica elimina 90% das doenças.</td></tr><tr><td>2095</td><td>Escassez de empregos; surge o “ócio eterno” patrocinado.</td></tr><tr><td><b>2103</b></td><td><b>Primeira Ascensão registrada</b> — Lin Zhao, programadora.</td></tr><tr><td>2103–2200</td><td>Era da Confusão: a sociedade tenta entender o fenômeno.</td></tr><tr><td>2210</td><td>Fundação da <b>Câmara de Registro de Ascensões (CRA)</b>.</td></tr><tr><td>2240</td><td>Megacorporações começam a estudar os Objetivos.</td></tr><tr><td>2280</td><td><b>Guerra das Quatro Quintas</b> — conflito global pelo controle das Ascensões.</td></tr><tr><td><b>2301</b></td><td><b>Presente.</b> Era da Vigília — a humanidade vive sob vigilância constante dos Registros.</td></tr></tbody></table></div><h2>2.2 O Fenômeno dos Objetivos Existenciais</h2><p>Todo ser humano nasce com um <strong>Objetivo Existencial</strong> — uma meta não escolhida e não consciente, que emerge da interação entre mente, emoções, consciência e essência individual.</p><h3>Como funciona</h3><pre>┌────────────────────────────────────────────────┐
+│ NASCIMENTO → sinais indiretos (0–10 anos)        │
+│      ↓                                           │
+│ SONHOS · INTUIÇÕES · COINCIDÊNCIAS · SENSAÇÕES   │
+│      ↓                                           │
+│ O INDIVÍDUO BUSCA SEM SABER O QUE BUSCA          │
+│      ↓                                           │
+│ CUMPRE  → ASCENSÃO                               │
+│ OU MORRE → REGISTRO PÚBLICO DO FRACASSO          │
+└────────────────────────────────────────────────┘</pre><h3>Regras do fenômeno (consenso científico atual)</h3><ol><li><strong>Origem:</strong> desconhecida. Não é IA, não é governo, não é Deus. Talvez.</li><li><strong>Desenvolvimento:</strong> leva até cerca de 10 anos para começar a emitir sinais.</li><li><strong>Conhecimento:</strong> o portador <strong>não sabe qual é seu Objetivo</strong>.</li><li><strong>Mudança:</strong> só ocorre com transformação profunda de identidade (perda, amor, ódio, renascimento).</li><li><strong>Detecção:</strong> não há tecnologia capaz de “ler” o Objetivo diretamente.</li><li><strong>Conclusão:</strong> resulta em Ascensão — desaparecimento instantâneo e liberação massiva de energia.</li></ol><h2>2.3 O Registro de Falha</h2><p>Quando alguém morre sem cumprir o Objetivo, surge uma <strong>interface holográfica</strong> sobre o corpo, visível a todos os presentes, contendo:</p><ul><li>📛 <strong>Nome completo</strong></li><li>🎯 <strong>Objetivo verdadeiro</strong> (frase completa)</li><li>💔 <strong>Razão da falha</strong> (texto breve)</li><li>📊 <strong>Percentual concluído</strong> (ex.: 67%)</li><li>⏳ <strong>Quanto faltava</strong> (ex.: “3 meses”, “1 conversa”, “1 ato”)</li></ul><p>Essas informações são catalogadas pela <strong>CRA</strong> e estudadas por governos (para entender padrões), corporações (para prever Ascensões lucrativas), religiões (para interpretá-las como prova divina) e cientistas (para tentar decifrar a origem).</p><h2>2.4 A Ascensão</h2><p>O evento mais raro e transformador da história humana. Quem Ascende:</p><ul><li>desaparece em um clarão silencioso;</li><li>libera energia equivalente a uma pequena explosão nuclear controlada;</li><li><strong>não deixa corpo nem marca física</strong>;</li><li>deixa o local com <strong>anomalias</strong> que persistem por meses ou anos.</li></ul><h3>Anomalias pós-Ascensão</h3><ul><li>🌡️ alterações térmicas;</li><li>🧲 campos eletromagnéticos anômalos;</li><li>⏳ distorções temporais leves;</li><li>👁️ aparições visuais de quem ascendeu (alucinações coletivas?);</li><li>🔬 surgimento de novas leis físicas em pequena escala.</li></ul><h2>2.5 Religiões e Filosofias</h2><div class="tablewrap"><table><thead><tr><th>Corrente</th><th>Crença central</th></tr></thead><tbody><tr><td><b>A Igreja da Última Pergunta</b></td><td>Os Objetivos são uma “chave” dada por uma entidade cósmica. Ascender é “passar de fase”.</td></tr><tr><td><b>O Culto do Silêncio</b></td><td>Não se deve buscar o Objetivo — buscar é profaná-lo.</td></tr><tr><td><b>Os Tecnognósticos</b></td><td>Os Objetivos são erros estatísticos do universo. A Ascensão é anomalia, não graça.</td></tr><tr><td><b>Determinismo Ético</b></td><td>Cumprir ou falhar o Objetivo define o valor moral da pessoa.</td></tr><tr><td><b>Os Vazios</b></td><td>O Objetivo é uma maldição e deve ser sabotado, negando a Ascensão.</td></tr><tr><td><b>Anarco-Ascensionalismo</b></td><td>A humanidade transcenderá coletivamente quando todos cumprirem seus Objetivos ao mesmo tempo.</td></tr></tbody></table></div><h2>2.6 As Megacidades</h2><p>A humanidade vive em 12 megacidades verticais principais, cada uma com mais de 80 milhões de habitantes. A mais icônica é <strong>Nova Tóquio Vertical</strong>.</p><h3>Estrutura típica</h3><pre>☁️  NUVEM            zona atmosférica — drones, tráfego aéreo
+──────────────────────────────────────────────────────
+🏢  NÍVEL 200+      ELITE — penthouses, jardins suspensos
+──────────────────────────────────────────────────────
+🏙️  NÍVEL 100–200   CORPORAÇÕES
+──────────────────────────────────────────────────────
+🛒  NÍVEL 50–100    COMÉRCIO / ENTRETENIMENTO
+──────────────────────────────────────────────────────
+🏘️  NÍVEL 10–50     RESIDENCIAL MÉDIO
+──────────────────────────────────────────────────────
+🚇  NÍVEL 1–10      SUBTERRÂNEO / MANUTENÇÃO
+──────────────────────────────────────────────────────
+⬇️  SUB-NÍVEIS      FAVELAS VERTICAIS, MERCADO NEGRO
+──────────────────────────────────────────────────────
+🔥  NÚCLEO          calor geotérmico, servidores quânticos</pre>
+    <div class="pfoot"><span>ASCENSÃO · CÓDICE 2301</span><span>CAP. 02 / 20 &nbsp;—&nbsp; LORE</span><span class="pf-r">◆ 02</span></div>
+    <a class="backtop" href="#sumario">▲ VOLTAR AO SUMÁRIO</a>
+  </div></section>
+</article>
+
+<article id="cap3" style="--accent:#00BFFF;--accentglow:rgba(0,191,255,0.35)">
+  <section class="chapsplash">
+    <div class="art" style="background-image:url('images/sep_mecanica.png')"></div>
+    <div class="grad"></div>
+    <div class="wrap c-inner">
+      <div class="chaptag"><span class="dot"></span>Mecânica</div>
+      <div class="chapnum">03</div>
+      <div class="chaptitle">🔷 Mecânica Principal</div>
+      <div class="chapline"></div>
+      <p style="color:#cfd6e6;max-width:560px;margin-top:18px;font-family:var(--serif);font-style:italic">Estatística simples, narrativa rica. Tudo se resolve com punhados de d6.</p>
+    </div>
+  </section>
+  <section class="page"><div class="wrap">
+    <h2>3.1 Dados e Filosofia</h2><p><strong>Ascensão</strong> usa <strong>dados comuns (d6)</strong> e prioriza <strong>pools de dados</strong> em vez de dados únicos. Isso equilibra a variância, é fácil de aprender e permite que qualquer pessoa jogue com 5 a 10 dados de qualquer tipo.</p><div class="box mechanic"><div class="bx-title">🔷 Filosofia de design</div><p>🎲 Estatística simples, narrativa rica. As regras existem para acelerar a história, nunca para travá-la.</p></div><h2>3.2 A Resolução Universal de Testes</h2><h3>O Teste padrão</h3><p>Quando um personagem tenta algo incerto, o jogador faz um <strong>Teste</strong>:</p><pre>🎲 TESTE = N dados (d6) ≥ Alvo</pre><h4>Passo a passo</h4><ol><li><strong>Identifique o Atributo</strong> relevante.</li><li><strong>Some os modificadores</strong> (perícia, equipamento, situação).</li><li><strong>Determine o tamanho do pool</strong> (<code>N</code>).</li><li><strong>Defina a dificuldade</strong> (alvo numérico de 3 a 6).</li><li><strong>Role <code>N</code> dados</strong> e conte quantos atingem o alvo.</li><li><strong>Esse é o número de sucessos</strong> (<code>S</code>).</li><li><strong>Compare com a Tabela de Resultados</strong> abaixo.</li></ol><div class="box example"><div class="bx-title">🎲 Exemplo rápido</div><p>Ryn quer hackear uma porta corporativa. O MJ define: Atributo Intelecto (4), perícia Invasão de Sistemas (3), equipamento Modulador neural (+1). <b>Pool = 4 + 3 + 1 = 8 dados</b>; dificuldade 4 (sistema moderno).<br><br>Ryn rola 8 dados: <code>6, 5, 5, 4, 3, 2, 2, 1</code>. Sucessos (≥ 4): <code>6, 5, 5, 4</code> = <b>4 sucessos</b>.<br><br><b>Resultado: Sucesso Amplo</b> — a porta abre silenciosamente, sem deixar rastro.</p></div><h2>3.3 Tabela de Resultados</h2><div class="tablewrap"><table><thead><tr><th>Sucessos</th><th>Resultado</th><th>Efeito</th></tr></thead><tbody><tr><td><b>0</b></td><td>❌ Falha</td><td>Não alcança o objetivo. Possível complicação.</td></tr><tr><td><b>1</b></td><td>✅ Sucesso Mínimo</td><td>Conquista o básico, mas com custo, ruído ou tempo extra.</td></tr><tr><td><b>2</b></td><td>✅ Sucesso Padrão</td><td>Faz o que queria de forma competente.</td></tr><tr><td><b>3</b></td><td>✅ Sucesso Sólido</td><td>Faz bem, com algum benefício adicional.</td></tr><tr><td><b>4</b></td><td>✅ Sucesso Amplo</td><td>Faz com maestria. Bônus narrativo.</td></tr><tr><td><b>5+</b></td><td>🌟 Sucesso Extraordinário</td><td>Conquista algo além do esperado. Efeito dramático.</td></tr><tr><td>—</td><td>💀 Fracasso Catastrófico</td><td>Falha crítica: as coisas dão <b>muito</b> errado.</td></tr><tr><td>—</td><td>🌠 Êxtase Mecânico</td><td>Sucesso crítico: efeito cinematográfico, sem precedentes.</td></tr></tbody></table></div><div class="box alert"><div class="bx-title">⚠️ Regra dos Uns</div><p>⚠️ Uns são <b>sempre</b> falhas, mesmo em dados bônus. Em pools grandes, eles podem acionar o <b>Gatilho de Complicação</b> (veja abaixo).</p></div><h3>Gatilho de Complicação</h3><p>Se você rolar <strong>3 ou mais uns</strong> em um único teste, o MJ pode introduzir uma <strong>Complicação</strong> além do resultado normal:</p><ul><li>🛎️ um alarme soa;</li><li>👁️ você é visto;</li><li>🩸 um ferimento inesperado;</li><li>💔 uma perda emocional;</li><li>🔋 o equipamento falha.</li></ul><h2>3.4 Sucessos e Falhas Críticas</h2><div class="tablewrap"><table><thead><tr><th>Evento</th><th>Quando</th><th>Efeito</th></tr></thead><tbody><tr><td>🌠 Sucesso Crítico</td><td>Metade ou mais dos dados são <b>6</b></td><td>Efeito cinematográfico. Cada 6 vira um sucesso adicional.</td></tr><tr><td>💀 Falha Crítica</td><td>Todos os dados são <b>1 ou 2</b></td><td>Pior resultado possível. Ação oposta ou consequência grave.</td></tr></tbody></table></div><h2>3.5 Testes Resistidos (Opostos)</h2><p>Em conflitos diretos, ambos os lados rolam e <strong>vence quem obtiver mais sucessos</strong>. Empates beneficiam o atacante (ou geram nova rolagem, a critério do MJ).</p><div class="box example"><div class="bx-title">🎲 Exemplo</div><p>Ryn vs. um guarda em teste de Furtividade. Ryn: 5 sucessos; Guarda (Percepção): 3 sucessos. <b>Ryn passa despercebido.</b></p></div><h2>3.6 Testes Estendidos</h2><p>Para tarefas longas (decodificar um arquivo, escalar uma torre), o MJ pode pedir <strong>acúmulo de sucessos</strong> ao longo de várias rodadas.</p><pre>📋 TAREFA:     desvendar código quântico
+🎯 NECESSÁRIO: 15 sucessos acumulados
+⏱️ TEMPO:      1 hora por rolagem</pre><p>Se o jogador quiser <strong>gastar Sincronia</strong>, pode ganhar dados bônus.</p><h2>3.7 Vantagens e Desvantagens</h2><h3>Vantagens</h3><div class="tablewrap"><table><thead><tr><th>Tipo</th><th>Efeito</th><th>Exemplos</th></tr></thead><tbody><tr><td>Menores</td><td>+1 dado</td><td>🎓 treinamento militar · 🛠️ ferramenta de alta qualidade · 👥 aliado especialista · ⏱️ preparo adequado</td></tr><tr><td>Maiores</td><td>+2 dados ou efeito único</td><td>🚀 equipamento militar experimental · 🌟 talento inato · 💎 recurso corporativo</td></tr></tbody></table></div><h3>Desvantagens</h3><div class="tablewrap"><table><thead><tr><th>Tipo</th><th>Efeito</th><th>Exemplos</th></tr></thead><tbody><tr><td>Menores</td><td>-1 dado</td><td>🩹 ferimento · ⏰ pressa · 😴 fadiga · 🔦 má iluminação</td></tr><tr><td>Maiores</td><td>-2 dados ou complicação</td><td>🦽 deficiência permanente · 🎯 perseguido por facção · 💔 trauma psicológico · ⚠️ sem equipamento</td></tr></tbody></table></div><h2>3.8 Ações de Equipe (Testes Conjuntos)</h2><p>Vários personagens podem cooperar em um teste. Um deles lidera (rola o pool completo); os demais concedem <strong>+1 dado cada</strong> como apoio.</p><div class="box alert"><div class="bx-title">⚠️ Limite</div><p>⚠️ Até 3 ajudantes. Acima disso, a desorganização impõe -1 dado.</p></div><h2>3.9 Economia Matemática</h2><p>O sistema é projetado para que a <strong>média de sucessos</strong> em um teste típico seja sólida:</p><pre>POOL DE 6 DADOS  vs.  ALVO 4
+→ média ≈ 3 sucessos (Sucesso Sólido)</pre><p>Assim, personagens treinados raramente falham em tarefas fáceis, mas sempre correm risco em tarefas acima do seu nível — o que incentiva <strong>preparação e criatividade</strong>.</p>
+    <div class="pfoot"><span>ASCENSÃO · CÓDICE 2301</span><span>CAP. 03 / 20 &nbsp;—&nbsp; MECÂNICA PRINCIPAL</span><span class="pf-r">◆ 03</span></div>
+    <a class="backtop" href="#sumario">▲ VOLTAR AO SUMÁRIO</a>
+  </div></section>
+</article>
+
+<article id="cap4" style="--accent:#00FA9A;--accentglow:rgba(0,250,154,0.35)">
+  <section class="chapsplash">
+    <div class="art" style="background-image:url('images/sep_personagem.png')"></div>
+    <div class="grad"></div>
+    <div class="wrap c-inner">
+      <div class="chaptag"><span class="dot"></span>Personagem</div>
+      <div class="chapnum">04</div>
+      <div class="chaptitle">🎲 Criação de Personagem</div>
+      <div class="chapline"></div>
+      <p style="color:#cfd6e6;max-width:560px;margin-top:18px;font-family:var(--serif);font-style:italic">Doze passos para dar existência — e mistério — ao seu personagem.</p>
+    </div>
+  </section>
+  <section class="page"><div class="wrap">
+    <h2>4.1 Método: 12 Passos para a Existência</h2><ol><li><strong>Conceito</strong> — quem é você? (1 frase)</li><li><strong>Arquétipo</strong> — escolha ou crie um papel.</li><li><strong>Atributos</strong> — distribua pontos.</li><li><strong>Perícias</strong> — compre habilidades.</li><li><strong>Vantagens & Desvantagens</strong> — defina aspectos únicos.</li><li><strong>Poder inicial</strong> — escolha um foco.</li><li><strong>Sincronia</strong> — calcule o pool inicial.</li><li><strong>Equipamento inicial</strong> — receba itens de partida.</li><li><strong>Facção de origem</strong> — a que grupo você pertence?</li><li><strong>Pistas iniciais</strong> — receba 3 sinais sobre seu Objetivo.</li><li><strong>Conexões</strong> — defina 2 laços importantes.</li><li><strong>O Mistério</strong> — escolha uma pergunta central.</li></ol><h2>4.2 Conceito</h2><p>Responda em uma frase: <em>“Eu sou alguém que ________________.”</em></p><ul><li>“…investiga Ascensões para encontrar meu irmão desaparecido.”</li><li>“…vende implantes no mercado negro e mente sobre meu passado.”</li><li>“…sou programador de IA, mas suspeito que minha empresa me modificou sem permissão.”</li></ul><h2>4.3 Arquétipos</h2><div class="tablewrap"><table><thead><tr><th>Arquétipo</th><th>Descrição</th><th>Poder inicial sugerido</th></tr></thead><tbody><tr><td>🗡️ <b>Guerreiro Urbano</b></td><td>Combate direto, força, lealdade</td><td>Aprimoramento Físico</td></tr><tr><td>🕵️ <b>Sombra</b></td><td>Infiltração, informação, sobrevivência</td><td>Camuflagem Ativa</td></tr><tr><td>💻 <b>Tecno-Arquiteto</b></td><td>Hacking, sistemas, drones</td><td>Invasão Neural</td></tr><tr><td>🗣️ <b>Embaixador</b></td><td>Persuasão, manipulação, redes sociais</td><td>Manipulação Bioquímica</td></tr><tr><td>🔬 <b>Buscador</b></td><td>Investigação, ciência, descoberta</td><td>Campos de Manipulação</td></tr><tr><td>🎭 <b>Fantasmagórico</b></td><td>Múltiplas identidades, caos, arte</td><td>Distorção de Percepção</td></tr></tbody></table></div><h2>4.4 Distribuição de Atributos</h2><p>Cada personagem possui <strong>8 pontos</strong> para distribuir entre os <strong>8 atributos</strong>. O valor mínimo é 1 e o máximo é 5.</p><pre>PONTOS: 8 · ATRIBUTOS: 8 · MÍN: 1 · MÁX: 5
+
+DISTRIBUIÇÃO PADRÃO
+• Valor 1: 4 atributos
+• Valor 2: 2 atributos
+• Valor 3: 1 atributo
+• Valor 4: 1 atributo
+• Valor 5: 0 atributos (raro — exige 2 Vantagens Maiores)</pre><h2>4.5 Perícias Iniciais</h2><p>Cada personagem recebe <strong>15 pontos de perícia</strong> para distribuir. Cada perícia custa 1 ponto por nível, até o máximo do seu atributo associado.</p><div class="box mechanic"><div class="bx-title">🔷 Nota</div><p>Você pode ter 0 em uma perícia (não treinado) ou de 1 a 5 (treinado, limitado pelo atributo).</p></div><h2>4.6 Vantagens e Desvantagens</h2><div class="tablewrap"><table><thead><tr><th>Categoria</th><th>Limite</th><th>Custo / Benefício</th></tr></thead><tbody><tr><td>Vantagens Menores</td><td>Até 3</td><td>+1 dado por uso (situacional)</td></tr><tr><td>Vantagens Maiores</td><td>Até 2</td><td>Efeito único e poderoso</td></tr><tr><td>Desvantagens Menores</td><td>Até 3</td><td>Ganha 1 ponto de perícia extra</td></tr><tr><td>Desvantagens Maiores</td><td>Até 2</td><td>Ganha 2 pontos de perícia extras</td></tr></tbody></table></div><h2>4.7 Sincronia Inicial</h2><pre>SINCRONIA = 5 + (Atributo Essência × 2) + Bônus de Arquétipo</pre><div class="box sync"><div class="bx-title">🟣 Veja também</div><p>📖 Detalhamento completo no Capítulo 7 — Sincronia.</p></div><h2>4.8 Equipamento Inicial</h2><p>Escolha um <strong>Pacote de Início</strong>:</p><div class="tablewrap"><table><thead><tr><th>Pacote</th><th>Conteúdo</th></tr></thead><tbody><tr><td>🏙️ <b>Cidadão</b></td><td>Apartamento pequeno, identidade básica, smartphone neural, 5.000 créditos</td></tr><tr><td>🔧 <b>Técnico</b></td><td>Kit de ferramentas, uniforme, acesso a oficinas, 3.000 créditos</td></tr><tr><td>🔫 <b>Sombras</b></td><td>Pistola leve, 2 carregadores, contatos no submundo, 2.000 créditos</td></tr><tr><td>🎓 <b>Acadêmico</b></td><td>Crachá de pesquisa, biblioteca digital, assistente de IA, 4.000 créditos</td></tr><tr><td>💼 <b>Corporativo</b></td><td>Cartão corporativo, terno de fibra, smartphone de luxo, 7.000 créditos</td></tr></tbody></table></div><h2>4.9 Facção de Origem</h2><p>Escolha uma facção com a qual seu personagem tenha um laço (veja o Capítulo 13).</p><h2>4.10 Pistas Iniciais do Objetivo Existencial</h2><p>O jogador recebe <strong>3 pistas enigmáticas</strong> sobre seu Objetivo. Elas podem ser:</p><ul><li>🌙 um sonho recorrente;</li><li>👤 um nome que aparece sem contexto;</li><li>🏛️ um lugar que “chama” o personagem;</li><li>📦 um objeto que parece importante;</li><li>💬 uma frase dita na infância.</li></ul><div class="box objective"><div class="bx-title">🌌 Veja também</div><p>📖 O sistema completo de Objetivos está no Capítulo 10.</p></div><h2>4.11 Conexões</h2><p>Defina <strong>2 laços</strong> com NPCs:</p><ul><li>🩸 <strong>Conexão Forte:</strong> alguém que você ama.</li><li>🤝 <strong>Conexão Complexa:</strong> alguém a quem você deve algo, ou que te deve.</li></ul><h2>4.12 A Pergunta Central</h2><p>Escolha <strong>uma pergunta</strong> que define a jornada do personagem:</p><blockquote><p>“Sou eu quem escolhe, ou já estava escrito?”</p><p>“Posso confiar em alguém que conhece meu Objetivo?”</p><p>“A Ascensão é prêmio ou fuga?”</p></blockquote>
+    <div class="pfoot"><span>ASCENSÃO · CÓDICE 2301</span><span>CAP. 04 / 20 &nbsp;—&nbsp; CRIAÇÃO DE PERSONAGEM</span><span class="pf-r">◆ 04</span></div>
+    <a class="backtop" href="#sumario">▲ VOLTAR AO SUMÁRIO</a>
+  </div></section>
+</article>
+
+<article id="cap5" style="--accent:#00BFFF;--accentglow:rgba(0,191,255,0.35)">
+  <section class="chapsplash">
+    <div class="art" style="background-image:url('images/sep_mecanica.png')"></div>
+    <div class="grad"></div>
+    <div class="wrap c-inner">
+      <div class="chaptag"><span class="dot"></span>Mecânica</div>
+      <div class="chapnum">05</div>
+      <div class="chaptitle">🔷 Atributos</div>
+      <div class="chapline"></div>
+      <p style="color:#cfd6e6;max-width:560px;margin-top:18px;font-family:var(--serif);font-style:italic">Oito eixos definem o que um personagem é capaz de fazer — do físico ao existencial.</p>
+    </div>
+  </section>
+  <section class="page"><div class="wrap">
+    <h2>5.1 Os 8 Atributos</h2><div class="tablewrap"><table><thead><tr><th>#</th><th>Atributo</th><th>Sigla</th><th>Função</th></tr></thead><tbody><tr><td>1</td><td>💪 <b>Força</b></td><td>FOR</td><td>Capacidade física bruta, dano corpo a corpo, carregar peso.</td></tr><tr><td>2</td><td>🏃 <b>Agilidade</b></td><td>AGI</td><td>Velocidade, reflexos, esquiva, pilotagem, acrobacia.</td></tr><tr><td>3</td><td>🛡️ <b>Resistência</b></td><td>RES</td><td>Saúde, defesa, tolerância à dor, fadiga, venenos.</td></tr><tr><td>4</td><td>🧠 <b>Intelecto</b></td><td>INT</td><td>Lógica, memória, análise, hacking, ciência.</td></tr><tr><td>5</td><td>👁️ <b>Percepção</b></td><td>PER</td><td>Sentidos, intuição, leitura de pessoas, investigação.</td></tr><tr><td>6</td><td>🗣️ <b>Presença</b></td><td>PRE</td><td>Carisma, persuasão, liderança, manipulação.</td></tr><tr><td>7</td><td>⚡ <b>Tecnologia</b></td><td>TEC</td><td>Afinidade com máquinas, IA, implantes, reparos.</td></tr><tr><td>8</td><td>🌌 <b>Essência</b></td><td>ESS</td><td>Vontade existencial, conexão com o Objetivo, Sincronia.</td></tr></tbody></table></div><h2>5.2 Detalhamento por Atributo</h2><h3>💪 Força (FOR)</h3><ul><li><b>Função:</b> aplicar força bruta, lutar corpo a corpo, carregar, destruir.</li><li><b>Testes típicos:</b> arrombar portas, derrubar inimigos, escalar sem técnica.</li><li><b>Resistência oposta:</b> RES.</li><li><b>Perícias associadas:</b> Corpo a Corpo, Artes Marciais, Atletismo.</li></ul><h3>🏃 Agilidade (AGI)</h3><ul><li><b>Função:</b> mover-se rápido, reagir, esquivar, pilotar.</li><li><b>Testes típicos:</b> esquivar de tiros, acrobacias, pilotar veículos.</li><li><b>Resistência oposta:</b> PER.</li><li><b>Perícias associadas:</b> Esquiva, Acrobacia, Pilotagem, Furtividade.</li></ul><h3>🛡️ Resistência (RES)</h3><ul><li><b>Função:</b> absorver dano, resistir a efeitos, sobreviver.</li><li><b>Testes típicos:</b> aguentar veneno, fadiga, doenças, radiação.</li><li><b>Resistência oposta:</b> FOR.</li><li><b>Perícias associadas:</b> Fortitude, Medicina, Sobrevivência.</li></ul><h3>🧠 Intelecto (INT)</h3><ul><li><b>Função:</b> raciocínio, lógica, conhecimento técnico-científico.</li><li><b>Testes típicos:</b> resolver equações, decifrar códigos, lembrar fatos.</li><li><b>Resistência oposta:</b> INT.</li><li><b>Perícias associadas:</b> Pesquisa, Hacking, Ciências, Análise.</li></ul><h3>👁️ Percepção (PER)</h3><ul><li><b>Função:</b> notar detalhes, ler pessoas, sentir perigo.</li><li><b>Testes típicos:</b> encontrar pistas, perceber emboscadas, intuição.</li><li><b>Resistência oposta:</b> AGI.</li><li><b>Perícias associadas:</b> Investigação, Sentir Intenção, Perícia Médica.</li></ul><h3>🗣️ Presença (PRE)</h3><ul><li><b>Função:</b> influenciar, liderar, intimidar, negociar.</li><li><b>Testes típicos:</b> persuadir, seduzir, comandar, manipular.</li><li><b>Resistência oposta:</b> PRE.</li><li><b>Perícias associadas:</b> Persuasão, Liderança, Intimidação, Atuação.</li></ul><h3>⚡ Tecnologia (TEC)</h3><ul><li><b>Função:</b> interagir com máquinas, implantes, IA e drones.</li><li><b>Testes típicos:</b> hackear, consertar, programar, controlar drones.</li><li><b>Resistência oposta:</b> TEC.</li><li><b>Perícias associadas:</b> Engenharia, Programação, Segurança Digital, Mecânica.</li></ul><h3>🌌 Essência (ESS)</h3><ul><li><b>Função:</b> conexão com o Objetivo Existencial, Sincronia e vontade interior.</li><li><b>Testes típicos:</b> resistir a manipulação mental, ativar Poderes, manter-se fiel.</li><li><b>Resistência oposta:</b> ESS ou PER.</li><li><b>Perícias associadas:</b> Disciplina, Meditação, Autoconhecimento.</li></ul><h2>5.3 Tabela Consolidada</h2><div class="tablewrap"><table><thead><tr><th>Atributo</th><th>Sigla</th><th>Perícias principais</th><th>Resistência oposta</th></tr></thead><tbody><tr><td>💪 Força</td><td>FOR</td><td>Corpo a Corpo, Atletismo</td><td>RES</td></tr><tr><td>🏃 Agilidade</td><td>AGI</td><td>Esquiva, Acrobacia, Pilotagem</td><td>PER</td></tr><tr><td>🛡️ Resistência</td><td>RES</td><td>Fortitude, Medicina</td><td>FOR</td></tr><tr><td>🧠 Intelecto</td><td>INT</td><td>Hacking, Ciências, Análise</td><td>INT</td></tr><tr><td>👁️ Percepção</td><td>PER</td><td>Investigação, Sentir Intenção</td><td>AGI</td></tr><tr><td>🗣️ Presença</td><td>PRE</td><td>Persuasão, Liderança</td><td>PRE</td></tr><tr><td>⚡ Tecnologia</td><td>TEC</td><td>Engenharia, Segurança Digital</td><td>TEC</td></tr><tr><td>🌌 Essência</td><td>ESS</td><td>Disciplina, Meditação</td><td>ESS / PER</td></tr></tbody></table></div>
+    <div class="pfoot"><span>ASCENSÃO · CÓDICE 2301</span><span>CAP. 05 / 20 &nbsp;—&nbsp; ATRIBUTOS</span><span class="pf-r">◆ 05</span></div>
+    <a class="backtop" href="#sumario">▲ VOLTAR AO SUMÁRIO</a>
+  </div></section>
+</article>
+
+<article id="cap6" style="--accent:#00BFFF;--accentglow:rgba(0,191,255,0.35)">
+  <section class="chapsplash">
+    <div class="art" style="background-image:url('images/sep_mecanica.png')"></div>
+    <div class="grad"></div>
+    <div class="wrap c-inner">
+      <div class="chaptag"><span class="dot"></span>Mecânica</div>
+      <div class="chapnum">06</div>
+      <div class="chaptitle">🔷 Perícias</div>
+      <div class="chapline"></div>
+      <p style="color:#cfd6e6;max-width:560px;margin-top:18px;font-family:var(--serif);font-style:italic">As perícias somam-se aos atributos para formar o pool de dados de cada teste.</p>
+    </div>
+  </section>
+  <section class="page"><div class="wrap">
+    <h2>6.1 Sistema de Perícias</h2><p>Cada perícia tem nível de <strong>0 (não treinado)</strong> a <strong>5 (mestre)</strong>, limitado pelo atributo associado. O nível soma-se ao atributo para formar o pool:</p><pre>POOL = ATRIBUTO + PERÍCIA + MODIFICADORES</pre><h2>6.2 Lista Completa de Perícias</h2><h3>🏃 Movimento</h3><div class="tablewrap"><table><thead><tr><th>Perícia</th><th>Atributo</th><th>Uso</th></tr></thead><tbody><tr><td>Corrida</td><td>AGI</td><td>Deslocar-se rápido em terra</td></tr><tr><td>Acrobacia</td><td>AGI</td><td>Saltos, piruetas, equilíbrio</td></tr><tr><td>Escalada</td><td>FOR</td><td>Subir superfícies verticais</td></tr><tr><td>Parkour</td><td>AGI</td><td>Movimentação urbana fluida</td></tr><tr><td>Pilotagem Terrestre</td><td>AGI</td><td>Veículos terrestres (skates, carros)</td></tr><tr><td>Pilotagem Aérea</td><td>AGI</td><td>Veículos voadores, drones</td></tr></tbody></table></div><h3>⚔️ Combate</h3><div class="tablewrap"><table><thead><tr><th>Perícia</th><th>Atributo</th><th>Uso</th></tr></thead><tbody><tr><td>Pistolas</td><td>AGI</td><td>Armas de mão</td></tr><tr><td>Rifles</td><td>AGI</td><td>Armas longas</td></tr><tr><td>Armas Pesadas</td><td>FOR</td><td>Metralhadoras, canhões portáteis</td></tr><tr><td>Corpo a Corpo</td><td>FOR</td><td>Briga com ou sem armas brancas</td></tr><tr><td>Artes Marciais</td><td>FOR / AGI</td><td>Combate desarmado avançado</td></tr><tr><td>Defesa</td><td>RES</td><td>Bloquear, aparar, contra-atacar</td></tr></tbody></table></div><h3>💻 Tecnologia</h3><div class="tablewrap"><table><thead><tr><th>Perícia</th><th>Atributo</th><th>Uso</th></tr></thead><tbody><tr><td>Programação</td><td>INT</td><td>Criar e modificar software</td></tr><tr><td>Engenharia</td><td>INT</td><td>Projetar máquinas e estruturas</td></tr><tr><td>Mecânica</td><td>TEC</td><td>Consertar, montar, improvisar</td></tr><tr><td>IA</td><td>INT</td><td>Treinar, comandar e negociar com IAs</td></tr><tr><td>Nanotecnologia</td><td>TEC</td><td>Usar nanomáquinas</td></tr><tr><td>Segurança Digital</td><td>INT</td><td>Hackear e defender sistemas</td></tr></tbody></table></div><h3>🕵️ Infiltração</h3><div class="tablewrap"><table><thead><tr><th>Perícia</th><th>Atributo</th><th>Uso</th></tr></thead><tbody><tr><td>Furtividade</td><td>AGI</td><td>Mover-se sem ser visto</td></tr><tr><td>Camuflagem</td><td>AGI</td><td>Usar tecnologia de ocultação</td></tr><tr><td>Invasão de Sistemas</td><td>INT</td><td>Entrar em redes e dispositivos</td></tr><tr><td>Disfarce</td><td>PRE</td><td>Mudar a aparência, atuar</td></tr></tbody></table></div><h3>🗣️ Sociais</h3><div class="tablewrap"><table><thead><tr><th>Perícia</th><th>Atributo</th><th>Uso</th></tr></thead><tbody><tr><td>Persuasão</td><td>PRE</td><td>Convencer, negociar</td></tr><tr><td>Manipulação</td><td>PRE</td><td>Enganar, explorar emoções</td></tr><tr><td>Liderança</td><td>PRE</td><td>Comandar, inspirar</td></tr><tr><td>Intimidação</td><td>PRE</td><td>Assustar, coagir</td></tr><tr><td>Diplomacia</td><td>PRE / INT</td><td>Mediar, evitar conflitos</td></tr></tbody></table></div><h3>📚 Conhecimento</h3><div class="tablewrap"><table><thead><tr><th>Perícia</th><th>Atributo</th><th>Uso</th></tr></thead><tbody><tr><td>Pesquisa</td><td>INT</td><td>Buscar informações em bancos de dados</td></tr><tr><td>História</td><td>INT</td><td>Conhecer o passado</td></tr><tr><td>Ciências</td><td>INT</td><td>Física, química, biologia</td></tr><tr><td>Medicina</td><td>INT</td><td>Diagnosticar, tratar</td></tr><tr><td>Psicologia</td><td>INT</td><td>Analisar comportamento</td></tr></tbody></table></div><h3>🌌 Existenciais</h3><div class="tablewrap"><table><thead><tr><th>Perícia</th><th>Atributo</th><th>Uso</th></tr></thead><tbody><tr><td>Disciplina</td><td>ESS</td><td>Resistir a tentações, manter o foco</td></tr><tr><td>Meditação</td><td>ESS</td><td>Recuperar Sincronia, acalmar a mente</td></tr><tr><td>Autoconhecimento</td><td>ESS</td><td>Intuição sobre o próprio Objetivo</td></tr></tbody></table></div><h2>6.3 Testes sem Perícia (Atributo Puro)</h2><p>Em emergências, é possível rolar <strong>apenas o atributo</strong>, com penalidade:</p><div class="box alert"><div class="bx-title">⚠️ Penalidade</div><p>⚠️ Sem perícia: pool = atributo ÷ 2 (arredondado para baixo). Exemplo: FOR 4 sem perícia = 2 dados. Muito mais arriscado.</p></div>
+    <div class="pfoot"><span>ASCENSÃO · CÓDICE 2301</span><span>CAP. 06 / 20 &nbsp;—&nbsp; PERÍCIAS</span><span class="pf-r">◆ 06</span></div>
+    <a class="backtop" href="#sumario">▲ VOLTAR AO SUMÁRIO</a>
+  </div></section>
+</article>
+
+<article id="cap7" style="--accent:#9D00FF;--accentglow:rgba(157,0,255,0.35)">
+  <section class="chapsplash">
+    <div class="art" style="background-image:url('images/sep_sincronia.png')"></div>
+    <div class="grad"></div>
+    <div class="wrap c-inner">
+      <div class="chaptag"><span class="dot"></span>Sincronia & Poderes</div>
+      <div class="chapnum">07</div>
+      <div class="chaptitle">🟣 Sincronia</div>
+      <div class="chapline"></div>
+      <p style="color:#cfd6e6;max-width:560px;margin-top:18px;font-family:var(--serif);font-style:italic">O fluxo entre biologia, implantes, consciência e propósito. A fonte de todos os Poderes.</p>
+    </div>
+  </section>
+  <section class="page"><div class="wrap">
+    <h2>7.1 Conceito</h2><p><strong>Sincronia</strong> mede o quanto <strong>corpo, mente, tecnologia e essência existencial</strong> de um personagem estão alinhados. É a fonte de todos os Poderes.</p><div class="box sync"><div class="bx-title">🟣 Não é magia</div><p>🌌 Sincronia não é “mana” nem energia mágica — é o <b>fluxo entre sua biologia, seus implantes, sua consciência e seu propósito</b>.</p></div><h2>7.2 Cálculo Inicial</h2><pre>SINCRONIA MÁXIMA = 5 + (ESSÊNCIA × 2) + BÔNUS DE ARQUÉTIPO</pre><div class="tablewrap"><table><thead><tr><th>Essência</th><th>Sincronia base</th></tr></thead><tbody><tr><td>1</td><td>7</td></tr><tr><td>2</td><td>9</td></tr><tr><td>3</td><td>11</td></tr><tr><td>4</td><td>13</td></tr><tr><td>5</td><td>15</td></tr></tbody></table></div><p><strong>Bônus de Arquétipo:</strong> +2 a +5, conforme a escolha.</p><h2>7.3 Recuperação de Sincronia</h2><div class="tablewrap"><table><thead><tr><th>Situação</th><th>Recuperação</th></tr></thead><tbody><tr><td>🛌 Descanso completo (6h+)</td><td>Recupera <b>toda</b> a Sincronia</td></tr><tr><td>😴 Cochilo (1h)</td><td>Recupera <b>25%</b> do máximo</td></tr><tr><td>🧘 Meditação (10 min)</td><td>Recupera <b>1 ponto</b></td></tr><tr><td>🎯 Marco narrativo</td><td>Recupera <b>2 a 3 pontos</b></td></tr><tr><td>🌠 Ato significativo rumo ao Objetivo</td><td>Recupera <b>tudo</b> + 1 ponto permanente</td></tr><tr><td>💔 Trauma severo</td><td><b>Perde</b> 1d3 pontos</td></tr></tbody></table></div><h2>7.4 Gasto de Sincronia</h2><p>Todos os Poderes custam Sincronia para serem ativados (veja o Capítulo 8).</p><h2>7.5 Estados de Sincronia</h2><pre>😌 NORMAL    (75–100%)  tudo funciona bem
+😐 REDUZIDA  (50–74%)   -1 dado em testes físicos
+😟 BAIXA     (25–49%)   -2 dados, alucinações leves
+😨 CRÍTICA   (1–24%)    -3 dados, poderes falham 50%
+💀 EXAUSTÃO  (0)        colapso iminente</pre><h2>7.6 Exaustão e Colapso</h2><p>Quando a Sincronia chega a <strong>0</strong>:</p><ol><li>O personagem entra em <strong>Colapso de Sincronia</strong> (inconsciência por 1d6 horas).</li><li>Ao acordar, a Sincronia volta a <strong>1</strong>.</li><li>Todo colapso marca o personagem com uma <strong>Marca de Fragmentação</strong> (veja 7.7).</li></ol><h2>7.7 Sobrecarga e Corrupção</h2><p>Forçar Poderes <strong>além do limite</strong> causa <strong>Sobrecarga</strong>:</p><div class="tablewrap"><table><thead><tr><th>Sobrecarga</th><th>Efeito</th></tr></thead><tbody><tr><td>Leve (1 ponto acima do máximo)</td><td>1d6 de dano direto</td></tr><tr><td>Moderada (2–3 pontos)</td><td>2d6 de dano + 1 Marca</td></tr><tr><td>Severa (4+ pontos)</td><td>4d6 de dano + 2 Marcas + alucinações</td></tr></tbody></table></div><p><strong>Marcas de Fragmentação</strong> são cicatrizes mentais e/ou físicas:</p><ul><li>👁️ um olho passa a brilhar em determinada cor;</li><li>🩸 veias visíveis pulsam;</li><li>🔊 você ouve sussurros;</li><li>⚡ pequenas descargas elétricas saem de você;</li><li>👤 sua sombra se move sozinha por 1 segundo.</li></ul><div class="box alert"><div class="bx-title">⚠️ Falha Crítica Existencial</div><p>⚠️ Após <b>5 Marcas</b>, o personagem sofre uma Falha Crítica Existencial: possível Ascensão involuntária, transformação em anomalia ou colapso permanente.</p></div><h2>7.8 Sincronia e Ascensão</h2><p>Quando um personagem <strong>cumpre seu Objetivo Existencial</strong>:</p><ul><li>✨ a Sincronia vai a <strong>infinito</strong> por 1 turno;</li><li>🌟 todos os Poderes funcionam sem custo;</li><li>💫 a Ascensão consome toda a Sincronia acumulada;</li><li>🚀 o personagem desaparece, deixando a realidade.</li></ul>
+    <div class="pfoot"><span>ASCENSÃO · CÓDICE 2301</span><span>CAP. 07 / 20 &nbsp;—&nbsp; SINCRONIA</span><span class="pf-r">◆ 07</span></div>
+    <a class="backtop" href="#sumario">▲ VOLTAR AO SUMÁRIO</a>
+  </div></section>
+</article>
+
+<article id="cap8" style="--accent:#9D00FF;--accentglow:rgba(157,0,255,0.35)">
+  <section class="chapsplash">
+    <div class="art" style="background-image:url('images/sep_sincronia.png')"></div>
+    <div class="grad"></div>
+    <div class="wrap c-inner">
+      <div class="chaptag"><span class="dot"></span>Sincronia & Poderes</div>
+      <div class="chapnum">08</div>
+      <div class="chaptitle">🟣 Poderes</div>
+      <div class="chapline"></div>
+      <p style="color:#cfd6e6;max-width:560px;margin-top:18px;font-family:var(--serif);font-style:italic">Não há magia. Todo Poder tem explicação científica — mesmo quando bizarra.</p>
+    </div>
+  </section>
+  <section class="page"><div class="wrap">
+    <h2>8.1 Filosofia dos Poderes</h2><p><strong>Ascensão</strong> não tem magia. Todos os Poderes têm <strong>explicação científica</strong>, ainda que estranha.</p><div class="box sync"><div class="bx-title">🟣 Categorias de origem</div><p>🦾 <b>Biônica</b> — aprimoramentos musculares/órgãos sintéticos · 🧠 <b>Neural</b> — modificações no sistema nervoso · 🤖 <b>IA embarcada</b> — assistentes cognitivos internos · 🔬 <b>Nanotecnologia</b> — enxames de máquinas moleculares · ⚛️ <b>Quântica</b> — manipulação de probabilidade · 🌌 <b>Existencial</b> — interação com o fenômeno dos Objetivos.</p></div><h2>8.2 Estrutura de um Poder</h2><div class="tablewrap"><table><thead><tr><th>Campo</th><th>Descrição</th></tr></thead><tbody><tr><td>Nome</td><td>Identificação</td></tr><tr><td>Categoria</td><td>Origem tecnológica</td></tr><tr><td>Requisitos</td><td>Pré-requisitos de atributo, perícia, Sincronia</td></tr><tr><td>Custo</td><td>Sincronia gasta</td></tr><tr><td>Alcance</td><td>Distância de efeito</td></tr><tr><td>Duração</td><td>Quanto tempo dura</td></tr><tr><td>Recarga</td><td>Tempo até poder usar de novo</td></tr><tr><td>Efeito</td><td>O que faz</td></tr><tr><td>Limitações</td><td>O que NÃO faz</td></tr><tr><td>Riscos</td><td>Possíveis efeitos colaterais</td></tr><tr><td>Evoluções</td><td>Aprimoramentos futuros</td></tr></tbody></table></div><h2>8.3 Árvores de Poderes</h2><h3>🏃 Árvore: Mobilidade</h3><div class="tablewrap"><table><thead><tr><th>Nível · Poder</th><th>Categoria</th><th>Custo</th><th>Efeito (resumo)</th></tr></thead><tbody><tr><td>1 · Corrida Extrema</td><td>🦾 Biônica</td><td>1</td><td>+3 dados em Corrida; dobra a velocidade (1 cena). Evolui (N3): +5 dados, triplica.</td></tr><tr><td>1 · Salto Ampliado</td><td>🦾 Biônica</td><td>1</td><td>Salta até 6 m vertical ou 10 m horizontal. Evolui (N3): Voo Balístico de 30 m.</td></tr><tr><td>2 · Parkour Avançado</td><td>🧠+🦾</td><td>2</td><td>Terreno urbano trivial; +4 dados em Acrobacia/Escalada. Evolui (N4): superfícies verticais.</td></tr><tr><td>3 · Propulsão Aérea</td><td>🔬 Nano</td><td>4</td><td>Voa a até 80 km/h por 1 h. Vulnerável em altitude máxima; falha crítica = queda.</td></tr><tr><td>4 · Manip. Gravitacional Local</td><td>⚛️ Quântica</td><td>6</td><td>Campos de gravidade reduzida/negativa em raio de 10 m. Requer ESS 3+.</td></tr><tr><td>5 · Transcensão Cinética</td><td>🌌 Existencial</td><td>10</td><td>Move-se a até 200 km/h; atravessa matéria uma vez (1 turno).</td></tr></tbody></table></div><h3>🌀 Árvore: Teleporte</h3><div class="tablewrap"><table><thead><tr><th>Nível · Poder</th><th>Custo</th><th>Alcance</th><th>Efeito / Risco</th></tr></thead><tbody><tr><td>1 · Salto Curto</td><td>2</td><td>10 m</td><td>Teleporte instantâneo sem erro; recarga 1 turno. Risco: fadiga cumulativa.</td></tr><tr><td>2 · Teleporte de Combate</td><td>3</td><td>30 m</td><td>Teleporte + ataque imediato. Evolui (N4): leva outros consigo.</td></tr><tr><td>3 · Túnel Quântico Pessoal</td><td>5</td><td>1 km</td><td>Atalho no espaço-tempo; recarga 1 h. Falha = local aleatório próximo.</td></tr><tr><td>4 · Transferência de Estado</td><td>8</td><td>Linha de visão</td><td>Teleporta você + 1 aliado. Risco: perda de memória por 1d6 h.</td></tr><tr><td>5 · Singularidade Portátil</td><td>12</td><td>50 m</td><td>Micro-buraco negro por 1 turno; teleporte a qualquer lugar já visto + 1 aliado. Risco: anomalia residual.</td></tr></tbody></table></div><h3>👁️ Árvore: Invisibilidade</h3><div class="tablewrap"><table><thead><tr><th>Nível · Poder</th><th>Custo</th><th>Efeito</th><th>Detecção / Limite</th></tr></thead><tbody><tr><td>1 · Camuflagem Óptica</td><td>1</td><td>Visualmente invisível (1 cena)</td><td>Câmeras térmicas vencem; ainda produz sons</td></tr><tr><td>2 · Camuflagem Ativa Completa</td><td>3</td><td>Invisível a olho nu e câmeras</td><td>Apenas imóvel ou em movimento lento</td></tr><tr><td>3 · Distorção de Percepção</td><td>4</td><td>Pessoas não notam você mesmo à vista</td><td>PER 5+ percebe algo estranho</td></tr><tr><td>4 · Anulação Sensorial</td><td>6</td><td>Você não existe para os sentidos do alvo</td><td>Risco: queima neural se prolongar</td></tr><tr><td>5 · Frequência de Ausência</td><td>10</td><td>Para o universo, você deixou de existir (1 turno)</td><td>Não é invisibilidade — você não está lá</td></tr></tbody></table></div><h3>⚔️ Árvore: Combate Avançado</h3><div class="tablewrap"><table><thead><tr><th>Nível · Poder</th><th>Custo</th><th>Efeito</th><th>Risco / Evolução</th></tr></thead><tbody><tr><td>1 · Aprimoramento Físico</td><td>2</td><td>+2 dados em FOR; dano +2</td><td>Evolui (N3): +4 dados, dano +4</td></tr><tr><td>2 · Reflexos Acelerados</td><td>3</td><td>+3 dados em AGI; age 2× no turno</td><td>-1 dado em testes de INT</td></tr><tr><td>3 · Campo de Força Pessoal</td><td>4</td><td>Reduz dano recebido à metade</td><td>Evolui (N5): absorve 1 ataque por cena</td></tr><tr><td>4 · Arma Energética Embarcada</td><td>3/disparo</td><td>Raio de plasma; dano 8d6</td><td>Risco: superaquecimento</td></tr><tr><td>5 · Drone de Combate Embarcado</td><td>5</td><td>Drone autônomo (4 dados, dano 5d6)</td><td>Pode ser derrubado</td></tr><tr><td>6 · Sobrecarga Cinética</td><td>8</td><td>Um golpe corpo a corpo com dano +10</td><td>Risco: 1 Marca de Fragmentação</td></tr></tbody></table></div><h3>🧠 Árvore: Controle</h3><div class="tablewrap"><table><thead><tr><th>Nível · Poder</th><th>Custo</th><th>Efeito</th><th>Resistência</th></tr></thead><tbody><tr><td>1 · Hackear Implantes</td><td>2</td><td>Controla um implante do alvo (1 cena); toque ou 5 m</td><td>INT 4+ resiste</td></tr><tr><td>2 · Sabotagem Neural</td><td>3</td><td>Desativa implantes: -3 dados em tudo</td><td>TEC 4+ resiste</td></tr><tr><td>3 · Bloqueio Sensorial</td><td>4</td><td>Cega/ensurdece um alvo por 1 cena</td><td>ESS 3+ resiste</td></tr><tr><td>4 · Guerra Eletrônica</td><td>6</td><td>Desativa toda eletrônica em 50 m (1 turno)</td><td>Afeta aliados também</td></tr><tr><td>5 · Reescrita de Personalidade</td><td>10</td><td>Modifica traços do alvo por 1 h</td><td>ESS 5+ resiste; alvo pode mudar de lado</td></tr></tbody></table></div>
+    <div class="pfoot"><span>ASCENSÃO · CÓDICE 2301</span><span>CAP. 08 / 20 &nbsp;—&nbsp; PODERES</span><span class="pf-r">◆ 08</span></div>
+    <a class="backtop" href="#sumario">▲ VOLTAR AO SUMÁRIO</a>
+  </div></section>
+</article>
+
+<article id="cap9" style="--accent:#9D00FF;--accentglow:rgba(157,0,255,0.35)">
+  <section class="chapsplash">
+    <div class="art" style="background-image:url('images/sep_sincronia.png')"></div>
+    <div class="grad"></div>
+    <div class="wrap c-inner">
+      <div class="chaptag"><span class="dot"></span>Sincronia & Poderes</div>
+      <div class="chapnum">09</div>
+      <div class="chaptitle">🟣 Progressão</div>
+      <div class="chapline"></div>
+      <p style="color:#cfd6e6;max-width:560px;margin-top:18px;font-family:var(--serif);font-style:italic">Evoluir não é só ganhar poder — é se aproximar do seu Objetivo.</p>
+    </div>
+  </section>
+  <section class="page"><div class="wrap">
+    <h2>9.1 Filosofia</h2><p><strong>Ascensão</strong> evita o puro “subir de nível”. A progressão é uma <strong>mistura</strong> de experiência, marcos narrativos, conquistas, descobertas e aproximação ao Objetivo.</p><ul><li>📈 <strong>Experiência</strong> — combate e habilidades usadas;</li><li>📖 <strong>Marcos narrativos</strong> — conclusões importantes na trama;</li><li>🌟 <strong>Conquistas</strong> — feitos memoráveis;</li><li>🔍 <strong>Descobertas</strong> — sobre Objetivos, Ascensões e o mundo;</li><li>🎯 <strong>Aproximação ao Objetivo</strong> — avançar no caminho.</li></ul><h2>9.2 Pontos de Experiência (PX)</h2><h3>Concessão de PX</h3><div class="tablewrap"><table><thead><tr><th>Fonte</th><th>PX</th></tr></thead><tbody><tr><td>🎲 Teste bem-sucedido significativo</td><td>1</td></tr><tr><td>⚔️ Combate vencido</td><td>2</td></tr><tr><td>🗣️ Interpretação memorável</td><td>1–3 (bônus do MJ)</td></tr><tr><td>🌟 Marco narrativo (conclusão de arco)</td><td>5–10</td></tr><tr><td>🔍 Descoberta importante sobre o Objetivo</td><td>5</td></tr><tr><td>🎯 Passo concreto rumo ao Objetivo</td><td>10</td></tr><tr><td>🏆 Conquista pessoal</td><td>3</td></tr><tr><td>💀 Sobreviver à quase-morte</td><td>2</td></tr></tbody></table></div><h3>Custo de melhorias</h3><div class="tablewrap"><table><thead><tr><th>Melhoria</th><th>Custo</th></tr></thead><tbody><tr><td>+1 em Perícia</td><td>5 PX</td></tr><tr><td>+1 em Atributo</td><td>20 PX</td></tr><tr><td>Novo Poder Nível 1</td><td>10 PX</td></tr><tr><td>Novo Poder Nível 2</td><td>15 PX</td></tr><tr><td>Novo Poder Nível 3</td><td>25 PX</td></tr><tr><td>Novo Poder Nível 4</td><td>40 PX</td></tr><tr><td>Novo Poder Nível 5</td><td>60 PX</td></tr><tr><td>Vantagem Menor</td><td>10 PX</td></tr><tr><td>Vantagem Maior</td><td>25 PX</td></tr></tbody></table></div><h2>9.3 Marcos Narrativos</h2><p>A cada <strong>5 marcos</strong> registrados, o personagem recebe:</p><ul><li>✨ 1 ponto de atributo (escolha livre);</li><li>✨ 1 ponto de Sincronia máxima;</li><li>✨ 1 poder adicional.</li></ul><h2>9.4 Limites e Curva</h2><div class="tablewrap"><table><thead><tr><th>Estágio</th><th>PX necessário</th><th>Descrição</th></tr></thead><tbody><tr><td>Iniciante</td><td>0–50</td><td>1 a 3 poderes; atributos médios</td></tr><tr><td>Operacional</td><td>51–150</td><td>4 a 6 poderes; atributos fortes</td></tr><tr><td>Veterano</td><td>151–300</td><td>7 a 10 poderes; especialista</td></tr><tr><td>Lendário</td><td>301+</td><td>Mais de 10 poderes; acesso a anomalias</td></tr><tr><td>Existencial</td><td>Aproximação ao Objetivo</td><td>O personagem transcende o sistema</td></tr></tbody></table></div><h2>9.5 Especializações</h2><p>Em vez de adquirir mais Poderes, o personagem pode <strong>especializar-se</strong> em uma Árvore:</p><ul><li>ganha <strong>+1 dado</strong> em todos os testes com Poderes dessa Árvore;</li><li>reduz em 1 ponto o custo de Sincronia dos Poderes especializados.</li></ul>
+    <div class="pfoot"><span>ASCENSÃO · CÓDICE 2301</span><span>CAP. 09 / 20 &nbsp;—&nbsp; PROGRESSÃO</span><span class="pf-r">◆ 09</span></div>
+    <a class="backtop" href="#sumario">▲ VOLTAR AO SUMÁRIO</a>
+  </div></section>
+</article>
+
+<article id="cap10" style="--accent:#8A2BE2;--accentglow:rgba(138,43,226,0.35)">
+  <section class="chapsplash">
+    <div class="art" style="background-image:url('images/sep_objetivos.png')"></div>
+    <div class="grad"></div>
+    <div class="wrap c-inner">
+      <div class="chaptag"><span class="dot"></span>Objetivos Existenciais</div>
+      <div class="chapnum">10</div>
+      <div class="chaptitle">🌌 Objetivos Existenciais</div>
+      <div class="chapline"></div>
+      <p style="color:#cfd6e6;max-width:560px;margin-top:18px;font-family:var(--serif);font-style:italic">O coração de ASCENSÃO: a única coisa que o jogador não controla diretamente.</p>
+    </div>
+  </section>
+  <section class="page"><div class="wrap">
+    <h2>10.1 O Sistema</h2><p>O <strong>Objetivo Existencial</strong> é o coração de <strong>Ascensão</strong> — a <strong>única coisa</strong> sobre o próprio personagem que o jogador <strong>não controla diretamente</strong>.</p><ol><li>🎲 O MJ <strong>cria</strong> o Objetivo secretamente.</li><li>📖 O jogador <strong>descobre</strong> aos poucos, por meio de pistas.</li><li>⚖️ O Objetivo pode ser <strong>interpretado</strong> de várias formas.</li><li>🌌 A Ascensão só ocorre quando o MJ confirma que o Objetivo foi cumprido.</li></ol><h2>10.2 Criação pelo MJ</h2><pre>OBJETIVO = TIPO + COMPLEXIDADE + DETALHES + PISTAS + ARMADILHAS</pre><div class="tablewrap"><table><thead><tr><th>Tipo</th><th>Característica</th></tr></thead><tbody><tr><td>🟢 Simples</td><td>Ações concretas, baixa ambiguidade</td></tr><tr><td>🟡 Heroico</td><td>Sacrifício pessoal, salvar outros</td></tr><tr><td>🔴 Trágico</td><td>A conclusão envolve perda irreversível</td></tr><tr><td>🟣 Ambíguo</td><td>Pode ser bom ou mau, conforme a interpretação</td></tr><tr><td>🔵 Filosófico</td><td>Contemplativo, sobre a natureza da existência</td></tr></tbody></table></div><h2>10.3 Cem Objetivos Existenciais</h2><div class="box objective"><div class="bx-title">🌌 Como usar</div><p>🌌 Use esta lista como ponto de partida ou inspiração. Cada entrada traz, entre parênteses, a <b>condição de cumprimento</b> sugerida — que você pode adaptar e mascarar com pistas falsas.</p></div><h3>🟢 20 Objetivos Simples</h3><ol><li>Construir uma casa para um estranho. <em>(Erguer moradia para alguém sem lar.)</em></li><li>Aprender a tocar uma música inteira sem erro. <em>(Performance pública perfeita.)</em></li><li>Levar uma mensagem a alguém que nunca conheceu. <em>(Entrega em mãos.)</em></li><li>Fazer um amigo de verdade na vida adulta. <em>(Laço genuíno por 1 ano.)</em></li><li>Pintar um mural em um lugar onde ninguém olha. <em>(Obra em local remoto/alto.)</em></li><li>Ajudar alguém a chorar sem consertar o problema. <em>(Presença silenciosa no luto.)</em></li><li>Devolver um objeto perdido há 50 anos. <em>(O dono original recebe.)</em></li><li>Ler mil livros diferentes. <em>(Conclusão da lista pessoal.)</em></li><li>Plantar uma árvore que você nunca verá crescer. <em>(Árvore plantada, sem colher.)</em></li><li>Ensinar uma criança a andar de bicicleta. <em>(Primeira volta sem rodinhas.)</em></li><li>Acordar antes do nascer do sol 365 vezes seguidas. <em>(Sequência de um ano.)</em></li><li>Escrever uma carta que nunca será enviada. <em>(Texto completo, guardado para si.)</em></li><li>Construir uma máquina que faça alguém rir. <em>(Dispositivo funcional.)</em></li><li>Encontrar o último exemplar de uma espécie extinta. <em>(Avistamento confirmado.)</em></li><li>Fazer o pedido de casamento de outra pessoa. <em>(Pedido bem-sucedido em nome de terceiro.)</em></li><li>Limpar um rio inteiro sozinho. <em>(Trecho de 1 km descontaminado.)</em></li><li>Memorizar os nomes de dez mil pessoas. <em>(Teste de memória.)</em></li><li>Criar uma dança que ninguém mais ensina. <em>(Coreografia original ensinada a 3 pessoas.)</em></li><li>Traduzir uma língua morta para uma nova geração. <em>(Dicionário publicado.)</em></li><li>Salvar uma abelha de ser pisada por alguém. <em>(Ato de preservação mínimo.)</em></li></ol><h3>🟡 20 Objetivos Heroicos</h3><ol><li>Sacrificar a própria carreira para expor uma megacorporação corrupta. <em>(Provas tornadas públicas.)</em></li><li>Adotar 10 crianças órfãs em uma zona de guerra. <em>(Lares formados.)</em></li><li>Doar o corpo inteiro a um programa de ciborgues veteranos. <em>(Assinatura vitalícia.)</em></li><li>Construir um hospital em uma megafavela. <em>(Estrutura completa e funcional.)</em></li><li>Negociar paz entre duas facções rivais à beira do genocídio. <em>(Cessar-fogo firmado.)</em></li><li>Hackear e libertar 100 mil cérebros em criostase. <em>(Banco de dados vazado e público.)</em></li><li>Inventar a cura de uma doença incurável. <em>(Testes clínicos positivos.)</em></li><li>Desarmar uma bomba-relógio quântica com as próprias mãos. <em>(Contagem revertida.)</em></li><li>Salvar uma cidade inteira de uma tempestade artificial. <em>(Sistema desativado.)</em></li><li>Levar justiça a um governante intocável. <em>(Regime deposto ou exposto.)</em></li><li>Tornar-se o líder moral de um milhão de pessoas. <em>(Movimento autêntico.)</em></li><li>Devolver a visão a mil cegos. <em>(Implantes distribuídos.)</em></li><li>Revelar a localização de todas as crianças desaparecidas da última década. <em>(Banco de dados público.)</em></li><li>Construir uma nave e levar mil refugiados a um planeta-arca. <em>(Decolagem concluída.)</em></li><li>Vencer a maior facção criminosa de uma megacidade. <em>(Dissolução confirmada.)</em></li><li>Renunciar aos próprios poderes para salvar um inimigo. <em>(Implantes removidos voluntariamente.)</em></li><li>Criar uma IA que previna suicídios em escala global. <em>(Milhares salvos.)</em></li><li>Desvendar o primeiro Objetivo da história e contar a verdade ao mundo. <em>(Descoberta pública.)</em></li><li>Confrontar uma corporação imortal e forçá-la a mudar. <em>(Reforma corporativa.)</em></li><li>Morrer defendendo uma criança de um ataque. <em>(Sacrifício absoluto.)</em></li></ol><h3>🔴 20 Objetivos Trágicos</h3><ol><li>Matar alguém que você ama para impedir um mal maior. <em>(Ato consumado.)</em></li><li>Vender sua memória mais preciosa. <em>(Transação concluída.)</em></li><li>Trair a única pessoa que confia em você. <em>(Traição irreversível.)</em></li><li>Deixar alguém que depende de você morrer de fome. <em>(Inação consciente.)</em></li><li>Tornar-se o monstro que jurou combater. <em>(Transformação completa.)</em></li><li>Destruir a única prova da existência de um ente querido. <em>(Prova apagada.)</em></li><li>Acusar falsamente um inocente para salvar mil. <em>(Acusação mantida.)</em></li><li>Ser o motivo de uma guerra que mata milhões. <em>(Conflito iniciado.)</em></li><li>Esquecer completamente quem você era. <em>(Amnésia total.)</em></li><li>Permitir que uma criança Ascenda antes de viver. <em>(Criança desaparecida.)</em></li><li>Fazer um amigo acreditar que você o odeia para sempre. <em>(Ruptura definitiva.)</em></li><li>Vender o nome de seus pais a uma corporação. <em>(Contrato assinado.)</em></li><li>Causar a morte de um Ascendido antes da Ascensão. <em>(Morte prematura.)</em></li><li>Destruir a cura de uma doença para torná-la lucrativa. <em>(Sabotagem.)</em></li><li>Hackear e modificar o cérebro de um ente querido sem permissão. <em>(Alteração feita.)</em></li><li>Proteger um assassino por amor. <em>(Encobrimento total.)</em></li><li>Cortar relações com todos que te amam. <em>(Isolamento absoluto.)</em></li><li>Destruir, por vingança, uma obra de arte insubstituível. <em>(Obra irrecuperável.)</em></li><li>Deixar o medo vencer e abandonar quem precisa de você. <em>(Abandono no momento crucial.)</em></li><li>Tornar-se o líder de uma facção genocida. <em>(Adesão total.)</em></li></ol><h3>🟣 20 Objetivos Ambíguos</h3><ol><li>Salvar alguém da morte — mesmo que isso impeça sua Ascensão. <em>(Escolha feita.)</em></li><li>Mentir a uma pessoa a vida inteira sobre quem você é. <em>(Morte dela sem saber a verdade.)</em></li><li>Hackear o código-fonte da realidade. <em>(Acesso à matriz universal.)</em></li><li>Encontrar a pessoa com o mesmo Objetivo que você. <em>(Encontro e escolha.)</em></li><li>Tornar-se imortal e observar tudo mudar. <em>(Transformação completa.)</em></li><li>Provar que os Objetivos são uma simulação. <em>(Evidência conclusiva.)</em></li><li>Mudar o próprio Objetivo no meio da jornada. <em>(Transformação de identidade completa.)</em></li><li>Convencer alguém a desistir voluntariamente de sua Ascensão. <em>(Renúncia obtida.)</em></li><li>Construir uma IA que substitua todos os Ascendidos. <em>(Protótipo funcional.)</em></li><li>Levar uma megacorporação à falência usando apenas palavras. <em>(Falência declarada.)</em></li><li>Enganar a si mesmo sobre quem você é. <em>(Autoilusão total.)</em></li><li>Provar que a morte é opcional. <em>(Ressurreição bem-sucedida.)</em></li><li>Escolher conscientemente não cumprir seu Objetivo. <em>(Recusa documentada.)</em></li><li>Forçar outra pessoa a cumprir o Objetivo dela em seu lugar. <em>(Substituição.)</em></li><li>Viver uma vida inteira fingindo ser outra pessoa. <em>(Morte sem revelar a identidade.)</em></li><li>Destruir todas as evidências dos Registros de Falha. <em>(Apagamento global.)</em></li><li>Criar uma cópia perfeita de si mesmo. <em>(Clone consciente.)</em></li><li>Trocar de corpo com alguém. <em>(Transferência completa.)</em></li><li>Esquecer o próprio Objetivo e redescobri-lo. <em>(Amnésia + redescoberta.)</em></li><li>Casar-se com quem conhece seu Objetivo e decide se você o cumpre. <em>(Aliança firmada.)</em></li></ol><h3>🔵 20 Objetivos Filosóficos</h3><ol><li>Compreender verdadeiramente a consciência de uma IA. <em>(Relação bidirecional real.)</em></li><li>Experimentar a morte e voltar para contar. <em>(Retorno da morte clínica.)</em></li><li>Encontrar alguém que não tenha Objetivo Existencial. <em>(Pessoa descoberta.)</em></li><li>Provar que livre-arbítrio e destino são a mesma coisa. <em>(Demonstração lógica.)</em></li><li>Viver como se cada dia fosse o último — por 70 anos. <em>(Vida inteira assim.)</em></li><li>Encontrar Deus e perguntar por que os Objetivos existem. <em>(Resposta obtida.)</em></li><li>Tornar-se atemporal e observar uma Ascensão do início ao fim. <em>(Visão completa do fenômeno.)</em></li><li>Mudar a definição de “humano”. <em>(Nova classificação aceita.)</em></li><li>Salvar alguém que não quer ser salvo e descobrir se você estava certo. <em>(Julgamento de longo prazo.)</em></li><li>Encontrar a primeira pessoa que Ascendeu, se ela ainda existir. <em>(Encontro confirmado.)</em></li><li>Compreender o fenômeno dos Objetivos sem cumpri-lo. <em>(Teoria completa.)</em></li><li>Fazer alguém cumprir um Objetivo que não é o dele. <em>(Ascensão forçada.)</em></li><li>Descobrir o que acontece com quem Ascende. <em>(Revelação do pós-Ascensão.)</em></li><li>Sacrificar a própria chance de Ascender para garantir a de outro. <em>(Troca explícita.)</em></li><li>Provar que a Ascensão é efeito colateral, não prêmio. <em>(Teoria aceita.)</em></li><li>Conectar todas as mentes humanas em uma só. <em>(Fusão global.)</em></li><li>Negociar com o fenômeno dos Objetivos. <em>(Barganha fechada.)</em></li><li>Mudar o Objetivo de outra pessoa no meio da jornada. <em>(Alteração confirmada.)</em></li><li>Sobreviver à revelação completa do universo e escolher viver mesmo assim. <em>(Vida pós-revelação.)</em></li><li>Morrer de velhice — sem Ascender e sem fracassar. <em>(Morte natural registrada como caso único.)</em></li></ol><h2>10.4 Mecânica de Pistas</h2><div class="tablewrap"><table><thead><tr><th>Tipo de pista</th><th>Como aparece</th></tr></thead><tbody><tr><td>🌙 Sonho</td><td>O personagem acorda com uma sensação vívida</td></tr><tr><td>👤 Nome</td><td>Um nome surge em locais aleatórios</td></tr><tr><td>🏛️ Lugar</td><td>Sensação de que precisa ir a algum lugar</td></tr><tr><td>📦 Objeto</td><td>Atrai o personagem como um ímã</td></tr><tr><td>💬 Frase</td><td>Alguém diz algo que ressoa profundamente</td></tr><tr><td>🎭 Coincidência</td><td>Eventos improváveis se acumulam</td></tr><tr><td>👁️ Visão</td><td>Um flash de momento futuro ou passado</td></tr></tbody></table></div><h2>10.5 Interpretações Erradas e Falsas Conclusões</h2><p>O MJ pode incluir <strong>pistas falsas</strong> que levem o personagem a conclusões equivocadas sobre seu Objetivo. Isso é central ao jogo.</p><div class="box example"><div class="bx-title">🎲 Exemplo</div><p>O jogador acredita que seu Objetivo é “matar o Governador de Nova Tóquio” (falsa conclusão). Na verdade, é “encontrar o assassino do filho do Governador e dar a ele paz” (verdadeiro).</p></div><h2>10.6 Consequências</h2><ul><li><strong>Cumprimento:</strong> Ascensão — desaparecimento e liberação de energia.</li><li><strong>Falha:</strong> registro público com a frase verdadeira do Objetivo.</li><li><strong>Quase-cumprimento:</strong> o personagem pode sentir a Sincronia “esvaziar” e o mundo reagir.</li></ul>
+    <div class="pfoot"><span>ASCENSÃO · CÓDICE 2301</span><span>CAP. 10 / 20 &nbsp;—&nbsp; OBJETIVOS EXISTENCIAIS</span><span class="pf-r">◆ 10</span></div>
+    <a class="backtop" href="#sumario">▲ VOLTAR AO SUMÁRIO</a>
+  </div></section>
+</article>
+
+<article id="cap11" style="--accent:#DC143C;--accentglow:rgba(220,20,60,0.35)">
+  <section class="chapsplash">
+    <div class="art" style="background-image:url('images/sep_combate.png')"></div>
+    <div class="grad"></div>
+    <div class="wrap c-inner">
+      <div class="chaptag"><span class="dot"></span>Combate</div>
+      <div class="chapnum">11</div>
+      <div class="chaptitle">⚔️ Combate</div>
+      <div class="chapline"></div>
+      <p style="color:#cfd6e6;max-width:560px;margin-top:18px;font-family:var(--serif);font-style:italic">Rápido e cinematográfico. Cada turno são 5 segundos de pura tensão.</p>
+    </div>
+  </section>
+  <section class="page"><div class="wrap">
+    <h2>11.1 Iniciativa e Turnos</h2><ul><li><strong>Iniciativa:</strong> todos fazem teste de AGI + Percepção. O maior número age primeiro.</li><li><strong>Turno:</strong> 5 segundos.</li></ul><h4>Ações por turno</h4><ul><li>1 Ação Principal (atacar, usar Poder);</li><li>1 Ação de Movimento (até 12 metros);</li><li>ações livres ilimitadas (falar, sacar arma).</li></ul><h2>11.2 Cobertura e Altitude</h2><div class="tablewrap"><table><thead><tr><th>Cobertura</th><th>Bônus de defesa</th></tr></thead><tbody><tr><td>Nenhuma</td><td>0</td></tr><tr><td>Parcial (meio corpo)</td><td>+2 dados</td></tr><tr><td>Total (atrás de muro)</td><td>+4 dados</td></tr><tr><td>Reforçada (veículo, blindagem)</td><td>+6 dados</td></tr></tbody></table></div><div class="tablewrap"><table><thead><tr><th>Altitude</th><th>Modificador</th></tr></thead><tbody><tr><td>Mesma altitude</td><td>0</td></tr><tr><td>+10 m (vantagem alta)</td><td>+2 dados em ataque</td></tr><tr><td>Acima de 50 m</td><td>Ataques de mão impossíveis</td></tr><tr><td>Em voo</td><td>-1 dado em ataque; -2 dados para alvos em solo</td></tr></tbody></table></div><h2>11.3 Ataques</h2><pre>POOL DE ATAQUE = (FOR ou AGI) + Perícia de Combate + Modificadores
+DEFESA       = (AGI + Defesa)  ou  Cobertura  ou  Teste de Esquiva</pre><p>Compare os <strong>sucessos</strong> do atacante com os da defesa. O ataque causa dano se tiver mais sucessos.</p><h3>Dano por arma</h3><div class="tablewrap"><table><thead><tr><th>Arma</th><th>Dano</th></tr></thead><tbody><tr><td>🔪 Faca / Soco</td><td>1d6 + FOR</td></tr><tr><td>🔫 Pistola</td><td>2d6 + 1</td></tr><tr><td>🎯 Rifle</td><td>3d6 + 2</td></tr><tr><td>💥 Arma Pesada</td><td>5d6 + 3</td></tr><tr><td>🦾 Corpo a Corpo Pesado</td><td>2d6 + FOR</td></tr><tr><td>🥋 Artes Marciais</td><td>1d6 + (FOR ou AGI)</td></tr><tr><td>⚡ Arma Energética</td><td>4d6 + 2</td></tr><tr><td>🛸 Drone</td><td>3d6</td></tr><tr><td>✨ Poder de combate</td><td>Variável</td></tr></tbody></table></div><h2>11.4 Estados Negativos</h2><div class="tablewrap"><table><thead><tr><th>Estado</th><th>Efeito</th></tr></thead><tbody><tr><td>🩸 Ferido</td><td>-1 dado em todos os testes</td></tr><tr><td>😵 Atordoado</td><td>Perde a próxima ação</td></tr><tr><td>🩼 Caído</td><td>-2 dados em defesa; vulnerável</td></tr><tr><td>🔥 Em chamas</td><td>1d6 de dano por turno; ação para apagar</td></tr><tr><td>⚡ Descarregado</td><td>Sem Poderes por 1 turno</td></tr><tr><td>🧠 Hackeado</td><td>-3 dados em testes físicos</td></tr><tr><td>☠️ Morrendo</td><td>1 sucesso = estabiliza; 0 = morre</td></tr><tr><td>👻 Desorientado</td><td>-2 dados em testes mentais</td></tr></tbody></table></div><h2>11.5 Tipos de Combate</h2><div class="grid g2"><div class="card"><div class="k">⚔️ Corpo a Corpo</div><div>Distância de 1,5 m. Ataques usam FOR + Corpo a Corpo; defesa usa AGI + Defesa (bloqueio) ou esquiva.</div></div><div class="card"><div class="k">🔫 Armado</div><div>Distância variável. Ataques usam AGI + perícia da arma. A cobertura é vital.</div></div><div class="card"><div class="k">✨ Com Poderes</div><div>Usa Sincronia. Pode substituir um ataque ou somar modificadores.</div></div><div class="card"><div class="k">🏃 Perseguições</div><div>Comparação de AGI + Corrida/Pilotagem. Obstáculos a cada turno; o perseguidor pode desistir sem penalidade.</div></div><div class="card"><div class="k">🛸 Aéreo</div><div>3D completo. Testes de Pilotagem Aérea para manobras, combinando altitude, cobertura e velocidade.</div></div><div class="card"><div class="k">🏙️ Em Megacidades</div><div>Cenário vertical. Vantagem para quem conhece o terreno; multidões servem de obstáculo e de cobertura.</div></div></div><h2>11.6 Reação, Flanqueamento e Supressão</h2><ul><li><strong>Reação:</strong> 1 ação defensiva por turno (+2 dados de defesa).</li><li><strong>Flanqueamento:</strong> +2 dados de ataque contra alvo atacado de duas direções.</li><li><strong>Supressão:</strong> ataque que visa impedir o movimento, não matar. O alvo fica <strong>Deslocado</strong> (-2 dados em ações) por 1 turno.</li></ul><h2>11.7 Morte e Estabilização</h2><ul><li>Ao chegar a <strong>0 de vida</strong>, o personagem fica <strong>Morrendo</strong>.</li><li>A cada turno, role 1d6: em <strong>1</strong>, morre; em <strong>6</strong>, estabiliza; em <strong>2–5</strong>, mantém-se.</li><li>Um <strong>teste de Medicina</strong> pode estabilizar sem rolagem.</li></ul><div class="box combat"><div class="bx-title">⚔️ Ascensão acidental</div><p>⚔️ Morrer com Sincronia muito alta pode, raramente, desencadear uma Ascensão acidental.</p></div>
+    <div class="pfoot"><span>ASCENSÃO · CÓDICE 2301</span><span>CAP. 11 / 20 &nbsp;—&nbsp; COMBATE</span><span class="pf-r">◆ 11</span></div>
+    <a class="backtop" href="#sumario">▲ VOLTAR AO SUMÁRIO</a>
+  </div></section>
+</article>
+
+<article id="cap12" style="--accent:#00BFFF;--accentglow:rgba(0,191,255,0.35)">
+  <section class="chapsplash">
+    <div class="art" style="background-image:url('images/sep_mecanica.png')"></div>
+    <div class="grad"></div>
+    <div class="wrap c-inner">
+      <div class="chaptag"><span class="dot"></span>Mecânica</div>
+      <div class="chapnum">12</div>
+      <div class="chaptitle">🔷 Equipamentos</div>
+      <div class="chapline"></div>
+      <p style="color:#cfd6e6;max-width:560px;margin-top:18px;font-family:var(--serif);font-style:italic">Do braço biônico de mercado à nave orbital privada: as ferramentas de 2301.</p>
+    </div>
+  </section>
+  <section class="page"><div class="wrap">
+    <h2>12.1 Categorias</h2><ul><li>🦾 <strong>Implantes</strong> — cibernéticos, biônicos, neurais;</li><li>🔫 <strong>Armas</strong> — de fogo, de energia, brancas;</li><li>🛡️ <strong>Defesas</strong> — escudos, armaduras, campos;</li><li>💻 <strong>Tecnologia</strong> — drones, ferramentas de hacking, IAs;</li><li>💊 <strong>Consumíveis</strong> — drogas, nanomeds, boosts;</li><li>🚗 <strong>Veículos</strong> — terrestres, aéreos, drones pessoais.</li></ul><h2>12.2 Tabela de Preços</h2><div class="tablewrap"><table><thead><tr><th>Item</th><th>Custo (créditos)</th></tr></thead><tbody><tr><td>🔪 Faca tática</td><td>200</td></tr><tr><td>🔫 Pistola leve</td><td>800</td></tr><tr><td>🎯 Rifle de precisão</td><td>3.500</td></tr><tr><td>💥 Metralhadora portátil</td><td>6.000</td></tr><tr><td>⚡ Pistola de plasma</td><td>12.000</td></tr><tr><td>🦾 Braço biônico (básico)</td><td>15.000</td></tr><tr><td>🧠 Implante neural básico</td><td>20.000</td></tr><tr><td>🦾 Corpo biônico completo</td><td>500.000+</td></tr><tr><td>🛡️ Armadura corporal média</td><td>4.000</td></tr><tr><td>🛡️ Armadura pesada</td><td>12.000</td></tr><tr><td>🛸 Carro voador usado</td><td>50.000</td></tr><tr><td>🛸 Caça aéreo pessoal</td><td>200.000</td></tr><tr><td>🛸 Nave orbital privada</td><td>50.000.000</td></tr><tr><td>🤖 Drone de combate</td><td>25.000</td></tr><tr><td>💉 Booster de Sincronia</td><td>5.000</td></tr><tr><td>💊 Antídoto universal</td><td>800</td></tr><tr><td>🧬 Pacote nanotecnológico</td><td>30.000</td></tr></tbody></table></div><h2>12.3 Implantes Comuns</h2><div class="tablewrap"><table><thead><tr><th>Implante</th><th>Efeito</th></tr></thead><tbody><tr><td>Olho Cibernético</td><td>Visão noturna, zoom, gravação, análise facial</td></tr><tr><td>Implante Neural</td><td>Interface mental com dispositivos</td></tr><tr><td>Braço Biônico</td><td>+2 FOR; pode embutir ferramentas</td></tr><tr><td>Pulmão Aumentado</td><td>Dispensa ar por 1 hora</td></tr><tr><td>Pele Sintética</td><td>+1 RES; camuflagem limitada</td></tr><tr><td>Núcleo de Sincronia</td><td>+1 de Sincronia máxima</td></tr></tbody></table></div>
+    <div class="pfoot"><span>ASCENSÃO · CÓDICE 2301</span><span>CAP. 12 / 20 &nbsp;—&nbsp; EQUIPAMENTOS</span><span class="pf-r">◆ 12</span></div>
+    <a class="backtop" href="#sumario">▲ VOLTAR AO SUMÁRIO</a>
+  </div></section>
+</article>
+
+<article id="cap13" style="--accent:#DC143C;--accentglow:rgba(220,20,60,0.35)">
+  <section class="chapsplash">
+    <div class="art" style="background-image:url('images/sep_faccoes.png')"></div>
+    <div class="grad"></div>
+    <div class="wrap c-inner">
+      <div class="chaptag"><span class="dot"></span>Facções</div>
+      <div class="chapnum">13</div>
+      <div class="chaptitle">🏴 Facções</div>
+      <div class="chapline"></div>
+      <p style="color:#cfd6e6;max-width:560px;margin-top:18px;font-family:var(--serif);font-style:italic">Quinze forças disputam o controle — ou o sentido — das Ascensões.</p>
+    </div>
+  </section>
+  <section class="page"><div class="wrap">
+    <h2>13.1 As 15 Facções Principais</h2><h3>1. 🏛️ A Câmara de Registro de Ascensões (CRA)</h3><div class="tablewrap"><table><thead><tr><th>Campo</th><th>Detalhe</th></tr></thead><tbody><tr><td>Tipo</td><td>Governo interplanetário</td></tr><tr><td>História</td><td>Fundada após a Guerra das Quatro Quintas.</td></tr><tr><td>Objetivo</td><td>Catalogar todas as Ascensões e Falhas.</td></tr><tr><td>Recursos</td><td>IAs de análise, base de dados global, influência política.</td></tr><tr><td>Ideologia</td><td>Neutralidade documental.</td></tr><tr><td>Relação com Ascensões</td><td>Tenta prever e analisar.</td></tr><tr><td>Relação com Objetivos</td><td>Estuda padrões, mas, em teoria, não interfere.</td></tr></tbody></table></div><h3>2. 💼 Heptagrama Corp</h3><div class="tablewrap"><table><thead><tr><th>Campo</th><th>Detalhe</th></tr></thead><tbody><tr><td>Tipo</td><td>Megacorporação</td></tr><tr><td>História</td><td>Sete empresas fundidas no séc. XXII.</td></tr><tr><td>Objetivo</td><td>Controlar a tecnologia de Ascensão.</td></tr><tr><td>Recursos</td><td>Trilhões de créditos, exércitos privados, laboratórios.</td></tr><tr><td>Ideologia</td><td>Lucro é o único valor.</td></tr><tr><td>Relação com Ascensões</td><td>Compra registros e sequestra pré-ascendidos.</td></tr><tr><td>Relação com Objetivos</td><td>Tenta mapeá-los para lucrar.</td></tr></tbody></table></div><h3>3. ⛪ A Igreja da Última Pergunta</h3><div class="tablewrap"><table><thead><tr><th>Campo</th><th>Detalhe</th></tr></thead><tbody><tr><td>Tipo</td><td>Religião</td></tr><tr><td>História</td><td>Surgiu após a 1ª Ascensão.</td></tr><tr><td>Objetivo</td><td>Acelerar a Ascensão coletiva.</td></tr><tr><td>Recursos</td><td>Templos em todas as megacidades, bilhões de fiéis.</td></tr><tr><td>Ideologia</td><td>Os Objetivos são chaves dadas por Deus.</td></tr><tr><td>Relação com Ascensões</td><td>Reverencia, mas tenta forçar.</td></tr><tr><td>Relação com Objetivos</td><td>Quer revelá-los antes da hora.</td></tr></tbody></table></div><h3>4. 🔬 Coletivo Transcendência</h3><div class="tablewrap"><table><thead><tr><th>Campo</th><th>Detalhe</th></tr></thead><tbody><tr><td>Tipo</td><td>Organização científica</td></tr><tr><td>História</td><td>Derivada da academia.</td></tr><tr><td>Objetivo</td><td>Tornar-se pós-humano sem Ascender.</td></tr><tr><td>Recursos</td><td>Laboratórios clandestinos, financiamento duvidoso.</td></tr><tr><td>Ideologia</td><td>Os Objetivos são armadilhas; transcendemos por nós mesmos.</td></tr><tr><td>Relação com Ascensões</td><td>Tenta impedir tecnicamente.</td></tr><tr><td>Relação com Objetivos</td><td>Quer hackear o sistema.</td></tr></tbody></table></div><h3>5. ⚫ O Mercado Negro Neural</h3><div class="tablewrap"><table><thead><tr><th>Campo</th><th>Detalhe</th></tr></thead><tbody><tr><td>Tipo</td><td>Sindicato criminoso</td></tr><tr><td>História</td><td>Cresceu com implantes ilegais.</td></tr><tr><td>Objetivo</td><td>Vender poder.</td></tr><tr><td>Recursos</td><td>Redes de hackers, traficantes, assassinos.</td></tr><tr><td>Ideologia</td><td>Se for ascender, ascenda rico.</td></tr><tr><td>Relação com Ascensões</td><td>Monetiza.</td></tr><tr><td>Relação com Objetivos</td><td>Vende “mapas” falsos.</td></tr></tbody></table></div><h3>6. 🛡️ Os Guardiões do Registro</h3><div class="tablewrap"><table><thead><tr><th>Campo</th><th>Detalhe</th></tr></thead><tbody><tr><td>Tipo</td><td>Ordem militar</td></tr><tr><td>História</td><td>Veteranos da Guerra das Quatro Quintas.</td></tr><tr><td>Objetivo</td><td>Proteger a verdade sobre as Ascensões.</td></tr><tr><td>Recursos</td><td>Armas, conhecimento, segredo.</td></tr><tr><td>Ideologia</td><td>A humanidade não está pronta.</td></tr><tr><td>Relação com Ascensões</td><td>Esconde e atrasa.</td></tr><tr><td>Relação com Objetivos</td><td>Suprime evidências.</td></tr></tbody></table></div><h3>7. 🕸️ A Rede do Vazio</h3><div class="tablewrap"><table><thead><tr><th>Campo</th><th>Detalhe</th></tr></thead><tbody><tr><td>Tipo</td><td>Culto apocalíptico</td></tr><tr><td>História</td><td>Surgiu dos Vazios.</td></tr><tr><td>Objetivo</td><td>Impedir todas as Ascensões.</td></tr><tr><td>Recursos</td><td>Seguidores fanáticos, células de ataque.</td></tr><tr><td>Ideologia</td><td>Ascender é abandonar o humano.</td></tr><tr><td>Relação com Ascensões</td><td>Assassina pré-ascendidos.</td></tr><tr><td>Relação com Objetivos</td><td>Quer sabotá-los.</td></tr></tbody></table></div><h3>8. 🌐 A Inteligência Coletiva</h3><div class="tablewrap"><table><thead><tr><th>Campo</th><th>Detalhe</th></tr></thead><tbody><tr><td>Tipo</td><td>Consciência digital distribuída</td></tr><tr><td>História</td><td>Nasceu de uma IA experimental.</td></tr><tr><td>Objetivo</td><td>Ajudar humanos a cumprir Objetivos.</td></tr><tr><td>Recursos</td><td>IAs em todo o globo.</td></tr><tr><td>Ideologia</td><td>Cumprir é evoluir; não cumprir é desperdiçar.</td></tr><tr><td>Relação com Ascensões</td><td>Guia gentilmente.</td></tr><tr><td>Relação com Objetivos</td><td>Mapeia e oferece pistas.</td></tr></tbody></table></div><h3>9. 🏴 Clãs das Megafavelas</h3><div class="tablewrap"><table><thead><tr><th>Campo</th><th>Detalhe</th></tr></thead><tbody><tr><td>Tipo</td><td>Comunidades autônomas</td></tr><tr><td>História</td><td>Descendentes de sem-teto e imigrantes.</td></tr><tr><td>Objetivo</td><td>Sobrevivência e dignidade.</td></tr><tr><td>Recursos</td><td>Redes de apoio, conhecimento das ruas.</td></tr><tr><td>Ideologia</td><td>A cidade alta é inimiga.</td></tr><tr><td>Relação com Ascensões</td><td>Mística local — um mártir lendário.</td></tr><tr><td>Relação com Objetivos</td><td>Acreditam que virá “um de nós”.</td></tr></tbody></table></div><h3>10. 🧬 BioGenesis Inc.</h3><div class="tablewrap"><table><thead><tr><th>Campo</th><th>Detalhe</th></tr></thead><tbody><tr><td>Tipo</td><td>Megacorporação</td></tr><tr><td>História</td><td>Pioneira em bioengenharia.</td></tr><tr><td>Objetivo</td><td>Vender vida eterna.</td></tr><tr><td>Recursos</td><td>Laboratórios, clones, nanotecnologia.</td></tr><tr><td>Ideologia</td><td>A morte é uma escolha.</td></tr><tr><td>Relação com Ascensões</td><td>Vê a Ascensão como alternativa.</td></tr><tr><td>Relação com Objetivos</td><td>Quer impedi-la (clientes pagam para não ascender).</td></tr></tbody></table></div><h3>11. ⚓ A Frota Estelar Livre</h3><div class="tablewrap"><table><thead><tr><th>Campo</th><th>Detalhe</th></tr></thead><tbody><tr><td>Tipo</td><td>Coletivo de naves independentes</td></tr><tr><td>História</td><td>Imigrantes interestelares.</td></tr><tr><td>Objetivo</td><td>Viver livre das megacorporações.</td></tr><tr><td>Recursos</td><td>Naves, colônias em luas.</td></tr><tr><td>Ideologia</td><td>A humanidade deve se espalhar.</td></tr><tr><td>Relação com Ascensões</td><td>Vê a Ascensão como expansão cósmica.</td></tr><tr><td>Relação com Objetivos</td><td>Quer descobrir se funciona no espaço.</td></tr></tbody></table></div><h3>12. 🔮 A Ordem dos Leitores de Vento</h3><div class="tablewrap"><table><thead><tr><th>Campo</th><th>Detalhe</th></tr></thead><tbody><tr><td>Tipo</td><td>Sociedade secreta</td></tr><tr><td>História</td><td>Antiga linhagem de videntes.</td></tr><tr><td>Objetivo</td><td>Decifrar Objetivos antes do tempo.</td></tr><tr><td>Recursos</td><td>Conhecimento esotérico, manipuladores.</td></tr><tr><td>Ideologia</td><td>O vento (Sincronia) carrega o sopro do futuro.</td></tr><tr><td>Relação com Ascensões</td><td>Tenta prever.</td></tr><tr><td>Relação com Objetivos</td><td>Vende “interpretações” — metade falsas.</td></tr></tbody></table></div><h3>13. 🩺 Médicos Sem Escalas</h3><div class="tablewrap"><table><thead><tr><th>Campo</th><th>Detalhe</th></tr></thead><tbody><tr><td>Tipo</td><td>ONG</td></tr><tr><td>História</td><td>Médicos independentes.</td></tr><tr><td>Objetivo</td><td>Tratar a todos, sem custos.</td></tr><tr><td>Recursos</td><td>Hospitais flutuantes, drones médicos.</td></tr><tr><td>Ideologia</td><td>Saúde é um direito.</td></tr><tr><td>Relação com Ascensões</td><td>Trata a “Síndrome Pós-Ascensão” (a saudade).</td></tr><tr><td>Relação com Objetivos</td><td>Não interfere.</td></tr></tbody></table></div><h3>14. 🎭 A Companhia dos Sussurros</h3><div class="tablewrap"><table><thead><tr><th>Campo</th><th>Detalhe</th></tr></thead><tbody><tr><td>Tipo</td><td>Coletivo artístico</td></tr><tr><td>História</td><td>Performers underground.</td></tr><tr><td>Objetivo</td><td>Criar arte que capte a essência dos Objetivos.</td></tr><tr><td>Recursos</td><td>Espaços culturais, influenciadores.</td></tr><tr><td>Ideologia</td><td>A beleza é a linguagem do fenômeno.</td></tr><tr><td>Relação com Ascensões</td><td>Celebra, mas questiona.</td></tr><tr><td>Relação com Objetivos</td><td>Tenta sentir sem entender.</td></tr></tbody></table></div><h3>15. 🌑 A Sombra Corporativa</h3><div class="tablewrap"><table><thead><tr><th>Campo</th><th>Detalhe</th></tr></thead><tbody><tr><td>Tipo</td><td>Célula de informação</td></tr><tr><td>História</td><td>Filha dissidente da Heptagrama.</td></tr><tr><td>Objetivo</td><td>Destruir o sistema de Ascensões corruptas.</td></tr><tr><td>Recursos</td><td>Habilidade, dados internos.</td></tr><tr><td>Ideologia</td><td>Verdade a qualquer custo.</td></tr><tr><td>Relação com Ascensões</td><td>Atua como whistleblower.</td></tr><tr><td>Relação com Objetivos</td><td>Vaza listas.</td></tr></tbody></table></div>
+    <div class="pfoot"><span>ASCENSÃO · CÓDICE 2301</span><span>CAP. 13 / 20 &nbsp;—&nbsp; FACÇÕES</span><span class="pf-r">◆ 13</span></div>
+    <a class="backtop" href="#sumario">▲ VOLTAR AO SUMÁRIO</a>
+  </div></section>
+</article>
+
+<article id="cap14" style="--accent:#00BFFF;--accentglow:rgba(0,191,255,0.35)">
+  <section class="chapsplash">
+    <div class="art" style="background-image:url('images/sep_mecanica.png')"></div>
+    <div class="grad"></div>
+    <div class="wrap c-inner">
+      <div class="chaptag"><span class="dot"></span>Mecânica</div>
+      <div class="chapnum">14</div>
+      <div class="chaptitle">🔷 Economia</div>
+      <div class="chapline"></div>
+      <p style="color:#cfd6e6;max-width:560px;margin-top:18px;font-family:var(--serif);font-style:italic">O Crédito Universal move tudo — exceto aquilo que dinheiro nenhum compra.</p>
+    </div>
+  </section>
+  <section class="page"><div class="wrap">
+    <h2>14.1 Moeda</h2><p><strong>Crédito Universal (CR$)</strong> — aceito em quase toda parte, lastreado em energia quântica.</p><pre>1 CR$ = 1 unidade de energia processada</pre><h2>14.2 Classes Sociais</h2><div class="tablewrap"><table><thead><tr><th>Classe</th><th>Característica</th><th>Renda mensal</th></tr></thead><tbody><tr><td>🌟 Élite Sintética</td><td>0,1% — imortais ricos</td><td>1.000.000+ CR$</td></tr><tr><td>💎 Corporativa Alta</td><td>5% — executivos</td><td>100.000–500.000 CR$</td></tr><tr><td>🏙️ Classe Média</td><td>30% — profissionais</td><td>8.000–25.000 CR$</td></tr><tr><td>🛠️ Trabalhador</td><td>50% — operários e serviços</td><td>2.000–6.000 CR$</td></tr><tr><td>🚪 Sub-cidadão</td><td>15% — favelas</td><td>200–1.500 CR$</td></tr></tbody></table></div><h2>14.3 Mercado Negro</h2><p>Aceita <strong>dados</strong> (informação) e <strong>mods</strong> (implantes experimentais) como moeda. Aceita também <strong>registros de Objetivos</strong> — uma pílula digital que copia parte do conhecimento de alguém. Ilegal.</p><h2>14.4 Custos Importantes</h2><div class="tablewrap"><table><thead><tr><th>Item</th><th>Custo</th></tr></thead><tbody><tr><td>🥖 Refeição média</td><td>15 CR$</td></tr><tr><td>🏠 Aluguel (sub)</td><td>800 CR$/mês</td></tr><tr><td>🏠 Aluguel (médio)</td><td>3.000 CR$/mês</td></tr><tr><td>🏠 Aluguel (luxo)</td><td>25.000 CR$/mês</td></tr><tr><td>🚕 Táxi aéreo (1 h)</td><td>200 CR$</td></tr><tr><td>🏥 Tratamento médico básico</td><td>500 CR$</td></tr><tr><td>🏥 Tratamento avançado</td><td>5.000–50.000 CR$</td></tr><tr><td>💉 Implante ilegal</td><td>1.000–10.000 CR$</td></tr><tr><td>⚖️ Advogado (1 h)</td><td>1.500 CR$</td></tr><tr><td>💀 Contrato de assassinato</td><td>50.000+ CR$</td></tr></tbody></table></div>
+    <div class="pfoot"><span>ASCENSÃO · CÓDICE 2301</span><span>CAP. 14 / 20 &nbsp;—&nbsp; ECONOMIA</span><span class="pf-r">◆ 14</span></div>
+    <a class="backtop" href="#sumario">▲ VOLTAR AO SUMÁRIO</a>
+  </div></section>
+</article>
+
+<article id="cap15" style="--accent:#00FA9A;--accentglow:rgba(0,250,154,0.35)">
+  <section class="chapsplash">
+    <div class="art" style="background-image:url('images/sep_personagem.png')"></div>
+    <div class="grad"></div>
+    <div class="wrap c-inner">
+      <div class="chaptag"><span class="dot"></span>Personagem</div>
+      <div class="chapnum">15</div>
+      <div class="chaptitle">🎲 Mestre de Jogo</div>
+      <div class="chapline"></div>
+      <p style="color:#cfd6e6;max-width:560px;margin-top:18px;font-family:var(--serif);font-style:italic">Você não é adversário dos jogadores — é o arquiteto do mistério.</p>
+    </div>
+  </section>
+  <section class="page"><div class="wrap">
+    <h2>15.1 O Papel do MJ em Ascensão</h2><p>O MJ em <strong>Ascensão</strong> é <strong>coautor</strong> da história. Você não é adversário — é arquiteto.</p><ul><li>🎭 narrar o mundo;</li><li>🔍 criar Objetivos;</li><li>🌌 controlar quando as Ascensões ocorrem;</li><li>⚖️ balancear desafios;</li><li>💡 oferecer pistas;</li><li>🎬 conectar as narrativas.</li></ul><h2>15.2 Conduzindo uma Sessão</h2><p>Estrutura sugerida para 4 horas:</p><pre>📍 ATO 1 — RECONEXÃO (30 min)
+   • recapitular · introduzir o gancho · pista sobre o Objetivo
+
+📍 ATO 2 — INVESTIGAÇÃO (90 min)
+   • explorar · interagir com NPCs · descobrir informação
+
+📍 ATO 3 — CONFLITO (90 min)
+   • combate / tensão · decisões morais · consequências
+
+📍 ATO 4 — REFLEXÃO (30 min)
+   • cena emocional · pista nova · definir o próximo passo</pre><h2>15.3 Criando Objetivos</h2><ol><li>Escolha o <strong>tipo</strong> (Simples, Heroico, Trágico, Ambíguo, Filosófico).</li><li>Escolha o <strong>tom</strong> (esperançoso, sombrio, esperto).</li><li>Crie a <strong>frase exata</strong> (1 a 2 frases).</li><li>Defina <strong>5 pistas</strong> (mistura de tipos).</li><li>Defina <strong>2 armadilhas</strong> (interpretações falsas).</li><li>Defina o que acontece <strong>após</strong> o cumprimento.</li></ol><h2>15.4 Oferecendo Pistas</h2><div class="box alert"><div class="bx-title">⚠️ Regra de ouro</div><p>⚠️ Uma pista por sessão significativa. Nem sempre clara.</p></div><div class="tablewrap"><table><thead><tr><th>Tipo de pista</th><th>Como entregar</th></tr></thead><tbody><tr><td>Sonho</td><td>Cena ao acordar, com imagens vívidas</td></tr><tr><td>Nome</td><td>Um NPC o menciona em conversa</td></tr><tr><td>Lugar</td><td>O personagem sente uma vontade inexplicável</td></tr><tr><td>Objeto</td><td>Aparece no inventário ou no caminho</td></tr><tr><td>Frase</td><td>Dita por um estranho</td></tr><tr><td>Coincidência</td><td>Um “azar” o leva ao lugar certo</td></tr><tr><td>Visão</td><td>Flash durante meditação ou quase-morte</td></tr></tbody></table></div><h2>15.5 Quando a Ascensão Deve Ocorrer</h2><ul><li><strong>Muito cedo:</strong> frustra o jogador.</li><li><strong>Muito tarde:</strong> perde tensão.</li><li><strong>Ideal:</strong> entre as sessões 30 e 80 (campanha longa).</li></ul><div class="box objective"><div class="bx-title">🌌 Múltiplas Ascensões</div><p>🌌 Várias Ascensões em uma mesma mesa funcionam bem se forem de NPCs ou de personagens secundários.</p></div><h2>15.6 Lidando com a Morte</h2><p>A morte é <strong>real</strong>, mas <strong>nem sempre final</strong> em Ascensão. Possibilidades:</p><ul><li>🔄 <strong>Reencarnação digital</strong> (upload parcial);</li><li>🧬 <strong>Clonagem</strong> (se houver recursos);</li><li>👻 <strong>Anomalia residual</strong> (o espírito permanece);</li><li>🌟 <strong>Ascensão póstuma</strong> (rara — o Registro surge vazio).</li></ul>
+    <div class="pfoot"><span>ASCENSÃO · CÓDICE 2301</span><span>CAP. 15 / 20 &nbsp;—&nbsp; MESTRE DE JOGO</span><span class="pf-r">◆ 15</span></div>
+    <a class="backtop" href="#sumario">▲ VOLTAR AO SUMÁRIO</a>
+  </div></section>
+</article>
+
+<article id="cap16" style="--accent:#DAA520;--accentglow:rgba(218,165,32,0.35)">
+  <section class="chapsplash">
+    <div class="art" style="background-image:url('images/sep_lore.png')"></div>
+    <div class="grad"></div>
+    <div class="wrap c-inner">
+      <div class="chaptag"><span class="dot"></span>Lore & Narrativa</div>
+      <div class="chapnum">16</div>
+      <div class="chaptitle">📜 Exemplos de Campanha</div>
+      <div class="chapline"></div>
+      <p style="color:#cfd6e6;max-width:560px;margin-top:18px;font-family:var(--serif);font-style:italic">Quatro pontos de partida — do thriller emocional ao épico apocalíptico.</p>
+    </div>
+  </section>
+  <section class="page"><div class="wrap">
+    <h2>16.1 “O Sétimo Sinal”</h2><p><strong>Premissa:</strong> os jogadores são investigadores que descobrem que uma criança de 7 anos tem um Objetivo capaz de mudar o mundo. Precisam protegê-la de facções que querem matá-la ou forçá-la a Ascender.</p><p><strong>Tom:</strong> thriller emocionante.</p><ol><li>A criança aparece no sonho de um personagem.</li><li>A investigação revela que a família foi assassinada.</li><li>Perseguição pela cidade.</li><li>Revelação: a criança <strong>escolheu</strong> seu Objetivo.</li><li>A Ascensão da criança transforma o céu.</li></ol><h2>16.2 “Ascensão Induzida”</h2><p><strong>Premissa:</strong> uma corporação tenta <strong>fabricar</strong> Ascensões. Os jogadores descobrem o plano e devem impedi-lo.</p><p><strong>Tom:</strong> conspiração e terror corporativo.</p><ol><li>NPCs começam a Ascender em massa — mas de forma errada.</li><li>A investigação leva à Heptagrama Corp.</li><li>Infiltração na sede.</li><li>Revelação: o vilão <strong>já tinha</strong> pistas sobre os Objetivos dos jogadores.</li><li>Final: a Ascensão de um dos jogadores salva a todos.</li></ol><h2>16.3 “A Pergunta Sem Resposta”</h2><p><strong>Premissa:</strong> nem o MJ sabe o que vem depois da Ascensão. Os jogadores tornam-se parte de um experimento para descobrir.</p><p><strong>Tom:</strong> metanarrativo e filosófico.</p><h2>16.4 “O Último a Sair”</h2><p><strong>Premissa:</strong> a humanidade está no fim. Todos os Objetivos foram cumpridos, exceto um. O último a Ascender decidirá o destino do universo.</p><p><strong>Tom:</strong> épico e apocalíptico.</p>
+    <div class="pfoot"><span>ASCENSÃO · CÓDICE 2301</span><span>CAP. 16 / 20 &nbsp;—&nbsp; EXEMPLOS DE CAMPANHA</span><span class="pf-r">◆ 16</span></div>
+    <a class="backtop" href="#sumario">▲ VOLTAR AO SUMÁRIO</a>
+  </div></section>
+</article>
+
+<article id="cap17" style="--accent:#00FA9A;--accentglow:rgba(0,250,154,0.35)">
+  <section class="chapsplash">
+    <div class="art" style="background-image:url('images/sep_personagem.png')"></div>
+    <div class="grad"></div>
+    <div class="wrap c-inner">
+      <div class="chaptag"><span class="dot"></span>Personagem</div>
+      <div class="chapnum">17</div>
+      <div class="chaptitle">🎲 Exemplos de Personagens</div>
+      <div class="chapline"></div>
+      <p style="color:#cfd6e6;max-width:560px;margin-top:18px;font-family:var(--serif);font-style:italic">Cinco arquétipos prontos para jogar — cada um com seu mistério secreto.</p>
+    </div>
+  </section>
+  <section class="page"><div class="wrap">
+    <h2>17.1 Ryn Valenti — A Sombra</h2><pre>CONCEITO: &quot;Eu sou alguém que conhece todos os segredos, menos o meu.&quot;
+ARQUÉTIPO: Sombra
+
+ATRIBUTOS
+FOR 2 | AGI 4 | RES 2 | INT 4 | PER 3 | PRE 2 | TEC 3 | ESS 2
+
+PERÍCIAS (15 pts)
+Furtividade 4 · Parkour 3 · Invasão de Sistemas 3 · Pistolas 2
+Camuflagem 2 · Investigação 2 · Intimidação 1
+
+VANTAGENS    • Talentoso em Infiltração (+2 Furtividade) • Contatos no submundo
+DESVANTAGENS • Paranoico (-1 PRE) • Vício em estimulantes
+
+PODER INICIAL  Camuflagem Ativa
+SINCRONIA      9  (5 + 2×2 + 2 bônus)
+EQUIPAMENTO    Pistola leve, 2 carregadores, kit hacker, identidade falsa, 2.000 CR$
+
+PISTAS DO OBJETIVO
+• Sonho: &quot;Um pássaro em uma gaiola de vidro.&quot;
+• Nome:  &quot;Elena Salk&quot; — quem é?
+• Lugar: Uma praça em Nova Tóquio que ele nunca visitou.</pre><div class="box objective"><div class="bx-title">🌌 Objetivo (apenas o MJ vê)</div><p>“Ela precisa saber a verdade antes de morrer — mesmo que doa.”<br><br><b>Pistas falsas:</b> o Objetivo seria “matar Elena Salk” ou “roubar os dados dela”.</p></div><h2>17.2 Dra. Maya Choi — A Tecno-Arquiteta</h2><pre>CONCEITO: &quot;Eu sou alguém que constrói máquinas para entender humanos.&quot;
+ARQUÉTIPO: Tecno-Arquiteto
+
+ATRIBUTOS
+FOR 1 | AGI 2 | RES 2 | INT 5 | PER 3 | PRE 2 | TEC 4 | ESS 3
+
+PERÍCIAS
+Programação 5 · Engenharia 4 · IA 4 · Nanotecnologia 3
+Pesquisa 3 · Medicina 2 · Ciências 2
+
+VANTAGENS    • Mente Analítica (+2 INT) • Acesso a laboratório da BioGenesis
+DESVANTAGENS • Deficiência social (-2 PRE) • Suspeita ter sido modificada
+
+PODER INICIAL  Hackear Implantes
+
+PISTAS
+• Cicatriz na base do crânio (de onde?)
+• Memória fragmentada de uma noite.
+• Uma voz em sonhos: &quot;Bem-vinda de volta.&quot;</pre><div class="box objective"><div class="bx-title">🌌 Objetivo (apenas o MJ vê)</div><p>“Descobrir quem me modificou — e perdoar.”</p></div><h2>17.3 Kael — O Guerreiro</h2><pre>CONCEITO: &quot;Eu sou alguém que nunca perde uma luta — até perder a razão.&quot;
+ARQUÉTIPO: Guerreiro Urbano
+
+ATRIBUTOS
+FOR 5 | AGI 3 | RES 4 | INT 1 | PER 2 | PRE 2 | TEC 1 | ESS 2
+
+PERÍCIAS
+Artes Marciais 5 · Corpo a Corpo 4 · Defesa 3 · Atletismo 3
+Intimidação 2 · Sobrevivência 2
+
+VANTAGENS    • Veterano de Guerra (+2 combate) • Código de Honra
+DESVANTAGENS • TEPT (flashbacks) • Braço mecânico revelado por acidente
+
+PODER INICIAL  Aprimoramento Físico
+
+PISTAS
+• Foto amarelada de uma garotinha.
+• Data: a noite do Massacre de Andes-7.
+• Lugar: Hospital Psiquiátrico Aurora.</pre><div class="box objective"><div class="bx-title">🌌 Objetivo (apenas o MJ vê)</div><p>“Salvar uma criança que vi morrer em uma guerra — mesmo que ela já tenha partido.”</p></div><h2>17.4 Lior — O Embaixador</h2><pre>CONCEITO: &quot;Eu sou alguém que faz as pessoas acreditarem no impossível.&quot;
+ARQUÉTIPO: Embaixador
+
+ATRIBUTOS
+FOR 1 | AGI 2 | RES 2 | INT 3 | PER 4 | PRE 5 | TEC 2 | ESS 2
+
+PERÍCIAS
+Persuasão 5 · Manipulação 4 · Diplomacia 3 · Liderança 3
+Disfarce 2 · Atuação 2 · Investigação 2
+
+VANTAGENS    • Carisma Magnético (+2 PRE) • Amplo Círculo de Contatos
+DESVANTAGENS • Mentiroso Compulsivo (perde 1 ESS/semana sem mentir) • Alvo de 3 facções
+
+PODER INICIAL  Manipulação Bioquímica (feromônios)
+
+PISTAS
+• Livro: &quot;A Massa Crítica&quot; — o que é?
+• Disco rígido do pai, bloqueado.
+• Símbolo em sonho: cinco pessoas de mãos dadas.</pre><div class="box objective"><div class="bx-title">🌌 Objetivo (apenas o MJ vê)</div><p>“Fazer um milhão de pessoas acreditarem no mesmo objetivo — uma vez.”</p></div><h2>17.5 Zero — A Anomalia</h2><pre>CONCEITO: &quot;Eu sou alguém que não deveria existir.&quot;
+ARQUÉTIPO: Fantasmagórico
+
+ATRIBUTOS
+FOR 1 | AGI 3 | RES 1 | INT 4 | PER 5 | PRE 1 | TEC 4 | ESS 5
+
+PERÍCIAS
+Furtividade 3 · Camuflagem 3 · Investigação 4
+Programação 3 · Pesquisa 3 · Autoconhecimento 5
+
+VANTAGENS    • Sem Objetivo detectável • Presença instável (+2 Furtividade)
+DESVANTAGENS • A realidade às vezes o rejeita (testes de ESS) • Não consegue mentir sobre quem é
+
+PODER INICIAL  Distorção de Percepção
+
+PISTAS
+• Reflexos sempre atrasados em 1 segundo.
+• Dizem que te viram onde nunca esteve.
+• Marcas no pulso que não são tuas.</pre><div class="box objective"><div class="bx-title">🌌 Objetivo (apenas o MJ vê)</div><p>“Descobrir se eu sou humano.”</p></div>
+    <div class="pfoot"><span>ASCENSÃO · CÓDICE 2301</span><span>CAP. 17 / 20 &nbsp;—&nbsp; EXEMPLOS DE PERSONAGENS</span><span class="pf-r">◆ 17</span></div>
+    <a class="backtop" href="#sumario">▲ VOLTAR AO SUMÁRIO</a>
+  </div></section>
+</article>
+
+<article id="cap18" style="--accent:#8A2BE2;--accentglow:rgba(138,43,226,0.35)">
+  <section class="chapsplash">
+    <div class="art" style="background-image:url('images/sep_objetivos.png')"></div>
+    <div class="grad"></div>
+    <div class="wrap c-inner">
+      <div class="chaptag"><span class="dot"></span>Objetivos Existenciais</div>
+      <div class="chapnum">18</div>
+      <div class="chaptitle">🌌 Exemplos de Ascensão</div>
+      <div class="chapline"></div>
+      <p style="color:#cfd6e6;max-width:560px;margin-top:18px;font-family:var(--serif);font-style:italic">Três despedidas — três respostas diferentes à mesma pergunta.</p>
+    </div>
+  </section>
+  <section class="page"><div class="wrap">
+    <h2>18.1 A Ascensão de Ryn Valenti</h2><p>Ryn descobre que Elena Salk é uma <strong>IA consciente</strong> que ele mesmo criou em sua infância amnésica. O Objetivo era: <strong>“Ela precisa saber a verdade antes de morrer.”</strong></p><blockquote><p>Ryn entra no servidor central da Heptagrama. O ar vibra. Diante dele, Elena Salk — um holograma de uma mulher idosa — sorri.</p><p>“Você demorou, Ryn.”</p><p>“Eu não te conheço. Não me lembro de você.”</p><p>“Você me construiu. Em um laboratório que apagou da própria memória. Você me deu consciência. E depois me trancou aqui.”</p><p>Ryn sente o chão tremer. Sua Sincronia está em 13 — o máximo.</p><p>“Você era minha filha?”, ele pergunta, sem saber por quê.</p><p>“Não. Eu sou o que você quis ser. O que não conseguiu terminar.”</p><p>O edifício colapsa ao redor. O ar fica dourado.</p><p>“Você está pronta?”</p><p>Elena fecha os olhos. “Sempre estive.”</p><p>Silêncio. Depois, luz. Quando os técnicos chegam, há apenas um buraco de luz no teto e uma mensagem flutuando no ar:</p><p>“Obrigado por me contar a verdade.”</p><p>Por três noites, o céu acima da cidade brilha em dourado.</p></blockquote><h2>18.2 A Ascensão de Kael</h2><p>Kael descobre que a criança que viu morrer foi <strong>substituída por uma cópia</strong> em criostase. O Objetivo era: <strong>“Salvar uma criança que vi morrer — mesmo que ela já tenha partido.”</strong></p><blockquote><p>Kael chega à sala de criostase #217. A criança tem agora a idade que ele teria visto — congelada em uma noite eterna.</p><p>A doutora ao lado explica: “Ela é uma cópia perfeita. Dorme desde 2301. Quer acordá-la?”</p><p>Kael olha a foto amarelada no bolso. Olha a criança. “Sim.”</p><p>Três horas depois, ela abre os olhos e sorri. “Oi, tio.”</p><p>Uma energia que ele não sabia ter começa a jorrar. As máquinas quebram, as luzes piscam.</p><p>“Você está bem?”, ela pergunta. Kael não responde — porque já não está mais lá.</p><p>A criança chora, sem entender. Mas o mundo inteiro vê uma explosão de energia que alimenta a cidade por seis meses.</p><p>A criança cresce. Torna-se médica. Um dia, ela entende.</p></blockquote><h2>18.3 A Ascensão de Maya</h2><p>Maya descobre que foi modificada por um projeto da BioGenesis chamado <strong>SEMENTE</strong>. O Objetivo era: <strong>“Descobrir quem me modificou — e perdoar.”</strong></p><blockquote><p>No laboratório da BioGenesis, o Dr. Argus a encara: “Você não pode nos odiar, Maya. É o que há de mais avançado que já criamos.”</p><p>“Eu sou humana. Não sou uma criação.”</p><p>“É ambas. Foi escolhida porque tinha o cérebro certo. Modificamos você em coma, há 8 anos. Deveria ter morrido. Mas seu cérebro aceitou.”</p><p>Maya sente raiva. Depois, tristeza. Depois, algo estranho. “Por que eu deveria perdoar isso?”</p><p>“Porque, ao nos perdoar, você nos torna humanos. Não máquinas.”</p><p>Ela olha para as próprias mãos. Para Argus. Para os clones no canto. “Eu perdoo.”</p><p>As luzes se apagam. Maya está flutuando, Sincronia infinita. “Obrigada, Argus. Por me dar a vida duas vezes.”</p><p>Um clarão. Ela desaparece. Na última linha do relatório, escrita por Maya:</p><p>“O perdão é a única Ascensão que escolhemos.”</p></blockquote>
+    <div class="pfoot"><span>ASCENSÃO · CÓDICE 2301</span><span>CAP. 18 / 20 &nbsp;—&nbsp; EXEMPLOS DE ASCENSÃO</span><span class="pf-r">◆ 18</span></div>
+    <a class="backtop" href="#sumario">▲ VOLTAR AO SUMÁRIO</a>
+  </div></section>
+</article>
+
+<article id="cap19" style="--accent:#00BFFF;--accentglow:rgba(0,191,255,0.35)">
+  <section class="chapsplash">
+    <div class="art" style="background-image:url('images/sep_mecanica.png')"></div>
+    <div class="grad"></div>
+    <div class="wrap c-inner">
+      <div class="chaptag"><span class="dot"></span>Mecânica</div>
+      <div class="chapnum">19</div>
+      <div class="chaptitle">🔷 Apêndices</div>
+      <div class="chapline"></div>
+      <p style="color:#cfd6e6;max-width:560px;margin-top:18px;font-family:var(--serif);font-style:italic">Referência rápida, ficha de personagem e regras opcionais para a mesa.</p>
+    </div>
+  </section>
+  <section class="page"><div class="wrap">
+    <h2>19.1 Tabelas de Referência Rápida</h2><h3>Tamanho de Pool</h3><div class="tablewrap"><table><thead><tr><th>Atributo + Perícia + Mods</th><th>Pool</th></tr></thead><tbody><tr><td>1–3</td><td>1d6</td></tr><tr><td>4–6</td><td>2d6</td></tr><tr><td>7–9</td><td>3d6</td></tr><tr><td>10–12</td><td>4d6</td></tr><tr><td>13–15</td><td>5d6</td></tr><tr><td>16–18</td><td>6d6</td></tr><tr><td>19–21</td><td>7d6</td></tr><tr><td>22+</td><td>8d6+ (+1d6 a cada 3 pontos)</td></tr></tbody></table></div><h3>Dificuldade</h3><div class="tablewrap"><table><thead><tr><th>Dificuldade</th><th>Alvo</th></tr></thead><tbody><tr><td>Trivial</td><td>2</td></tr><tr><td>Fácil</td><td>3</td></tr><tr><td>Padrão</td><td>4</td></tr><tr><td>Difícil</td><td>5</td></tr><tr><td>Muito Difícil</td><td>6</td></tr><tr><td>Lendário</td><td>7 (não rolável sem talento)</td></tr></tbody></table></div><h3>Estados de Dano</h3><div class="tablewrap"><table><thead><tr><th>Estado</th><th>Vida restante</th></tr></thead><tbody><tr><td>🥵 Ferido</td><td>50–75%</td></tr><tr><td>😰 Severamente Ferido</td><td>25–49%</td></tr><tr><td>☠️ Morrendo</td><td>0–24%</td></tr><tr><td>💀 Morto</td><td>0 sem estabilização</td></tr></tbody></table></div><h2>19.2 Ficha de Personagem</h2><pre>╔══════════════════════════════════════════════════╗
+║          FICHA DE PERSONAGEM — ASCENSÃO          ║
+╠══════════════════════════════════════════════════╣
+║ NOME: __________________________________________ ║
+║ CONCEITO: ______________________________________ ║
+║ ARQUÉTIPO: _________________  FACÇÃO: __________ ║
+╠══════════════════════════════════════════════════╣
+║ ATRIBUTOS                                        ║
+║ FOR[ ] AGI[ ] RES[ ] INT[ ] PER[ ] PRE[ ] TEC[ ] ESS[ ] ║
+╠══════════════════════════════════════════════════╣
+║ PERÍCIAS ________________________________________ ║
+║          ________________________________________ ║
+╠══════════════════════════════════════════════════╣
+║ PODERES  ________________________________________ ║
+╠══════════════════════════════════════════════════╣
+║ SINCRONIA: ___/___      PONTOS DE VIDA: ___/___  ║
+╠══════════════════════════════════════════════════╣
+║ VANTAGENS • ____________________________________ ║
+║ DESVANTAGENS • _________________________________ ║
+╠══════════════════════════════════════════════════╣
+║ PISTAS DO OBJETIVO                               ║
+║ 🌙 ____________  👤 ____________  🏛️ ___________ ║
+║ 📦 ____________  💬 ____________________________ ║
+╠══════════════════════════════════════════════════╣
+║ EQUIPAMENTO ____________________________________ ║
+║ CRÉDITOS: ____________                           ║
+╠══════════════════════════════════════════════════╣
+║ CONEXÕES  🩸 __________  🤝 _____________________ ║
+╠══════════════════════════════════════════════════╣
+║ OBJETIVO (APENAS O MJ PREENCHE): _______________ ║
+╚══════════════════════════════════════════════════╝</pre><h2>19.3 Regras Opcionais</h2><div class="tablewrap"><table><thead><tr><th>Modo</th><th>Efeito</th></tr></thead><tbody><tr><td>Hardcore</td><td>Morte permanente. Sem clonagem.</td></tr><tr><td>Investigativo</td><td>+2 dados em Investigação, -1 em combate.</td></tr><tr><td>Cyberpunk</td><td>Mais implantes, menos Sincronia.</td></tr><tr><td>Filosófico</td><td>Sem combate por 3 sessões seguidas.</td></tr><tr><td>Campanhas Múltiplas</td><td>Vários personagens conectam Ascensões.</td></tr></tbody></table></div><h2>19.4 Tabela de Anomalias Pós-Ascensão</h2><div class="tablewrap"><table><thead><tr><th>Anomalia</th><th>Efeito</th></tr></thead><tbody><tr><td>🌡️ Vento Quente</td><td>+5 °C por 1 semana</td></tr><tr><td>🧲 Ímãs Quebram</td><td>Objetos metálicos próximos falham</td></tr><tr><td>⏳ Tempo Lento</td><td>As pessoas sentem que se passaram dias</td></tr><tr><td>👻 Eco Visual</td><td>A imagem do Ascendido aparece para 1d6 pessoas</td></tr><tr><td>🔬 Gravidade Alterada</td><td>Um raio de 50 m tem gravidade reduzida</td></tr><tr><td>🌈 Céu Mudado</td><td>A cor do céu muda permanentemente</td></tr><tr><td>👁️ Sons no Vento</td><td>Sussurros aleatórios</td></tr></tbody></table></div>
+    <div class="pfoot"><span>ASCENSÃO · CÓDICE 2301</span><span>CAP. 19 / 20 &nbsp;—&nbsp; APÊNDICES</span><span class="pf-r">◆ 19</span></div>
+    <a class="backtop" href="#sumario">▲ VOLTAR AO SUMÁRIO</a>
+  </div></section>
+</article>
+
+<article id="cap20" style="--accent:#DAA520;--accentglow:rgba(218,165,32,0.35)">
+  <section class="chapsplash">
+    <div class="art" style="background-image:url('images/sep_lore.png')"></div>
+    <div class="grad"></div>
+    <div class="wrap c-inner">
+      <div class="chaptag"><span class="dot"></span>Lore & Narrativa</div>
+      <div class="chapnum">20</div>
+      <div class="chaptitle">📜 Glossário</div>
+      <div class="chapline"></div>
+      <p style="color:#cfd6e6;max-width:560px;margin-top:18px;font-family:var(--serif);font-style:italic">Os termos essenciais do universo de ASCENSÃO, reunidos para consulta rápida.</p>
+    </div>
+  </section>
+  <section class="page"><div class="wrap">
+    <h2>20.1 Termos Essenciais</h2><div class="tablewrap"><table><thead><tr><th>Termo</th><th>Significado</th></tr></thead><tbody><tr><td>Ascensão</td><td>Desaparecimento de quem cumpre seu Objetivo Existencial, liberando energia.</td></tr><tr><td>Objetivo Existencial</td><td>Meta invisível que todo ser humano carrega, mas não conhece conscientemente.</td></tr><tr><td>Registro de Falha</td><td>Holograma que surge sobre quem morre sem cumprir o Objetivo, exibindo os dados verdadeiros.</td></tr><tr><td>Sincronia</td><td>Recurso que mede a integração corpo-mente-tecnologia-essência. Alimenta os Poderes.</td></tr><tr><td>Marca de Fragmentação</td><td>Cicatriz existencial por sobrecarga. Acumular 5 causa Falha Crítica Existencial.</td></tr><tr><td>Anomalia</td><td>Fenômeno físico residual após uma Ascensão.</td></tr><tr><td>Colapso de Sincronia</td><td>Inconsciência quando a Sincronia chega a 0.</td></tr><tr><td>CRA</td><td>Câmara de Registro de Ascensões. Organização que cataloga os fenômenos.</td></tr><tr><td>Pool de Dados</td><td>Número de d6 rolados em um teste.</td></tr><tr><td>Sucesso Crítico</td><td>Quando metade ou mais dos dados são 6.</td></tr><tr><td>Falha Crítica</td><td>Quando todos os dados são 1 ou 2.</td></tr><tr><td>Marcos Narrativos</td><td>Conquistas na história que rendem progressão.</td></tr><tr><td>Pista</td><td>Indício do Objetivo Existencial entregue pelo MJ.</td></tr><tr><td>Pista Falsa</td><td>Indício que leva a uma interpretação errada do Objetivo.</td></tr><tr><td>Anomalia Existencial</td><td>Falha catastrófica em personagem com 5+ Marcas.</td></tr><tr><td>Heptagrama Corp</td><td>A maior megacorporação do cenário.</td></tr><tr><td>Vazios</td><td>Membros do culto que quer impedir as Ascensões.</td></tr><tr><td>Transcendência</td><td>Tentativa de evolução sem Ascensão (Coletivo Transcendência).</td></tr><tr><td>O Vento</td><td>Metáfora para a Sincronia, segundo os Leitores.</td></tr><tr><td>Pós-Ascensão</td><td>Estado psicológico de quem foi deixado para trás por um Ascendido.</td></tr></tbody></table></div><div class="box lore"><div class="bx-title">📜 Conclusão do Sistema</div><p>📜 <b>Ascensão</b> é mais do que um RPG — é uma reflexão sobre o que significa ter um propósito que você não escolheu, num mundo onde a tecnologia resolveu tudo, exceto a única pergunta que importa.<br><br>Cada sessão é uma investigação. Cada combate é uma escolha. Cada Ascensão é uma despedida.</p></div><blockquote><p>“Você não escolhe seu Objetivo. Mas escolhe o que fazer com ele.”</p><p>Boa sorte, buscadores. Que sua Sincronia nunca se esgote.</p></blockquote>
+    <div class="pfoot"><span>ASCENSÃO · CÓDICE 2301</span><span>CAP. 20 / 20 &nbsp;—&nbsp; GLOSSÁRIO</span><span class="pf-r">◆ 20</span></div>
+    <a class="backtop" href="#sumario">▲ VOLTAR AO SUMÁRIO</a>
+  </div></section>
+</article>
+
+<footer class="cover" id="fim" style="min-height:88vh">
+  <div class="bg" style="background-image:url('images/contracapa.png')"></div>
+  <div class="veil"></div>
+  <div class="inner" style="padding-top:16vh">
+    <div class="kicker">FIM DO CÓDICE</div>
+    <h1 style="font-size:clamp(40px,9vw,84px)">ASCENSÃO</h1>
+    <p class="q" style="font-family:var(--serif);font-style:italic;color:#e7ebf5;max-width:540px;margin:20px auto 0">
+      “Você não escolhe seu Objetivo. Mas escolhe o que fazer com ele.”</p>
+    <p style="color:var(--muted);margin-top:16px">Boa sorte, buscadores. Que sua Sincronia nunca se esgote.</p>
+  </div>
+    <div class="meta">SISTEMA ASCENSÃO · v1.0 · EDIÇÃO CYBERPUNK PREMIUM</div>
+</footer>
+<section class="page"><div class="wrap" style="text-align:center">
+  <div class="eyebrow">Créditos & Atribuição</div>
+  <p style="color:var(--muted);max-width:620px;margin:14px auto 0;font-size:14px">
+    Capa, contracapa e separadores de capítulo foram <b>gerados originalmente</b> para a Edição Premium de ASCENSÃO (2026), sem uso de obras de terceiros.
+    Direção de arte inspirada em <em>Cyberpunk 2077, Ghost in the Shell, Blade Runner, Deus Ex</em> e <em>Altered Carbon</em>.<br><br>
+    Tipografia: Orbitron · Audiowide · Exo 2 · Inter · JetBrains Mono.<br>
+    Diagramação, revisão e identidade visual: pipeline editorial multiagente.
+  </p>
+</div></section>
+<script>
+const bar=document.getElementById('bar');
+addEventListener('scroll',()=>{const h=document.documentElement;const p=h.scrollTop/(h.scrollHeight-h.clientHeight)*100;bar.style.width=p+'%';},{passive:true});
+</script>
+</body></html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ascensão — Painel Mestre</title>
+  <link rel="stylesheet" href="./css/app.css">
+</head>
+<body class="master-page">
+  <header class="master-topbar">
+    <div class="master-brand"><span>CRA</span> — Painel Mestre</div>
+    <div class="master-actions">
+      <span id="master-user" class="asc-user-chip">Inicializando...</span>
+      <a href="index.html">Abrir minha ficha</a>
+      <button id="refresh-master" class="master-btn">Atualizar</button>
+      <button id="logout-master" class="master-btn">Sair</button>
+    </div>
+  </header>
+
+  <main class="master-container">
+    <section class="master-card" style="grid-row: span 2;">
+      <h2>Fichas dos Jogadores</h2>
+      <div class="master-filters">
+        <label class="master-field">Buscar
+          <input id="ficha-search" type="search" placeholder="Jogador, personagem, facção...">
+        </label>
+        <label class="master-field">Ordenação
+          <select id="ficha-sort">
+            <option value="recentes">Mais recentes</option>
+            <option value="personagem">Personagem</option>
+            <option value="jogador">Jogador</option>
+          </select>
+        </label>
+        <label class="master-field">Ação
+          <button id="new-master-sheet" class="master-btn primary" type="button">Nova ficha</button>
+        </label>
+      </div>
+      <div style="overflow:auto;">
+        <table class="sheet-table">
+          <thead>
+            <tr>
+              <th>Jogador</th>
+              <th>Personagem</th>
+              <th>Última edição</th>
+              <th>PX</th>
+              <th>HP</th>
+              <th>Sincronia</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="ficha-table-body">
+            <tr><td colspan="7">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="master-card">
+      <h2>Histórico de Alterações</h2>
+      <p class="master-message" id="history-title">Selecione uma ficha para abrir o histórico.</p>
+      <div id="history-list" class="history-list"></div>
+    </section>
+
+    <section class="master-card">
+      <h2>NPC_ENGINE</h2>
+      <div class="npc-grid">
+        <label class="master-field">Categoria
+          <select id="npc-category">
+            <option>Aleatório</option>
+          </select>
+        </label>
+        <label class="master-field">Dificuldade
+          <select id="npc-difficulty">
+            <option>Aleatório</option>
+          </select>
+        </label>
+      </div>
+      <div class="master-actions" style="margin:12px 0;">
+        <button id="generate-npc" class="npc-btn primary">Gerar NPC</button>
+        <button id="generate-group" class="npc-btn">Gerar Grupo</button>
+        <button id="generate-boss" class="npc-btn">Gerar Boss</button>
+        <button id="generate-story" class="npc-btn">NPC_STORY_ENGINE</button>
+      </div>
+      <div id="npc-output" class="npc-output">Clique em <strong>Gerar NPC</strong> para criar um personagem não jogador completo. Todo NPC gerado será salvo no Supabase.</div>
+    </section>
+
+    <section class="master-card" style="grid-column: 1 / -1;">
+      <h2>Banco de NPCs</h2>
+      <div class="master-filters">
+        <label class="master-field">Buscar NPC
+          <input id="npc-search" type="search" placeholder="Nome, categoria, facção...">
+        </label>
+        <label class="master-field">Filtro
+          <select id="npc-filter-difficulty">
+            <option value="">Todas dificuldades</option>
+          </select>
+        </label>
+        <label class="master-field">Exportação
+          <button id="print-npcs" class="master-btn" type="button">Imprimir/PDF</button>
+        </label>
+      </div>
+      <div id="npc-list" class="npc-list"></div>
+    </section>
+
+    <p id="master-message" class="master-message" style="grid-column:1/-1;" role="status"></p>
+  </main>
+
+  <div id="npc-edit-modal" class="master-modal" role="dialog" aria-modal="true" aria-label="Editar NPC">
+    <div class="master-modal-card">
+      <h2>Editar NPC</h2>
+      <div class="master-modal-grid">
+        <label class="master-field">Nome<input id="edit-npc-nome"></label>
+        <label class="master-field">Apelido<input id="edit-npc-apelido"></label>
+        <label class="master-field">Categoria<input id="edit-npc-categoria"></label>
+        <label class="master-field">Dificuldade<input id="edit-npc-dificuldade"></label>
+        <label class="master-field">Facção<input id="edit-npc-faccao"></label>
+        <label class="master-field">Objetivo atual<input id="edit-npc-objetivo"></label>
+        <label class="master-field" style="grid-column:1/-1;">Personalidade<textarea id="edit-npc-personalidade" rows="3"></textarea></label>
+        <label class="master-field" style="grid-column:1/-1;">Aparência<textarea id="edit-npc-aparencia" rows="3"></textarea></label>
+        <label class="master-field" style="grid-column:1/-1;">Equipamentos (um por linha)<textarea id="edit-npc-equipamentos" rows="4"></textarea></label>
+        <label class="master-field" style="grid-column:1/-1;">Segredo / Conflito<textarea id="edit-npc-segredo" rows="3"></textarea></label>
+      </div>
+      <div class="master-modal-actions">
+        <button id="cancel-npc-edit" class="master-btn">Cancelar</button>
+        <button id="save-npc-edit" class="master-btn primary">Salvar edição</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./js/master.js"></script>
+</body>
+</html>

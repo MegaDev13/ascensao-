@@ -1,0 +1,3470 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CRA — SISTEMA DE REGISTRO COGNITIVO v9.2.301</title>
+  
+  <style>
+    /* ============================================================
+       CRA TERMINAL STYLE 2301 — CYBERPUNK THEME
+       ============================================================ */
+    :root {
+      --bg: #030305;
+      --bg-panel: rgba(10, 11, 16, 0.93);
+      --bg-header: #07080c;
+      --border: #1a2233;
+      --border-glowing: rgba(0, 245, 255, 0.2);
+      --text: #e1e7f0;
+      --text-muted: #7e8c9f;
+      
+      /* Neon Colors */
+      --cyan: #00F5FF;
+      --cyan-glow: rgba(0, 245, 255, 0.4);
+      --purple: #9D00FF;
+      --purple-glow: rgba(157, 0, 255, 0.4);
+      --magenta: #FF007F;
+      --magenta-glow: rgba(255, 0, 127, 0.4);
+      --green: #00FA9A;
+      --green-glow: rgba(0, 250, 154, 0.3);
+      --orange: #FF8C00;
+      --orange-glow: rgba(255, 140, 0, 0.3);
+      --crimson: #DC143C;
+      --crimson-glow: rgba(220, 20, 60, 0.4);
+
+      /* Typography Fallbacks */
+      --font-disp: 'Orbitron', 'Audiowide', 'Trebuchet MS', sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+      --font-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.5;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(1200px 600px at 80% -10%, rgba(157,0,255,0.08), transparent 60%),
+        radial-gradient(1000px 600px at 10% 20%, rgba(0,245,255,0.06), transparent 55%),
+        linear-gradient(rgba(255, 255, 255, 0.007) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.007) 1px, transparent 1px);
+      background-size: auto, auto, 30px 30px, 30px 30px;
+      background-attachment: fixed;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--cyan);
+    }
+
+    /* Grid Layout */
+    .app-container {
+      display: grid;
+      grid-template-rows: 50px 1fr 140px;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* TOP BAR */
+    .top-bar {
+      grid-row: 1;
+      background: var(--bg-header);
+      border-bottom: 2px solid var(--cyan);
+      box-shadow: 0 1px 15px var(--cyan-glow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      z-index: 10;
+    }
+
+    .brand-title {
+      font-family: var(--font-disp);
+      font-weight: 900;
+      font-size: 15px;
+      letter-spacing: 0.2em;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-title span {
+      color: var(--cyan);
+      text-shadow: 0 0 8px var(--cyan-glow);
+    }
+
+    .top-controls {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .status-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: rgba(0, 245, 255, 0.08);
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      padding: 3px 8px;
+      text-transform: uppercase;
+      box-shadow: 0 0 5px rgba(0, 245, 255, 0.2);
+    }
+
+    /* MAIN CONTENT */
+    .main-grid {
+      grid-row: 2;
+      display: grid;
+      grid-template-columns: 310px 1fr;
+      overflow: hidden;
+    }
+
+    /* LEFT PANEL HUD (Always Visible - Priority 1 & 2) */
+    .hud-sidebar {
+      grid-column: 1;
+      background: rgba(5, 6, 10, 0.95);
+      border-right: 1px solid var(--border);
+      padding: 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .profile-card {
+      background: rgba(13, 15, 22, 0.8);
+      border: 1px solid var(--border);
+      padding: 12px;
+      position: relative;
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+    }
+
+    .profile-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 12px;
+      height: 12px;
+      background: var(--cyan);
+      clip-path: polygon(100% 0, 100% 100%, 0 100%);
+    }
+
+    .avatar-placeholder {
+      width: 100%;
+      height: 120px;
+      background: #0d111a;
+      border: 1px dashed var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+
+    .profile-info h3 {
+      font-family: var(--font-disp);
+      font-size: 16px;
+      color: var(--cyan);
+      text-shadow: 0 0 5px var(--cyan-glow);
+    }
+
+    .profile-info p {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* HP & SINCRONIA GAUGE (PRIORITY 1 & 2) */
+    .hud-section {
+      background: rgba(13, 15, 22, 0.8);
+      border: 1px solid var(--border);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .hud-title {
+      font-family: var(--font-disp);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .bar-container {
+      width: 100%;
+      background: #0d111a;
+      height: 20px;
+      border: 1px solid var(--border);
+      position: relative;
+      margin-top: 4px;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 100%;
+      transition: width 0.3s ease, background 0.3s ease;
+    }
+
+    .bar-fill.hp {
+      background: linear-gradient(90deg, var(--crimson), var(--green));
+      box-shadow: 0 0 8px rgba(0, 250, 154, 0.3);
+    }
+
+    .bar-fill.sincronia {
+      background: linear-gradient(90deg, var(--border), var(--purple));
+      box-shadow: 0 0 8px var(--purple-glow);
+    }
+
+    .bar-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 8px;
+      font-family: var(--font-mono);
+      font-weight: bold;
+      font-size: 11px;
+      color: #fff;
+      text-shadow: 1px 1px 2px #000;
+    }
+
+    .hud-status-desc {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 4px 6px;
+      background: rgba(5, 5, 5, 0.5);
+      border-left: 2px solid var(--border);
+    }
+
+    .hud-status-desc.active {
+      border-left-color: var(--cyan);
+      color: var(--cyan);
+      text-shadow: 0 0 3px var(--cyan-glow);
+    }
+    .hud-status-desc.warning {
+      border-left-color: var(--orange);
+      color: var(--orange);
+    }
+    .hud-status-desc.danger {
+      border-left-color: var(--magenta);
+      color: var(--magenta);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.7; }
+      50% { opacity: 1; }
+      100% { opacity: 0.7; }
+    }
+
+    /* REST ACTIONS */
+    .rest-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .rest-btn {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 6px 2px;
+      background: #111422;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .rest-btn:hover {
+      border-color: var(--purple);
+      color: var(--purple);
+      box-shadow: 0 0 5px var(--purple-glow);
+    }
+
+    /* RIGHT WORKSPACE (TABBED INTERFACE) */
+    .workspace {
+      grid-column: 2;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--bg-panel);
+    }
+
+    /* TABS NAV */
+    .tabs-nav {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      background: #08090e;
+      overflow-x: auto;
+    }
+
+    .tab-button {
+      font-family: var(--font-disp);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      padding: 12px 18px;
+      background: transparent;
+      border: none;
+      border-right: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .tab-button:hover {
+      color: var(--cyan);
+      background: rgba(0, 245, 255, 0.02);
+    }
+
+    .tab-button.active {
+      color: var(--cyan);
+      background: #0c0e16;
+      border-bottom: 2px solid var(--cyan);
+      text-shadow: 0 0 8px var(--cyan-glow);
+    }
+
+    .tab-button.master-only {
+      color: var(--magenta);
+      border-right: 1px solid rgba(255, 0, 127, 0.2);
+    }
+
+    .tab-button.master-only:hover {
+      background: rgba(255, 0, 127, 0.05);
+      color: var(--magenta);
+    }
+
+    .tab-button.master-only.active {
+      border-bottom: 2px solid var(--magenta);
+      color: var(--magenta);
+      text-shadow: 0 0 8px var(--magenta-glow);
+    }
+
+    /* TABS PANELS */
+    .tab-content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* TERMINAL LOG PANEL */
+    .terminal-panel {
+      grid-row: 3;
+      background: #040508;
+      border-top: 2px solid var(--border);
+      padding: 10px 20px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .terminal-header {
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-muted);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 4px;
+      margin-bottom: 6px;
+    }
+
+    .terminal-body {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .term-line {
+      display: flex;
+      gap: 10px;
+    }
+
+    .term-time {
+      color: var(--text-muted);
+      user-select: none;
+    }
+
+    .term-system {
+      color: var(--cyan);
+    }
+
+    .term-roll {
+      color: var(--green);
+    }
+
+    .term-power {
+      color: var(--purple);
+    }
+
+    .term-mj {
+      color: var(--magenta);
+    }
+
+    /* FORMS & INPUTS STYLE */
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      font-family: var(--font-disp);
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    input[type="text"], input[type="number"], select, textarea {
+      width: 100%;
+      background: #0a0b12;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      border-radius: 2px;
+      transition: all 0.2s;
+    }
+
+    input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 5px var(--cyan-glow);
+      outline: none;
+    }
+
+    .btn-terminal {
+      font-family: var(--font-disp);
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      background: #121824;
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      cursor: pointer;
+      box-shadow: 0 0 5px rgba(0, 245, 255, 0.1);
+      transition: all 0.2s;
+      border-radius: 2px;
+    }
+
+    .btn-terminal:hover {
+      background: var(--cyan);
+      color: #000;
+      box-shadow: 0 0 10px var(--cyan-glow);
+    }
+
+    .btn-purple {
+      border-color: var(--purple);
+      color: var(--purple);
+      box-shadow: 0 0 5px rgba(157, 0, 255, 0.1);
+    }
+
+    .btn-purple:hover {
+      background: var(--purple);
+      color: #fff;
+      box-shadow: 0 0 10px var(--purple-glow);
+    }
+
+    .btn-danger {
+      border-color: var(--magenta);
+      color: var(--magenta);
+      box-shadow: 0 0 5px rgba(255, 0, 127, 0.1);
+    }
+
+    .btn-danger:hover {
+      background: var(--magenta);
+      color: #fff;
+      box-shadow: 0 0 10px var(--magenta-glow);
+    }
+
+    /* GRID COLS/ROWS CARDS */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 15px;
+    }
+
+    .c-card {
+      background: rgba(13, 15, 22, 0.8);
+      border: 1px solid var(--border);
+      padding: 15px;
+      position: relative;
+    }
+
+    .c-card-title {
+      font-family: var(--font-disp);
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--cyan);
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+      margin-bottom: 12px;
+      letter-spacing: 0.1em;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* ATTRIBUTES TAB (AGENTE 5) */
+    .attributes-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .attr-row {
+      background: rgba(10, 12, 18, 0.9);
+      border: 1px solid var(--border);
+      padding: 10px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s;
+    }
+
+    .attr-row:hover {
+      border-color: var(--cyan);
+      box-shadow: 0 0 5px var(--cyan-glow);
+    }
+
+    .attr-label {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .attr-name {
+      font-family: var(--font-disp);
+      font-weight: bold;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .attr-sigla {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .attr-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .attr-value {
+      font-family: var(--font-mono);
+      font-size: 20px;
+      font-weight: bold;
+      min-width: 25px;
+      text-align: center;
+      color: var(--cyan);
+      text-shadow: 0 0 5px var(--cyan-glow);
+    }
+
+    .attr-mod-indicator {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--green);
+    }
+
+    .btn-circle {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: #111422;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .btn-circle:hover {
+      border-color: var(--cyan);
+      color: var(--cyan);
+      box-shadow: 0 0 5px var(--cyan-glow);
+    }
+
+    .points-tracker {
+      font-family: var(--font-disp);
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 15px;
+      padding: 10px;
+      background: rgba(0, 245, 255, 0.03);
+      border: 1px dashed var(--border);
+      text-align: center;
+    }
+
+    .points-tracker span {
+      font-weight: bold;
+      color: var(--cyan);
+    }
+
+    /* SKILLS TAB (AGENTE 5) */
+    .skills-section-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 15px;
+    }
+
+    .skills-group {
+      background: rgba(13, 15, 22, 0.8);
+      border: 1px solid var(--border);
+      padding: 12px;
+    }
+
+    .skills-group-title {
+      font-family: var(--font-disp);
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--purple);
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 4px;
+      margin-bottom: 10px;
+      letter-spacing: 0.1em;
+    }
+
+    .skill-row {
+      display: grid;
+      grid-template-columns: 100px 70px 1fr 40px;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(25, 33, 48, 0.4);
+    }
+
+    .skill-row:last-child {
+      border-bottom: none;
+    }
+
+    .skill-name {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .skill-attr {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .skill-dots {
+      display: flex;
+      gap: 3px;
+    }
+
+    .skill-dot {
+      width: 10px;
+      height: 10px;
+      border: 1px solid var(--border);
+      background: #0d111a;
+      cursor: pointer;
+      border-radius: 2px;
+    }
+
+    .skill-dot.active {
+      background: var(--purple);
+      border-color: var(--purple);
+      box-shadow: 0 0 5px var(--purple-glow);
+    }
+
+    .btn-roll-skill {
+      padding: 2px 6px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      background: rgba(0, 245, 255, 0.05);
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-roll-skill:hover {
+      background: var(--cyan);
+      color: #000;
+      box-shadow: 0 0 5px var(--cyan-glow);
+    }
+
+    /* POWERS TAB (AGENTE 2 & 5) */
+    .powers-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .power-tree {
+      border: 1px solid var(--border);
+      background: rgba(10, 11, 16, 0.7);
+    }
+
+    .power-tree-header {
+      padding: 10px 15px;
+      background: #0b0d14;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      user-select: none;
+    }
+
+    .power-tree-header h4 {
+      font-family: var(--font-disp);
+      font-size: 13px;
+      color: var(--purple);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tree-meta {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    .power-tree-content {
+      padding: 15px;
+      display: none;
+    }
+
+    .power-tree-content.active {
+      display: block;
+    }
+
+    .power-item {
+      background: rgba(15, 17, 26, 0.8);
+      border: 1px solid var(--border);
+      padding: 10px 15px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .power-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .power-desc-col {
+      flex: 1;
+    }
+
+    .power-name-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .power-name {
+      font-family: var(--font-disp);
+      font-weight: bold;
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    .power-cost {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      background: rgba(157, 0, 255, 0.1);
+      border: 1px solid var(--purple);
+      color: var(--purple);
+      padding: 1px 5px;
+      border-radius: 2px;
+    }
+
+    .power-detail {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .power-btn-col {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      align-items: flex-end;
+    }
+
+    .power-acquired {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--green);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* COMBATE COCKPIT TAB (AGENTE 2 & 3) */
+    .combat-cockpit {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .quick-modifiers-card {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px;
+      background: rgba(5, 5, 5, 0.3);
+      border: 1px solid var(--border);
+    }
+
+    .checkbox-row input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--cyan);
+    }
+
+    .weapon-list-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .weapon-action-row {
+      background: #0d101a;
+      border: 1px solid var(--border);
+      padding: 10px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-left: 3px solid var(--cyan);
+    }
+
+    .weapon-meta h5 {
+      font-family: var(--font-disp);
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    .weapon-meta p {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .weapon-roll-controls {
+      display: flex;
+      gap: 6px;
+    }
+
+    /* EQUIPMENT DB TAB (AGENTE 5) */
+    .inventory-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .item-db-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+
+    .db-item-row {
+      background: #0c0e15;
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s;
+    }
+
+    .db-item-row:hover {
+      border-color: var(--cyan);
+    }
+
+    .db-item-info h5 {
+      font-family: var(--font-disp);
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    .db-item-info p {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .active-inventory {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .inv-item-row {
+      background: #111422;
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-left: 3px solid var(--purple);
+    }
+
+    /* MODO MESTRE PANEL (AGENTE 6) */
+    .master-panel-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .proximity-slider-container {
+      background: rgba(220, 20, 60, 0.04);
+      border: 1px dashed var(--crimson);
+      padding: 15px;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .proximity-display {
+      font-family: var(--font-disp);
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--magenta);
+      text-shadow: 0 0 10px var(--magenta-glow);
+      margin: 10px 0;
+    }
+
+    /* MODAL EXPORT WINDOW (AGENTE 7) */
+    .export-buttons-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .copy-output-area {
+      position: relative;
+    }
+
+    .copy-output-area textarea {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      height: 250px;
+      background: #030407;
+      border: 1px solid var(--border);
+    }
+
+    /* UTILITY CLASSES */
+    .g-flex {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .g-flex-between {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .text-cyan { color: var(--cyan) !important; }
+    .text-purple { color: var(--purple) !important; }
+    .text-magenta { color: var(--magenta) !important; }
+    .text-green { color: var(--green) !important; }
+    .text-muted { color: var(--text-muted) !important; }
+
+    /* PRINT LAYOUT */
+    @media print {
+      body {
+        background: #fff !important;
+        color: #000 !important;
+      }
+      .top-bar, .tabs-nav, .terminal-panel, .rest-grid, .btn-circle, .btn-terminal, .btn-circle, .btn-roll-skill, .power-btn-col {
+        display: none !important;
+      }
+      .app-container {
+        display: block !important;
+        height: auto !important;
+      }
+      .main-grid {
+        display: block !important;
+      }
+      .hud-sidebar {
+        width: 100% !important;
+        border-right: none !important;
+        background: transparent !important;
+      }
+      .tab-content {
+        display: block !important;
+        page-break-after: always;
+        border: none !important;
+        padding: 0 !important;
+      }
+      .power-tree-content {
+        display: block !important;
+      }
+      input, select, textarea {
+        border-bottom: 1px solid #000 !important;
+        border-top: none !important;
+        border-left: none !important;
+        border-right: none !important;
+        background: transparent !important;
+        color: #000 !important;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="./css/app.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- TOP BAR -->
+    <header class="top-bar">
+      <div class="brand-title">
+        <span>CRA</span> — REGISTRO COGNITIVO v9.2.301
+      </div>
+      
+      <div class="top-controls">
+        <div class="status-badge" id="pool-mode-badge" onclick="togglePoolMode()" style="cursor: pointer;" title="Clique para alternar o modo de dados">
+          MODO POOL: SOMA DIRETA
+        </div>
+        
+        <button class="btn-terminal btn-danger" id="master-mode-toggle" onclick="toggleMasterMode()">
+          [ MODO MJ: INATIVO ]
+        </button>
+
+        <div class="asc-app-controls" aria-label="Controles de conta e Supabase">
+          <span id="asc-user-chip" class="asc-user-chip">Sessão...</span>
+          <select id="sheet-selector" title="Carregar ficha salva">
+            <option value="">Carregar ficha...</option>
+          </select>
+          <button type="button" id="asc-new-btn" title="Criar nova ficha">Nova</button>
+          <button type="button" id="asc-save-btn" title="Salvar agora no Supabase">Salvar</button>
+          <button type="button" id="asc-export-universal-btn" title="Baixar JSON universal">JSON</button>
+          <button type="button" id="asc-edit-toggle" style="display:none;" title="Alternar visualização/edição do mestre">Editar ficha</button>
+          <button type="button" id="asc-master-panel-btn" style="display:none;" title="Abrir painel exclusivo do mestre">Painel Mestre</button>
+          <button type="button" id="asc-logout-btn" title="Encerrar sessão">Sair</button>
+          <span id="asc-sync-status" class="asc-sync-chip">Inicializando</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN GRID -->
+    <div class="main-grid">
+      
+      <!-- LEFT HUD SIDEBAR (PRIORITIES 1 & 2 - LIFE & SINCRONIA ALWAYS VISIBLE) -->
+      <aside class="hud-sidebar">
+        
+        <!-- Character Avatar & Concept Summary -->
+        <div class="profile-card">
+          <div class="avatar-placeholder">
+            <svg width="80" height="80" viewBox="0 0 100 100" style="fill:none; stroke:var(--cyan); stroke-width:1.5;">
+              <path d="M 50 15 L 80 30 L 80 70 L 50 85 L 20 70 L 20 30 Z" stroke-dasharray="2,2"/>
+              <path d="M 50 20 L 75 33 L 75 67 L 50 80 L 25 67 L 25 33 Z" />
+              <circle cx="50" cy="50" r="15" />
+              <line x1="50" y1="15" x2="50" y2="35" />
+              <line x1="50" y1="65" x2="50" y2="85" />
+              <line x1="20" y1="30" x2="40" y2="45" />
+              <line x1="80" y1="30" x2="60" y2="45" />
+            </svg>
+          </div>
+          <div class="profile-info">
+            <h3 id="hud-char-name">Operador Anônimo</h3>
+            <p id="hud-char-codename">CODENOME: N/A</p>
+            <p id="hud-char-archetype" class="text-cyan">ARQUÉTIPO: N/A</p>
+          </div>
+        </div>
+
+        <!-- PRIORITY 1: PONTOS DE VIDA (HP) -->
+        <div class="hud-section" style="border-left: 3px solid var(--green);">
+          <div class="hud-title">
+            <span>🛡️ INTEGRIDADE FÍSICA</span>
+            <span id="hud-hp-percent">100%</span>
+          </div>
+          <div class="bar-container">
+            <div class="bar-fill hp" id="hp-bar-fill" style="width: 100%;"></div>
+            <div class="bar-text">
+              <span>VIDA</span>
+              <span id="hp-bar-text">20/20</span>
+            </div>
+          </div>
+          <div class="g-flex" style="margin-top: 5px;">
+            <input type="number" id="hp-current" value="20" onchange="updateHealthFromInputs()" style="width: 60px; height: 24px; padding: 0 5px; font-family: var(--font-mono); font-size: 11px;">
+            <span class="text-muted">/</span>
+            <input type="number" id="hp-max" value="20" onchange="updateHealthFromInputs()" style="width: 60px; height: 24px; padding: 0 5px; font-family: var(--font-mono); font-size: 11px;">
+            <button class="btn-circle" onclick="adjustHP(1)" style="width:24px; height:24px;">+</button>
+            <button class="btn-circle" onclick="adjustHP(-1)" style="width:24px; height:24px;">-</button>
+          </div>
+          <div class="hud-status-desc active" id="hud-hp-state">
+            ESTADO: SAUDÁVEL (Sem penalidades)
+          </div>
+        </div>
+
+        <!-- PRIORITY 2: SINCRONIA -->
+        <div class="hud-section" style="border-left: 3px solid var(--purple);">
+          <div class="hud-title">
+            <span>🌌 ALINHAMENTO DE SINCRONIA</span>
+            <span id="hud-sinc-percent">100%</span>
+          </div>
+          <div class="bar-container">
+            <div class="bar-fill sincronia" id="sinc-bar-fill" style="width: 100%;"></div>
+            <div class="bar-text">
+              <span>SINCRONIA</span>
+              <span id="sinc-bar-text">9/9</span>
+            </div>
+          </div>
+          <div class="g-flex" style="margin-top: 5px;">
+            <input type="number" id="sinc-current" value="9" onchange="updateSincroniaFromInputs()" style="width: 60px; height: 24px; padding: 0 5px; font-family: var(--font-mono); font-size: 11px;">
+            <span class="text-muted">/</span>
+            <input type="number" id="sinc-max" value="9" onchange="updateSincroniaFromInputs()" style="width: 60px; height: 24px; padding: 0 5px; font-family: var(--font-mono); font-size: 11px;" disabled>
+            <button class="btn-circle" onclick="adjustSinc(1)" style="width:24px; height:24px;">+</button>
+            <button class="btn-circle" onclick="adjustSinc(-1)" style="width:24px; height:24px;">-</button>
+          </div>
+          <div class="hud-status-desc active" id="hud-sinc-state">
+            ESTADO: NORMAL (Sem penalidades)
+          </div>
+        </div>
+
+        <!-- QUICK REST ACTIONS -->
+        <div class="hud-section">
+          <div class="hud-title">🔋 PROTOCOLO DE RECUPERAÇÃO</div>
+          <div class="rest-grid">
+            <button class="rest-btn" onclick="executeRecovery('cochilo')" title="Cochilo de 1 hora: recupera 25% do máximo">Cochilo</button>
+            <button class="rest-btn" onclick="executeRecovery('meditar')" title="10 min meditando: recupera 1 ponto">Meditar</button>
+            <button class="rest-btn" onclick="executeRecovery('descanso')" title="Repouso total (6h+): recupera 100%">Completo</button>
+          </div>
+        </div>
+
+        <!-- PROGRESSION INDICATOR (PX) -->
+        <div class="hud-section">
+          <div class="hud-title">📈 PROGRESSÃO EXISTENCIAL</div>
+          <div class="g-flex-between" style="font-family: var(--font-mono); font-size: 12px; margin-bottom: 4px;">
+            <span class="text-muted">ESTÁGIO:</span>
+            <span id="hud-stage-display" class="text-cyan" style="font-weight: bold;">INICIANTE</span>
+          </div>
+          <div class="g-flex-between" style="font-family: var(--font-mono); font-size: 11px; align-items: center; margin-bottom: 4px;">
+            <span class="text-muted">PX TOTAL:</span>
+            <div class="g-flex" style="gap: 4px;">
+              <input type="number" id="px-total-input" value="0" onchange="updatePXFromInput()" style="width: 55px; height: 20px; padding: 0 3px; font-family: var(--font-mono); font-size: 11px; text-align: center;">
+              <button class="btn-circle" onclick="adjustPX(10)" style="width: 24px; height: 18px; font-size: 9px; border-radius: 2px;">+10</button>
+            </div>
+          </div>
+          <div class="g-flex-between" style="font-family: var(--font-mono); font-size: 11px; margin-bottom: 4px;">
+            <span class="text-muted">PX DISPONÍVEL:</span>
+            <span id="hud-px-available" class="text-green" style="font-weight: bold;">0 PX</span>
+          </div>
+          <div class="g-flex-between" style="font-family: var(--font-mono); font-size: 11px; align-items: center;">
+            <span class="text-muted">MARCOS REG.:</span>
+            <div class="g-flex" style="gap: 4px;">
+              <input type="number" id="marcos-input" value="0" onchange="updateMarcosFromInput()" style="width: 55px; height: 20px; padding: 0 3px; font-family: var(--font-mono); font-size: 11px; text-align: center;">
+              <button class="btn-circle" onclick="adjustMarcos(1)" style="width: 18px; height: 18px; font-size: 9px; border-radius: 2px;">+1</button>
+            </div>
+          </div>
+        </div>
+
+      </aside>
+
+      <!-- RIGHT SIDE WORKSPACE -->
+      <main class="workspace">
+        
+        <!-- TABS BAR -->
+        <nav class="tabs-nav">
+          <button class="tab-button active" onclick="switchTab('identidade-tab')">📑 Identidade</button>
+          <button class="tab-button" onclick="switchTab('atributos-tab')">📊 Atributos</button>
+          <button class="tab-button" onclick="switchTab('pericias-tab')">🎯 Perícias</button>
+          <button class="tab-button" onclick="switchTab('poderes-tab')">⚡ Poderes</button>
+          <button class="tab-button" onclick="switchTab('combate-tab')">⚔️ Combate</button>
+          <button class="tab-button" onclick="switchTab('equipamento-tab')">🦾 Equipamentos</button>
+          <button class="tab-button" onclick="switchTab('objetivos-tab')">🌌 Objetivos</button>
+          <button class="tab-button master-only" id="master-tab-btn" onclick="switchTab('master-tab')" style="display: none;">💀 Diagnóstico MJ</button>
+          <button class="tab-button" onclick="switchTab('export-tab')">💾 Exportação</button>
+        </nav>
+
+        <!-- TAB 1: IDENTIDADE -->
+        <div class="tab-content active" id="identidade-tab">
+          <div class="card-grid">
+            <div class="c-card" style="grid-column: span 2;">
+              <div class="c-card-title">DADOS REGISTRAIS DO OPERADOR (CRA-2301)</div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                  <label for="char-name">Nome do Cidadão</label>
+                  <input type="text" id="char-name" value="Ryn Valenti" oninput="syncIdentity()">
+                </div>
+                <div class="form-group">
+                  <label for="char-codename">Codenome Neural</label>
+                  <input type="text" id="char-codename" value="A Sombra" oninput="syncIdentity()">
+                </div>
+                <div class="form-group">
+                  <label for="char-archetype">Arquétipo Existencial</label>
+                  <select id="char-archetype" onchange="changeArchetype()">
+                    <option value="Sombra" selected>🕵️ Sombra (+2 Sincronia Base, Camuflagem Ativa sugerida)</option>
+                    <option value="Guerreiro">🗡️ Guerreiro Urbano (Aprimoramento Físico sugerido)</option>
+                    <option value="Tecno">💻 Tecno-Arquiteto (Invasão Neural sugerida)</option>
+                    <option value="Embaixador">🗣️ Embaixador (Manipulação Bioquímica sugerida)</option>
+                    <option value="Buscador">🔬 Buscador (Campos de Manipulação sugerida)</option>
+                    <option value="Fantasma">🎭 Fantasmagórico (Distorção de Percepção sugerida)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="char-faction">Facção de Origem / Filiação</label>
+                  <select id="char-faction">
+                    <option value="CRA">Câmara de Registro de Ascensões (CRA)</option>
+                    <option value="Heptagrama">Heptagrama Corp</option>
+                    <option value="Igreja">A Igreja da Última Pergunta</option>
+                    <option value="Transcendencia">Coletivo Transcendência</option>
+                    <option value="MercadoNegro">O Mercado Negro Neural</option>
+                    <option value="Guardioes">Os Guardiões do Registro</option>
+                    <option value="RedeVazio">A Rede do Vazio</option>
+                    <option value="Inteligencia">A Inteligência Coletiva</option>
+                    <option value="ClasFavelas">Clãs das Megafavelas</option>
+                    <option value="BioGenesis">BioGenesis Inc.</option>
+                    <option value="FrotaLivre">A Frota Estelar Livre</option>
+                    <option value="LeitoresVento">A Ordem dos Leitores de Vento</option>
+                    <option value="MedicosSemEscalas">Médicos Sem Escalas</option>
+                    <option value="CompanhiaSussurros">A Companhia dos Sussurros</option>
+                    <option value="SombraCorporativa">A Sombra Corporativa</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group" style="margin-top: 10px;">
+                <label for="char-concept">Conceito de Vida (Frase Central)</label>
+                <input type="text" id="char-concept" value="Eu sou alguém que conhece todos os segredos, menos o meu." style="font-style: italic;">
+              </div>
+            </div>
+
+            <div class="c-card">
+              <div class="c-card-title">VANTAGENS REGISTRADAS</div>
+              <div class="form-group">
+                <textarea id="char-advantages" placeholder="Insira uma vantagem por linha..." style="height: 100px;">• Talentoso em Infiltração (+2 Furtividade)&#10;• Contatos no submundo</textarea>
+              </div>
+              <div class="g-flex">
+                <button class="btn-terminal" onclick="adjustAvailablePX(10)" style="font-size: 10px;">+1 Vantagem Menor (-10 PX)</button>
+                <button class="btn-terminal btn-purple" onclick="adjustAvailablePX(25)" style="font-size: 10px;">+1 Vantagem Maior (-25 PX)</button>
+              </div>
+            </div>
+
+            <div class="c-card">
+              <div class="c-card-title">DESVANTAGENS REGISTRADAS</div>
+              <div class="form-group">
+                <textarea id="char-disadvantages" placeholder="Insira uma desvantagem por linha..." style="height: 100px;">• Paranoico (-1 PRE)&#10;• Vício em estimulantes</textarea>
+              </div>
+              <p class="text-muted" style="font-size: 10px;">Desvantagens Menores concedem +1 ponto de perícia extra. Desvantagens Maiores concedem +2 pontos.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: ATRIBUTOS -->
+        <div class="tab-content" id="atributos-tab">
+          <div class="c-card" style="margin-bottom: 20px;">
+            <div class="c-card-title">EIXOS DE CAPACIDADE COGNITIVO-BIOLÓGICA</div>
+            <p style="margin-bottom: 15px;" class="text-muted">Cada operador inicia com base 1. Distribua até 8 pontos iniciais na criação do personagem. Cada aumento posterior custa 20 PX.</p>
+            
+            <div class="attributes-list">
+              <!-- FOR -->
+              <div class="attr-row">
+                <div class="attr-label">
+                  <span class="attr-name">💪 Força</span>
+                  <span class="attr-sigla">FOR (Físico bruto, dano corpo a corpo)</span>
+                </div>
+                <div class="attr-controls">
+                  <button class="btn-circle" onclick="adjustAttribute('for', -1)">-</button>
+                  <span class="attr-value" id="attr-for">2</span>
+                  <span class="attr-mod-indicator" id="attr-for-mod"></span>
+                  <button class="btn-circle" onclick="adjustAttribute('for', 1)">+</button>
+                </div>
+              </div>
+              <!-- AGI -->
+              <div class="attr-row">
+                <div class="attr-label">
+                  <span class="attr-name">🏃 Agilidade</span>
+                  <span class="attr-sigla">AGI (Reflexos, velocidade, esquiva)</span>
+                </div>
+                <div class="attr-controls">
+                  <button class="btn-circle" onclick="adjustAttribute('agi', -1)">-</button>
+                  <span class="attr-value" id="attr-agi">4</span>
+                  <span class="attr-mod-indicator" id="attr-agi-mod"></span>
+                  <button class="btn-circle" onclick="adjustAttribute('agi', 1)">+</button>
+                </div>
+              </div>
+              <!-- RES -->
+              <div class="attr-row">
+                <div class="attr-label">
+                  <span class="attr-name">🛡️ Resistência</span>
+                  <span class="attr-sigla">RES (Saúde, absorção de dano, fadiga)</span>
+                </div>
+                <div class="attr-controls">
+                  <button class="btn-circle" onclick="adjustAttribute('res', -1)">-</button>
+                  <span class="attr-value" id="attr-res">2</span>
+                  <span class="attr-mod-indicator" id="attr-res-mod"></span>
+                  <button class="btn-circle" onclick="adjustAttribute('res', 1)">+</button>
+                </div>
+              </div>
+              <!-- INT -->
+              <div class="attr-row">
+                <div class="attr-label">
+                  <span class="attr-name">🧠 Intelecto</span>
+                  <span class="attr-sigla">INT (Lógica, análise, hacking)</span>
+                </div>
+                <div class="attr-controls">
+                  <button class="btn-circle" onclick="adjustAttribute('int', -1)">-</button>
+                  <span class="attr-value" id="attr-int">4</span>
+                  <span class="attr-mod-indicator" id="attr-int-mod"></span>
+                  <button class="btn-circle" onclick="adjustAttribute('int', 1)">+</button>
+                </div>
+              </div>
+              <!-- PER -->
+              <div class="attr-row">
+                <div class="attr-label">
+                  <span class="attr-name">👁️ Percepção</span>
+                  <span class="attr-sigla">PER (Sentidos, intuição, pistas)</span>
+                </div>
+                <div class="attr-controls">
+                  <button class="btn-circle" onclick="adjustAttribute('per', -1)">-</button>
+                  <span class="attr-value" id="attr-per">3</span>
+                  <span class="attr-mod-indicator" id="attr-per-mod"></span>
+                  <button class="btn-circle" onclick="adjustAttribute('per', 1)">+</button>
+                </div>
+              </div>
+              <!-- PRE -->
+              <div class="attr-row">
+                <div class="attr-label">
+                  <span class="attr-name">🗣️ Presença</span>
+                  <span class="attr-sigla">PRE (Persuasão, carisma, manipulação)</span>
+                </div>
+                <div class="attr-controls">
+                  <button class="btn-circle" onclick="adjustAttribute('pre', -1)">-</button>
+                  <span class="attr-value" id="attr-pre">2</span>
+                  <span class="attr-mod-indicator" id="attr-pre-mod"></span>
+                  <button class="btn-circle" onclick="adjustAttribute('pre', 1)">+</button>
+                </div>
+              </div>
+              <!-- TEC -->
+              <div class="attr-row">
+                <div class="attr-label">
+                  <span class="attr-name">⚡ Tecnologia</span>
+                  <span class="attr-sigla">TEC (Afinidade de máquinas, implantes)</span>
+                </div>
+                <div class="attr-controls">
+                  <button class="btn-circle" onclick="adjustAttribute('tec', -1)">-</button>
+                  <span class="attr-value" id="attr-tec">3</span>
+                  <span class="attr-mod-indicator" id="attr-tec-mod"></span>
+                  <button class="btn-circle" onclick="adjustAttribute('tec', 1)">+</button>
+                </div>
+              </div>
+              <!-- ESS -->
+              <div class="attr-row">
+                <div class="attr-label">
+                  <span class="attr-name">🌌 Essência</span>
+                  <span class="attr-sigla">ESS (Conexão ao Objetivo, Sincronia)</span>
+                </div>
+                <div class="attr-controls">
+                  <button class="btn-circle" onclick="adjustAttribute('ess', -1)">-</button>
+                  <span class="attr-value" id="attr-ess">2</span>
+                  <span class="attr-mod-indicator" id="attr-ess-mod"></span>
+                  <button class="btn-circle" onclick="adjustAttribute('ess', 1)">+</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="points-tracker">
+              DISTRIBUIÇÃO DE CRIAÇÃO: <span id="creation-points-spent">7</span> / 8 PONTOS DISTRIBUÍDOS. | 
+              PONTOS POSTERIORES COMPRADOS: <span id="purchased-points-count">0</span> | 
+              <button class="btn-terminal" style="font-size: 10px; margin-left: 10px; padding: 3px 6px;" onclick="buyAttributePoint()">Comprar +1 Ponto de Atributo (-20 PX)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: PERÍCIAS -->
+        <div class="tab-content" id="pericias-tab">
+          <div class="c-card" style="margin-bottom: 15px;">
+            <div class="c-card-title">BANCO DE PERÍCIAS OPERACIONAIS</div>
+            <p style="margin-bottom: 10px;" class="text-muted">Níveis permitidos de 0 a 5, limitados ao valor final do atributo associado. Cada nível custa 1 ponto de perícia inicial ou 5 PX. Clique nos círculos para atribuir níveis.</p>
+            <div class="points-tracker" style="margin: 0 0 15px 0; text-align: left;">
+              PERÍCIAS DE CRIAÇÃO: <span id="skill-points-spent">15</span> / 15 PONTOS GASTOS. | 
+              <button class="btn-terminal" style="font-size: 10px; padding: 3px 6px;" onclick="buySkillPoint()">Comprar +1 Nível de Perícia (-5 PX)</button>
+            </div>
+            
+            <div class="skills-section-grid" id="skills-grid">
+              <!-- Generates via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: PODERES -->
+        <div class="tab-content" id="poderes-tab">
+          <div class="c-card" style="margin-bottom: 15px;">
+            <div class="c-card-title">SOFTWARE DE PODERES EXISTENCIAIS</div>
+            <p style="margin-bottom: 15px;" class="text-muted">Abaixo estão as árvores quânticas e biônicas de manipulação da realidade. Se você for especializado em uma árvore, ganha +1 dado em todos os seus testes de ativação e diminui em -1 o custo de Sincronia de seus poderes. Novos poderes custam PX de acordo com o nível.</p>
+            
+            <div class="powers-container" id="powers-tree-container">
+              <!-- Generates via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 5: COMBATE COCKPIT -->
+        <div class="tab-content" id="combate-tab">
+          <div class="combat-cockpit">
+            
+            <div class="c-card">
+              <div class="c-card-title">FOGO E REAÇÕES TÁTICAS</div>
+              <p class="text-muted" style="margin-bottom: 10px;">Escolha modificadores táticos que se aplicam à sua próxima ação de combate. O sistema calculará o pool de dados final automaticamente.</p>
+              
+              <div class="quick-modifiers-card">
+                <div class="checkbox-row">
+                  <input type="checkbox" id="mod-cobertura" onchange="recalculateCombatPools()">
+                  <label for="mod-cobertura">🛡️ Alvo em Cobertura Parcial (Inimigo ganha +2 Defesa)</label>
+                </div>
+                <div class="checkbox-row">
+                  <input type="checkbox" id="mod-cobertura-total" onchange="recalculateCombatPools()">
+                  <label for="mod-cobertura-total">🏰 Alvo em Cobertura Total (Inimigo ganha +4 Defesa)</label>
+                </div>
+                <div class="checkbox-row">
+                  <input type="checkbox" id="mod-altitude" onchange="recalculateCombatPools()">
+                  <label for="mod-altitude">⛰️ Vantagem de Altitude (+10 m de altura, +2 dados no ataque)</label>
+                </div>
+                <div class="checkbox-row">
+                  <input type="checkbox" id="mod-flanqueamento" onchange="recalculateCombatPools()">
+                  <label for="mod-flanqueamento">👥 Flanqueamento Ativo (+2 dados no ataque)</label>
+                </div>
+                <div class="checkbox-row">
+                  <input type="checkbox" id="mod-supressao" onchange="recalculateCombatPools()">
+                  <label for="mod-supressao">💥 Alvo sob Supressão (-2 dados no alvo / Deslocado)</label>
+                </div>
+                <div class="checkbox-row">
+                  <input type="checkbox" id="mod-situational-bonus" onchange="recalculateCombatPools()">
+                  <label for="mod-situational-bonus">🎓 Modificador Positivo Situacional (+1 dado)</label>
+                </div>
+                <div class="checkbox-row">
+                  <input type="checkbox" id="mod-situational-malus" onchange="recalculateCombatPools()">
+                  <label for="mod-situational-malus">🩹 Modificador Negativo Situacional (-1 dado)</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="c-card">
+              <div class="c-card-title">ARMAS ATIVAS & SISTEMA DE ATAQUE</div>
+              <p class="text-muted" style="margin-bottom: 15px;">Abaixo estão as armas atualmente equipadas. Suas jogadas de ataque e fórmulas de dano são recalculadas dinamicamente com base em seus atributos atuais, implantes e modificadores táticos.</p>
+              
+              <div class="weapon-list-container" id="equipped-weapons-container">
+                <!-- Generates via JS -->
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- TAB 6: EQUIPAMENTO & IMPLANTES -->
+        <div class="tab-content" id="equipamento-tab">
+          <div class="c-card" style="margin-bottom: 15px;">
+            <div class="c-card-title">CRÉDITOS FINANCEIROS DO REGISTRO</div>
+            <div class="g-flex" style="align-items: center; max-width: 300px;">
+              <span class="attr-name" style="white-space: nowrap;">CRÉDITOS (CR$):</span>
+              <input type="number" id="character-credits" value="2000" style="font-family: var(--font-mono); font-size: 16px; font-weight: bold; color: var(--green);">
+            </div>
+          </div>
+
+          <div class="inventory-section">
+            
+            <div class="c-card">
+              <div class="c-card-title">BANCO DE EQUIPAMENTOS DA CRA</div>
+              <p class="text-muted" style="margin-bottom: 10px;">Clique em "Equipar" para adicionar o item ao seu inventário ativo. Implantes mecânicos aplicam melhorias automáticas na sua ficha!</p>
+              
+              <div class="item-db-list" id="item-database-container">
+                <!-- Generates via JS -->
+              </div>
+            </div>
+
+            <div class="c-card">
+              <div class="c-card-title">INVENTÁRIO ATIVO DO OPERADOR</div>
+              <p class="text-muted" style="margin-bottom: 10px;">Estes são os itens carregados. Remova-os para desativar seus bônus imediatos.</p>
+              
+              <div class="active-inventory" id="active-inventory-container">
+                <!-- Generates via JS -->
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- TAB 7: OBJETIVOS & CONEXÕES -->
+        <div class="tab-content" id="objetivos-tab">
+          <div class="card-grid">
+            
+            <div class="c-card" style="grid-column: span 2;">
+              <div class="c-card-title">PISTAS DO OBJETIVO EXISTENCIAL (CONHECIDO)</div>
+              <p class="text-muted" style="margin-bottom: 15px;">O Objetivo é desconhecido para o jogador e criado em segredo pelo mestre. Pistas acumuladas indicam o caminho da Ascensão.</p>
+              
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                  <label>🌙 Sonho Recorrente</label>
+                  <input type="text" id="clue-dream" value="Um pássaro em uma gaiola de vidro.">
+                </div>
+                <div class="form-group">
+                  <label>👤 Nome Enigmático</label>
+                  <input type="text" id="clue-name" value="Elena Salk — quem é?">
+                </div>
+                <div class="form-group">
+                  <label>🏛️ Lugar de Atração</label>
+                  <input type="text" id="clue-place" value="Uma praça em Nova Tóquio que ele nunca visitou.">
+                </div>
+                <div class="form-group">
+                  <label>📦 Objeto Atraente</label>
+                  <input type="text" id="clue-object" value="Uma chave quântica sem fechadura.">
+                </div>
+                <div class="form-group" style="grid-column: span 2;">
+                  <label>💬 Frase Enigmática</label>
+                  <input type="text" id="clue-phrase" value="O vento carrega o que você esqueceu na infância.">
+                </div>
+              </div>
+            </div>
+
+            <div class="c-card">
+              <div class="c-card-title">CONEXÕES SOCIAIS E AFETIVAS</div>
+              <div class="form-group">
+                <label>🩸 Conexão Forte (Quem você ama)</label>
+                <input type="text" id="conn-strong" value="Dra. Maya Choi (Parceira de pesquisa em IA)">
+              </div>
+              <div class="form-group">
+                <label>🤝 Conexão Complexa (Relação de dívida ou atrito)</label>
+                <input type="text" id="conn-complex" value="Zero (Ele sabe meu segredo e exige silêncio)">
+              </div>
+            </div>
+
+            <div class="c-card">
+              <div class="c-card-title">A PERGUNTA CENTRAL</div>
+              <div class="form-group">
+                <label>O Enigma Interior do Operador</label>
+                <select id="central-question">
+                  <option selected>Sou eu quem escolhe, ou já estava escrito?</option>
+                  <option>Posso confiar em alguém que conhece meu Objetivo?</option>
+                  <option>A Ascensão é prêmio ou fuga?</option>
+                  <option>Mudar o destino vale a aniquilação física?</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Marcas de Fragmentação Atuais</label>
+                <div class="g-flex">
+                  <input type="number" id="fragmentation-marks" value="0" min="0" max="5" onchange="checkFragmentationMarks()" style="width: 70px;">
+                  <span class="text-muted" style="font-size: 11px;">(Após 5 Marcas: Falha Crítica Existencial!)</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- TAB 8: DIAGNÓSTICO SECRETO (MODO MJ - AGENTE 6) -->
+        <div class="tab-content" id="master-tab" style="border: 1px solid var(--magenta);">
+          <div style="background: rgba(220, 20, 60, 0.08); border-left: 4px solid var(--magenta); padding: 10px 15px; margin-bottom: 20px;">
+            <h4 class="text-magenta" style="font-family: var(--font-disp); font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase;">Acesso Altamente Confidencial — Protocolo CRA-2301</h4>
+            <p style="font-size: 11px; margin-top: 3px;" class="text-muted">Estes campos representam o Códice Secreto do personagem. Eles são completamente invisíveis para o jogador. Use este painel para governar os destinos e as armadilhas narrativas.</p>
+          </div>
+
+          <div class="master-panel-grid">
+            
+            <div class="c-card" style="border-color: rgba(255, 0, 127, 0.4);">
+              <div class="c-card-title text-magenta">DIRETRIZ DA ASCENSÃO E VERDADES OCULTAS</div>
+              <div class="form-group">
+                <label class="text-magenta">Objetivo Existencial Verdadeiro do Personagem</label>
+                <textarea id="master-true-objective" style="height: 80px;" oninput="updateMasterData()">Ela precisa saber a verdade antes de morrer — mesmo que doa.</textarea>
+              </div>
+              <div class="form-group">
+                <label class="text-magenta">Armadilhas Narrativas e Pistas Falsas Planejadas</label>
+                <textarea id="master-false-clues" style="height: 80px;" oninput="updateMasterData()">O Objetivo parece ser matar Elena Salk ou roubar os dados dela para vender no mercado negro.</textarea>
+              </div>
+              <div class="form-group">
+                <label class="text-magenta">Notas Secretas da Campanha</label>
+                <textarea id="master-campaign-notes" style="height: 100px;" oninput="updateMasterData()">Ryn é um clone gerado pela Heptagrama Corp para simular caminhos de Ascensão induzida quântica. Se ele chegar a Sincronia infinita, seu corpo se fragmentará gerando anomalia gravitacional local.</textarea>
+              </div>
+            </div>
+
+            <div class="c-card" style="border-color: rgba(255, 0, 127, 0.4);">
+              <div class="c-card-title text-magenta">PROGRESSÃO CRÍTICA E REPUTAÇÃO</div>
+              
+              <!-- ASCENSAO PROXIMITY SLIDER -->
+              <div class="proximity-slider-container">
+                <label class="text-magenta" style="font-size: 11px;">GRAU DE APROXIMAÇÃO DA ASCENSÃO</label>
+                <div class="proximity-display" id="proximity-val">15%</div>
+                <input type="range" id="master-proximity-slider" min="0" max="100" value="15" oninput="updateProximitySlider()" style="width: 100%; accent-color: var(--magenta);">
+                <p class="text-muted" style="font-size: 10px; margin-top: 5px;">A aproximação representa a sintonia sutil do personagem com o Códice do Universo.</p>
+              </div>
+
+              <div class="form-group">
+                <label class="text-magenta">Relação e Influência de Facções Críticas</label>
+                <div style="display: flex; flex-direction: column; gap: 6px; font-family: var(--font-mono); font-size: 11px;">
+                  <div class="g-flex-between">
+                    <span>🏛️ CRA (Câmara de Reg.):</span>
+                    <input type="number" id="influence-cra" value="2" min="-5" max="5" style="width:60px; height:20px; padding:0 3px;" onchange="updateMasterData()">
+                  </div>
+                  <div class="g-flex-between">
+                    <span>💼 Heptagrama Corp:</span>
+                    <input type="number" id="influence-hepta" value="-3" min="-5" max="5" style="width:60px; height:20px; padding:0 3px;" onchange="updateMasterData()">
+                  </div>
+                  <div class="g-flex-between">
+                    <span>⛪ Igreja Última Pergunta:</span>
+                    <input type="number" id="influence-igreja" value="0" min="-5" max="5" style="width:60px; height:20px; padding:0 3px;" onchange="updateMasterData()">
+                  </div>
+                  <div class="g-flex-between">
+                    <span>⚫ Mercado Negro Neural:</span>
+                    <input type="number" id="influence-mercado" value="4" min="-5" max="5" style="width:60px; height:20px; padding:0 3px;" onchange="updateMasterData()">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="c-card" style="grid-column: span 2; border-color: rgba(255, 0, 127, 0.4);">
+              <div class="c-card-title text-magenta">CENTRAL DE CONTROLE DE NPCs RÁPIDOS</div>
+              <p class="text-muted" style="margin-bottom: 10px;">Gere e armazene perfis táticos rápidos de NPCs para combates ou interações imediatas na mesa.</p>
+              <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                <button class="btn-terminal btn-danger" onclick="generateQuickNPC('guarda')">Guarda Corporativo</button>
+                <button class="btn-terminal btn-danger" onclick="generateQuickNPC('hacker')">Netrunner Rebelde</button>
+                <button class="btn-terminal btn-danger" onclick="generateQuickNPC('agente')">Agente CRA de Elite</button>
+                <button class="btn-terminal btn-danger" onclick="generateQuickNPC('civil')">Cidadão Comum</button>
+              </div>
+              <textarea id="master-npc-log" style="height: 120px; font-family: var(--font-mono); font-size: 11px;" placeholder="Perfís de NPCs gerados aparecerão aqui..."></textarea>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- TAB 9: EXPORTAÇÃO & SISTEMAS (AGENTE 7) -->
+        <div class="tab-content" id="export-tab">
+          <div class="c-card" style="margin-bottom: 15px;">
+            <div class="c-card-title">EXPORTAÇÃO E INTEROPERABILIDADE MULTIPLATAFORMA</div>
+            <p class="text-muted" style="margin-bottom: 15px;">Gerencie seus backups no banco de dados quântico ou converta sua ficha para integração com outras redes neurais (Notion, Foundry VTT, Roll20, etc.).</p>
+            
+            <div class="export-buttons-grid">
+              <button class="btn-terminal" onclick="generateJSONExport()">Gerar JSON CRA</button>
+              <button class="btn-terminal btn-purple" onclick="generateNotionExport()">Exportar p/ Notion</button>
+              <button class="btn-terminal" onclick="generateFoundryExport()">Exportar p/ Foundry</button>
+              <button class="btn-terminal btn-purple" onclick="generateRoll20Export()">Exportar p/ Roll20</button>
+              <button class="btn-terminal btn-danger" onclick="window.print()">Exportar PDF / Imprimir</button>
+            </div>
+
+            <div class="copy-output-area">
+              <div class="g-flex-between" style="margin-bottom: 6px;">
+                <span class="attr-name" style="font-size: 11px;" id="export-format-label">CÓDIGO DE TRANSAÇÃO DO BACKUP:</span>
+                <button class="btn-terminal" style="font-size: 9px; padding: 2px 6px;" onclick="copyExportText()">Copiar Código</button>
+              </div>
+              <textarea id="export-textarea" placeholder="O código quântico do seu personagem aparecerá aqui..." readonly></textarea>
+            </div>
+          </div>
+
+          <div class="c-card">
+            <div class="c-card-title">IMPORTAR ARQUIVO DE PERSONAGEM (JSON / CRA DECODE)</div>
+            <p class="text-muted" style="margin-bottom: 10px;">Cole o código JSON do seu personagem abaixo para carregar os dados completos na interface cerebral.</p>
+            <div class="form-group">
+              <textarea id="import-textarea" placeholder="Cole o código JSON do personagem aqui..." style="height: 80px; font-family: var(--font-mono); font-size: 11px;"></textarea>
+            </div>
+            <button class="btn-terminal" onclick="importCharacterJSON()">Carregar Personagem na Rede</button>
+          </div>
+        </div>
+
+      </main>
+
+    </div>
+
+    <!-- TERMINAL LOG PANEL (REAL-TIME CONSOLE) -->
+    <footer class="terminal-panel">
+      <div class="terminal-header">
+        <span>CRA COGNITIVE NETWORKS — SYSTEM CONSOLE LOG</span>
+        <span id="terminal-clock">2301-06-16 13:20:00</span>
+      </div>
+      <div class="terminal-body" id="console-log-body">
+        <div class="term-line">
+          <span class="term-time">[13:20:01]</span>
+          <span class="term-system">[CRA-NET] Sistema neural conectado com sucesso. Protocolo seguro ativo.</span>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- SOUNDS & LOGIC JAVASCRIPT -->
+  <script>
+    // Audio Context Synthesis for Haptic Sound Effects
+    let audioCtx = null;
+
+    function playBeep(freq = 800, duration = 0.05, type = 'sine') {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        osc.type = type;
+        gainNode.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        // Suppress audio failure
+      }
+    }
+
+    // Databases
+    const SKILL_DATABASE = [
+      { name: "Corrida", attr: "agi", category: "🏃 Movimento", desc: "Deslocar-se rápido em terra" },
+      { name: "Acrobacia", attr: "agi", category: "🏃 Movimento", desc: "Saltos, piruetas, equilíbrio" },
+      { name: "Escalada", attr: "for", category: "🏃 Movimento", desc: "Subir superfícies verticais" },
+      { name: "Parkour", attr: "agi", category: "🏃 Movimento", desc: "Movimentação urbana fluida" },
+      { name: "Pilotagem Terrestre", attr: "agi", category: "🏃 Movimento", desc: "Veículos terrestres (skates, carros)" },
+      { name: "Pilotagem Aérea", attr: "agi", category: "🏃 Movimento", desc: "Veículos voadores, drones" },
+      
+      { name: "Pistolas", attr: "agi", category: "⚔️ Combate", desc: "Armas de mão" },
+      { name: "Rifles", attr: "agi", category: "⚔️ Combate", desc: "Armas longas" },
+      { name: "Armas Pesadas", attr: "for", category: "⚔️ Combate", desc: "Metralhadoras, canhões portáteis" },
+      { name: "Corpo a Corpo", attr: "for", category: "⚔️ Combate", desc: "Briga com ou sem armas brancas" },
+      { name: "Artes Marciais", attr: "agi", category: "⚔️ Combate", desc: "Combate desarmado avançado (FOR/AGI)" },
+      { name: "Defesa", attr: "res", category: "⚔️ Combate", desc: "Bloquear, aparar, contra-atacar" },
+      
+      { name: "Programação", attr: "int", category: "💻 Tecnologia", desc: "Criar e modificar software" },
+      { name: "Engenharia", attr: "int", category: "💻 Tecnologia", desc: "Projetar máquinas e estruturas" },
+      { name: "Mecânica", attr: "tec", category: "💻 Tecnologia", desc: "Consertar, montar, improvisar" },
+      { name: "IA", attr: "int", category: "💻 Tecnologia", desc: "Treinar, comandar e negociar com IAs" },
+      { name: "Nanotecnologia", attr: "tec", category: "💻 Tecnologia", desc: "Usar nanomáquinas" },
+      { name: "Segurança Digital", attr: "int", category: "💻 Tecnologia", desc: "Hackear e defender sistemas" },
+      
+      { name: "Furtividade", attr: "agi", category: "🕵️ Infiltração", desc: "Mover-se sem ser visto" },
+      { name: "Camuflagem", attr: "agi", category: "🕵️ Infiltração", desc: "Usar tecnologia de ocultação" },
+      { name: "Invasão de Sistemas", attr: "int", category: "🕵️ Infiltração", desc: "Entrar em redes e dispositivos" },
+      { name: "Disfarce", attr: "pre", category: "🕵️ Infiltração", desc: "Mudar a aparência, atuar" },
+      
+      { name: "Persuasão", attr: "pre", category: "🗣️ Sociais", desc: "Convencer, negociar" },
+      { name: "Manipulação", attr: "pre", category: "🗣️ Sociais", desc: "Enganar, explorar emoções" },
+      { name: "Liderança", attr: "pre", category: "🗣️ Sociais", desc: "Comandar, inspirar" },
+      { name: "Intimidação", attr: "pre", category: "🗣️ Sociais", desc: "Assustar, coagir" },
+      { name: "Diplomacia", attr: "pre", category: "🗣️ Sociais", desc: "Mediar, evitar conflitos" },
+      
+      { name: "Pesquisa", attr: "int", category: "📚 Conhecimento", desc: "Buscar informações em bancos de dados" },
+      { name: "História", attr: "int", category: "📚 Conhecimento", desc: "Conhecer o passado" },
+      { name: "Ciências", attr: "int", category: "📚 Conhecimento", desc: "Física, química, biologia" },
+      { name: "Medicina", attr: "int", category: "📚 Conhecimento", desc: "Diagnosticar, tratar" },
+      { name: "Psicologia", attr: "int", category: "📚 Conhecimento", desc: "Analisar comportamento" },
+      
+      { name: "Disciplina", attr: "ess", category: "🌌 Existenciais", desc: "Resistir a tentações, manter o foco" },
+      { name: "Meditação", attr: "ess", category: "🌌 Existenciais", desc: "Recuperar Sincronia, acalmar" },
+      { name: "Autoconhecimento", attr: "ess", category: "🌌 Existenciais", desc: "Intuição sobre o próprio Objetivo" }
+    ];
+
+    const POWER_DATABASE = {
+      "Mobilidade": [
+        { id: "corrida_extrema", lvl: 1, name: "Corrida Extrema", cost: 1, desc: "+3 dados em Corrida; dobra a velocidade (1 cena)." },
+        { id: "salto_ampliado", lvl: 1, name: "Salto Ampliado", cost: 1, desc: "Salta até 6 m vertical ou 10 m horizontal." },
+        { id: "parkour_avancado", lvl: 2, name: "Parkour Avançado", cost: 2, desc: "Ignora terreno urbano; +4 dados em Acrobacia/Escalada." },
+        { id: "propulsao_aerea", lvl: 3, name: "Propulsão Aérea", cost: 4, desc: "Voa a até 80 km/h por 1 hora. Risco: queda quântica se falha." },
+        { id: "manip_grav_local", lvl: 4, name: "Manipulação Gravitacional Local", cost: 6, desc: "Gravidade zero/reduzida em 10 m. Requer ESS 3+." },
+        { id: "transcensao_cinetica", lvl: 5, name: "Transcensão Cinética", cost: 10, desc: "Atravessa matéria física sólida por 1 turno; 200 km/h." }
+      ],
+      "Teleporte": [
+        { id: "salto_curto", lvl: 1, name: "Salto Curto", cost: 2, desc: "Teleporte instantâneo de até 10 m; recarga 1 turno." },
+        { id: "teleporte_combate", lvl: 2, name: "Teleporte de Combate", cost: 3, desc: "Teleporte de até 30 m + ataque corpo a corpo imediato." },
+        { id: "tunel_quantico", lvl: 3, name: "Túnel Quântico Pessoal", cost: 5, desc: "Atalho quântico no espaço-tempo de até 1 km; recarga 1h." },
+        { id: "transferencia_estado", lvl: 4, name: "Transferência de Estado", cost: 8, desc: "Teleporta você e um aliado na linha de visão. Risco: perda memória." },
+        { id: "singularidade_portatil", lvl: 5, name: "Singularidade Portátil", cost: 12, desc: "Buraco negro 1 turno; teleporte a qualquer lugar já visto." }
+      ],
+      "Invisibilidade": [
+        { id: "camuflagem_optica", lvl: 1, name: "Camuflagem Óptica", cost: 1, desc: "Fica invisível a olho nu por 1 cena. Câmeras térmicas detectam." },
+        { id: "camuflagem_ativa", lvl: 2, name: "Camuflagem Ativa Completa", cost: 3, desc: "Invisível a olhos e sensores de rede. Deve se mover lentamente." },
+        { id: "distorcao_percepcao", lvl: 3, name: "Distorção de Percepção", cost: 4, desc: "Pessoas não notam sua presença mesmo de perto. PER 5+ resiste." },
+        { id: "anulacao_sensorial", lvl: 4, name: "Anulação Sensorial", cost: 6, desc: "Inexistente para os sentidos de um alvo. Risco: fadiga neural." },
+        { id: "freq_ausencia", lvl: 5, name: "Frequência de Ausência", cost: 10, desc: "Para o universo, você deixou de existir temporariamente por 1 turno." }
+      ],
+      "Combate Avançado": [
+        { id: "aprimoramento_fisico", lvl: 1, name: "Aprimoramento Físico", cost: 2, desc: "+2 dados em FOR e dano físico +2." },
+        { id: "reflexos_acelerados", lvl: 2, name: "Reflexos Acelerados", cost: 3, desc: "+3 dados em AGI; age 2x por rodada. Penalidade: -1 dado em INT." },
+        { id: "campo_forca", lvl: 3, name: "Campo de Força Pessoal", cost: 4, desc: "Absorve e reduz todo o dano recebido pela metade." },
+        { id: "arma_energetica", lvl: 4, name: "Arma Energética Embarcada", cost: 3, desc: "Raio de plasma embarcado; causa 8d6 de dano de fogo." },
+        { id: "drone_embarcado", lvl: 5, name: "Drone de Combate Embarcado", cost: 5, desc: "Drone autônomo acoplado (Ataque: 4 dados, Dano: 5d6)." },
+        { id: "sobrecarga_cinetica", lvl: 6, name: "Sobrecarga Cinética", cost: 8, desc: "Ataque corporal único com dano +10. Risco: +1 Marca Fragmentação." }
+      ],
+      "Controle": [
+        { id: "hackear_implantes", lvl: 1, name: "Hackear Implantes", cost: 2, desc: "Controla um implante do oponente por 1 cena. Resistência: INT 4+." },
+        { id: "sabotagem_neural", lvl: 2, name: "Sabotagem Neural", cost: 3, desc: "Desativa implantes de um alvo; -3 dados em tudo. Resistência: TEC 4+." },
+        { id: "bloqueio_sensorial", lvl: 3, name: "Bloqueio Sensorial", cost: 4, desc: "Cega ou ensurdece um alvo por 1 cena. Resistência: ESS 3+." },
+        { id: "guerra_eletronica", lvl: 4, name: "Guerra Eletrônica", cost: 6, desc: "Desativa todos os sistemas em 50 m por 1 turno. Afeta aliados." },
+        { id: "reescrita_personalidade", lvl: 5, name: "Reescrita de Personalidade", cost: 10, desc: "Modifica traços emocionais e morais do alvo. Resistência: ESS 5+." }
+      ]
+    };
+
+    const EQUIPMENT_DATABASE = [
+      { id: "faca", name: "🔪 Faca Tática", type: "arma", price: 200, desc: "Dano: 1d6 + FOR. Alcance: Corpo a Corpo." },
+      { id: "pistola", name: "🔫 Pistola Leve", type: "arma", price: 800, desc: "Dano: 2d6 + 1. Alcance: Curto (15 m)." },
+      { id: "rifle", name: "🎯 Rifle de Precisão", type: "arma", price: 3500, desc: "Dano: 3d6 + 2. Alcance: Longo (150 m)." },
+      { id: "metralhadora", name: "💥 Metralhadora Portátil", type: "arma", price: 6000, desc: "Dano: 5d6 + 3. Alcance: Longo (80 m). Requer FOR." },
+      { id: "plasma", name: "⚡ Pistola de Plasma", type: "arma", price: 12000, desc: "Dano: 4d6 + 2. Alcance: Médio (30 m). Energia quântica." },
+      
+      { id: "braco_bionico", name: "🦾 Braço Biônico (Básico)", type: "implante", price: 15000, desc: "Implante biônico de alta potência. Aplica +2 FOR permanentemente." },
+      { id: "pele_sintetica", name: "🛡️ Pele Sintética Reforçada", type: "implante", price: 30000, desc: "Fibras de kevlar dérmico. Aplica +1 RES permanentemente." },
+      { id: "nucleo_sincronia", name: "🔮 Núcleo de Sincronia CRA", type: "implante", price: 35000, desc: "Estabilizador de rede existencial. Aplica +1 Sincronia Máxima." },
+      { id: "olho_cibernetico", name: "👁️ Olho Cibernético v4", type: "implante", price: 10000, desc: "Visão quântica/térmica. Concede +1 dado em Percepção visual." },
+      { id: "implante_neural", name: "🧠 Implante Neural Cognitivo", type: "implante", price: 20000, desc: "Interface mental direta. Concede +1 dado em Hacking e Tecnologia." },
+      
+      { id: "armadura_media", name: "🛡️ Armadura Corporal Média", type: "defesa", price: 4000, desc: "Reduz dano recebido em 2. Modificador: -1 em Acrobacias." },
+      { id: "armadura_pesada", name: "🛡️ Armadura Corporal Pesada", type: "defesa", price: 12000, desc: "Reduz dano recebido em 4. Modificador: -1 dado em AGI." }
+    ];
+
+    // Character State Object
+    let charState = {
+      name: "Ryn Valenti",
+      codename: "A Sombra",
+      archetype: "Sombra",
+      faction: "MercadoNegro",
+      concept: "Eu sou alguém que conhece todos os segredos, menos o meu.",
+      advantages: "• Talentoso em Infiltração (+2 Furtividade)\n• Contatos no submundo",
+      disadvantages: "• Paranoico (-1 PRE)\n• Vício em estimulantes",
+      
+      attributes: {
+        for: 2, agi: 4, res: 2, int: 4, per: 3, pre: 2, tec: 3, ess: 2
+      },
+      purchasedAttributes: 0,
+      
+      skills: {
+        "Furtividade": 4, "Parkour": 3, "Invasão de Sistemas": 3, "Pistolas": 2, "Camuflagem": 2, "Investigação": 2, "Intimidação": 1
+      },
+      purchasedSkillsCount: 0,
+      
+      powersAcquired: ["camuflagem_optica"],
+      specializedTree: "Invisibilidade",
+      
+      hp: { current: 20, maxOverride: null },
+      sinc: { current: 9 },
+      fragmentationMarks: 0,
+      credits: 2000,
+      px: { total: 0, spent: 0 },
+      marcosNarrativos: 0,
+      
+      clues: {
+        dream: "Um pássaro em uma gaiola de vidro.",
+        name: "Elena Salk — quem é?",
+        place: "Uma praça em Nova Tóquio que ele nunca visitou.",
+        object: "Uma chave quântica sem fechadura.",
+        phrase: "O vento carrega o que você esqueceu na infância."
+      },
+      connections: {
+        strong: "Dra. Maya Choi (Parceira de pesquisa em IA)",
+        complex: "Zero (Ele sabe meu segredo e exige silêncio)"
+      },
+      centralQuestion: "Sou eu quem escolhe, ou já estava escrito?",
+      
+      // Master confidential info
+      master: {
+        trueObjective: "Ela precisa saber a verdade antes de morrer — mesmo que doa.",
+        falseClues: "O Objetivo parece ser matar Elena Salk ou roubar os dados dela para vender no mercado negro.",
+        campaignNotes: "Ryn é um clone gerado pela Heptagrama Corp para simular caminhos de Ascensão induzida quântica. Se ele chegar a Sincronia infinita, seu corpo se fragmentará gerando anomalia gravitacional local.",
+        proximity: 15,
+        influence: {
+          cra: 2,
+          hepta: -3,
+          igreja: 0,
+          mercado: 4
+        }
+      },
+      inventory: ["pistola"] // Equipped standard pistol on load
+    };
+
+    // System Settings State
+    let masterModeActive = false;
+    let poolModeStepped = false; // false = Soma Direta (Cap 3), true = Escalonado (Cap 19)
+
+    // Load functions on startup
+    window.onload = function() {
+      buildSkillsInterface();
+      buildPowersInterface();
+      buildItemDatabase();
+      recalculateAll();
+      syncFormToState();
+      addLog("CRA", "Banco de dados cognitivo carregado com sucesso no ano 2301.");
+      
+      // ticking clock
+      setInterval(updateClock, 1000);
+    };
+
+    function updateClock() {
+      const now = new Date();
+      const yr = 2301;
+      const mo = String(now.getMonth()+1).padStart(2, '0');
+      const dy = String(now.getDate()).padStart(2, '0');
+      const hr = String(now.getHours()).padStart(2, '0');
+      const mi = String(now.getMinutes()).padStart(2, '0');
+      const se = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('terminal-clock').innerText = `${yr}-${mo}-${dy} ${hr}:${mi}:${se}`;
+    }
+
+    // Tab switcher
+    function switchTab(tabId) {
+      playBeep(900, 0.04);
+      const contents = document.querySelectorAll('.tab-content');
+      contents.forEach(c => c.classList.remove('active'));
+      
+      const buttons = document.querySelectorAll('.tab-button');
+      buttons.forEach(b => b.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active');
+      
+      // find active button
+      buttons.forEach(b => {
+        if (b.getAttribute('onclick').includes(tabId)) {
+          b.classList.add('active');
+        }
+      });
+    }
+
+    // Toggle Master Mode
+    function toggleMasterMode() {
+      if (!window.ASC_AUTH?.isMaster) {
+        playBeep(240, 0.12, 'triangle');
+        alert("Acesso restrito ao Mestre autenticado pelo Supabase.");
+        return;
+      }
+      playBeep(masterModeActive ? 600 : 1200, 0.08, 'sawtooth');
+      masterModeActive = !masterModeActive;
+      const btn = document.getElementById('master-mode-toggle');
+      const mTab = document.getElementById('master-tab-btn');
+      
+      if (masterModeActive) {
+        btn.innerText = "[ MODO MJ: SEGURO ATIVO ]";
+        btn.style.borderColor = "var(--magenta)";
+        btn.style.color = "var(--magenta)";
+        btn.style.boxShadow = "0 0 10px var(--magenta-glow)";
+        mTab.style.display = "block";
+        addLog("MJ", "ACESSO SECRETO DO MJ LIBERADO. Protocolo de segurança suspenso.");
+      } else {
+        btn.innerText = "[ MODO MJ: INATIVO ]";
+        btn.style.borderColor = "var(--cyan)";
+        btn.style.color = "var(--cyan)";
+        btn.style.boxShadow = "none";
+        mTab.style.display = "none";
+        addLog("CRA", "Acesso seguro restaurado. Dados confidenciais do MJ ocultados.");
+        if (document.getElementById('master-tab').classList.contains('active')) {
+          switchTab('identidade-tab');
+        }
+      }
+    }
+
+    // Toggle Pool Calculation Mode
+    function togglePoolMode() {
+      playBeep(850, 0.05);
+      poolModeStepped = !poolModeStepped;
+      const badge = document.getElementById('pool-mode-badge');
+      if (poolModeStepped) {
+        badge.innerText = "MODO POOL: ESCALONADO (Cap. 19)";
+        addLog("CRA", "Metodologia de rolagens escalonada (Códice Tabela 19.1) ativada.");
+      } else {
+        badge.innerText = "MODO POOL: SOMA DIRETA (Cap. 3)";
+        addLog("CRA", "Metodologia de rolagens por soma direta (Capítulo 3) ativada.");
+      }
+      recalculateAll();
+    }
+
+    // Log to console log panel
+    function addLog(source, message, type = 'system') {
+      const body = document.getElementById('console-log-body');
+      const now = new Date();
+      const timeStr = `[${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}]`;
+      
+      const line = document.createElement('div');
+      line.className = 'term-line';
+      
+      let sourceSpan = "";
+      if (source === "CRA") sourceSpan = `<span class="term-system">[CRA-NET]</span>`;
+      else if (source === "ROLAGEM") sourceSpan = `<span class="term-roll">[ROLAGEM]</span>`;
+      else if (source === "PODER") sourceSpan = `<span class="term-power">[SINC-POWER]</span>`;
+      else if (source === "MJ") sourceSpan = `<span class="term-mj">[CONFIDENCIAL]</span>`;
+      else sourceSpan = `<span class="term-system">[${source}]</span>`;
+      
+      line.innerHTML = `<span class="term-time">${timeStr}</span> ${sourceSpan} <span>${message}</span>`;
+      body.appendChild(line);
+      body.scrollTop = body.scrollHeight;
+    }
+
+    // Form synchronization
+    function syncIdentity() {
+      charState.name = document.getElementById('char-name').value;
+      charState.codename = document.getElementById('char-codename').value;
+      charState.concept = document.getElementById('char-concept').value;
+      charState.advantages = document.getElementById('char-advantages').value;
+      charState.disadvantages = document.getElementById('char-disadvantages').value;
+      
+      document.getElementById('hud-char-name').innerText = charState.name || "Sem Nome";
+      document.getElementById('hud-char-codename').innerText = `CODENOME: ${charState.codename || "N/A"}`;
+    }
+
+    function syncFormToState() {
+      document.getElementById('char-name').value = charState.name;
+      document.getElementById('char-codename').value = charState.codename;
+      document.getElementById('char-concept').value = charState.concept;
+      document.getElementById('char-advantages').value = charState.advantages;
+      document.getElementById('char-disadvantages').value = charState.disadvantages;
+      
+      document.getElementById('hud-char-name').innerText = charState.name;
+      document.getElementById('hud-char-codename').innerText = `CODENOME: ${charState.codename}`;
+      document.getElementById('hud-char-archetype').innerText = `ARQUÉTIPO: ${charState.archetype.toUpperCase()}`;
+      document.getElementById('char-archetype').value = charState.archetype;
+      document.getElementById('char-faction').value = charState.faction;
+      
+      document.getElementById('clue-dream').value = charState.clues.dream;
+      document.getElementById('clue-name').value = charState.clues.name;
+      document.getElementById('clue-place').value = charState.clues.place;
+      document.getElementById('clue-object').value = charState.clues.object;
+      document.getElementById('clue-phrase').value = charState.clues.phrase;
+      document.getElementById('conn-strong').value = charState.connections.strong;
+      document.getElementById('conn-complex').value = charState.connections.complex;
+      document.getElementById('central-question').value = charState.centralQuestion;
+      
+      document.getElementById('character-credits').value = charState.credits;
+      document.getElementById('fragmentation-marks').value = charState.fragmentationMarks;
+      
+      const pxInput = document.getElementById('px-total-input');
+      if (pxInput) pxInput.value = charState.px.total;
+      
+      const marcosInput = document.getElementById('marcos-input');
+      if (marcosInput) marcosInput.value = charState.marcosNarrativos;
+      
+      // Master tab sync
+      document.getElementById('master-true-objective').value = charState.master.trueObjective;
+      document.getElementById('master-false-clues').value = charState.master.falseClues;
+      document.getElementById('master-campaign-notes').value = charState.master.campaignNotes;
+      document.getElementById('master-proximity-slider').value = charState.master.proximity;
+      document.getElementById('proximity-val').innerText = charState.master.proximity + '%';
+      
+      document.getElementById('influence-cra').value = charState.master.influence.cra;
+      document.getElementById('influence-hepta').value = charState.master.influence.hepta;
+      document.getElementById('influence-igreja').value = charState.master.influence.igreja;
+      document.getElementById('influence-mercado').value = charState.master.influence.mercado;
+      
+      // Checkboxes & states
+      updateUIForAttributes();
+      updateUIForSkills();
+      updateUIForPowers();
+    }
+
+    function changeArchetype() {
+      playBeep(880, 0.05);
+      charState.archetype = document.getElementById('char-archetype').value;
+      document.getElementById('hud-char-archetype').innerText = `ARQUÉTIPO: ${charState.archetype.toUpperCase()}`;
+      
+      addLog("CRA", `Arquétipo reconfigurado para ${charState.archetype}. Sincronia máxima recalculada.`);
+      recalculateAll();
+    }
+
+    // ATTRIBUTES MANAGEMENT (AGENTE 5)
+    function adjustAttribute(attr, amount) {
+      const currentBase = charState.attributes[attr];
+      const newBase = currentBase + amount;
+      
+      if (newBase < 1 || newBase > 5) {
+        playBeep(400, 0.1, 'triangle');
+        return;
+      }
+      
+      // Check creation points limit
+      const baseAttributesSum = Object.values(charState.attributes).reduce((a, b) => a + b, 0);
+      const initialSpent = baseAttributesSum - 8; // base starts at 1, so 8 is starting sum
+      
+      if (amount > 0 && initialSpent >= 8 && charState.purchasedAttributes <= 0) {
+        playBeep(400, 0.1, 'triangle');
+        alert("Todos os 8 pontos iniciais já foram distribuídos. Use pontos de PX para comprar novos aumentos.");
+        return;
+      }
+
+      playBeep(700 + (newBase * 50), 0.05);
+      charState.attributes[attr] = newBase;
+      
+      if (initialSpent >= 8 && amount > 0) {
+        charState.purchasedAttributes--;
+      }
+      
+      recalculateAll();
+    }
+
+    function buyAttributePoint() {
+      const cost = 20;
+      const avail = charState.px.total - charState.px.spent;
+      if (avail < cost) {
+        playBeep(400, 0.1, 'triangle');
+        alert(`Pontos de PX insuficientes. Requer ${cost} PX. Disponível: ${avail} PX.`);
+        return;
+      }
+      playBeep(1000, 0.1, 'sine');
+      charState.px.spent += cost;
+      charState.purchasedAttributes++;
+      addLog("CRA", "Operador adquiriu +1 ponto de Atributo de evolução (-20 PX). Distribua usando o botão [+].");
+      recalculateAll();
+    }
+
+    // Get Final Attributes (including implants modifications)
+    function getFinalAttributes() {
+      let finalAttrs = { ...charState.attributes };
+      
+      // Braço Biônico: +2 FOR
+      if (charState.inventory.includes("braco_bionico")) {
+        finalAttrs.for += 2;
+      }
+      // Pele Sintética: +1 RES
+      if (charState.inventory.includes("pele_sintetica")) {
+        finalAttrs.res += 1;
+      }
+      
+      return finalAttrs;
+    }
+
+    function updateUIForAttributes() {
+      const finalAttrs = getFinalAttributes();
+      const baseAttrs = charState.attributes;
+      
+      for (let attr in baseAttrs) {
+        const valSpan = document.getElementById(`attr-${attr}`);
+        const modSpan = document.getElementById(`attr-${attr}-mod`);
+        
+        valSpan.innerText = finalAttrs[attr];
+        
+        if (finalAttrs[attr] > baseAttrs[attr]) {
+          modSpan.innerText = `(+${finalAttrs[attr] - baseAttrs[attr]} imp.)`;
+        } else {
+          modSpan.innerText = "";
+        }
+      }
+      
+      // Update points spent in creation
+      const baseAttrsSum = Object.values(charState.attributes).reduce((a,b) => a + b, 0);
+      const pointsSpent = baseAttrsSum - 8;
+      document.getElementById('creation-points-spent').innerText = Math.min(8, pointsSpent);
+      document.getElementById('purchased-points-count').innerText = charState.purchasedAttributes;
+    }
+
+    // SKILLS LOGIC (AGENTE 5)
+    function buildSkillsInterface() {
+      const grid = document.getElementById('skills-grid');
+      grid.innerHTML = "";
+      
+      // Categorize skills
+      let categories = {};
+      SKILL_DATABASE.forEach(s => {
+        if (!categories[s.category]) categories[s.category] = [];
+        categories[s.category].push(s);
+      });
+      
+      for (let cat in categories) {
+        const groupDiv = document.createElement('div');
+        groupDiv.className = 'skills-group';
+        groupDiv.innerHTML = `<div class="skills-group-title">${cat}</div>`;
+        
+        categories[cat].forEach(s => {
+          const row = document.createElement('div');
+          row.className = 'skill-row';
+          row.id = `skill-row-${s.name.replace(/\s+/g, '')}`;
+          
+          let dotsHTML = "";
+          for(let i=1; i<=5; i++) {
+            dotsHTML += `<div class="skill-dot" onclick="setSkillLevel('${s.name}', ${i})" id="dot-${s.name.replace(/\s+/g, '')}-${i}"></div>`;
+          }
+          
+          row.innerHTML = `
+            <span class="skill-name" title="${s.desc}">${s.name}</span>
+            <span class="skill-attr" id="skill-attr-label-${s.name.replace(/\s+/g, '')}">${s.attr.toUpperCase()}: 0</span>
+            <div class="skill-dots">${dotsHTML}</div>
+            <button class="btn-roll-skill" onclick="rollSkillTest('${s.name}')">🎲</button>
+          `;
+          
+          groupDiv.appendChild(row);
+        });
+        
+        grid.appendChild(groupDiv);
+      }
+    }
+
+    function setSkillLevel(skillName, level) {
+      const finalAttrs = getFinalAttributes();
+      const assocAttr = SKILL_DATABASE.find(s => s.name === skillName).attr;
+      const attrLimit = finalAttrs[assocAttr];
+      
+      // If click same level, reset to level - 1 or 0
+      let targetLvl = level;
+      if (charState.skills[skillName] === level) {
+        targetLvl = level - 1;
+      }
+      
+      // Check attribute cap for creation
+      if (targetLvl > attrLimit) {
+        playBeep(400, 0.1, 'triangle');
+        alert(`O nível da perícia não pode exceder o atributo associado (${assocAttr.toUpperCase()} final: ${attrLimit}).`);
+        return;
+      }
+      
+      // Check creation points spent
+      const currentSpent = Object.values(charState.skills).reduce((a,b)=>a+b, 0);
+      const pointsDiff = targetLvl - (charState.skills[skillName] || 0);
+      
+      if (pointsDiff > 0 && currentSpent >= 15 && charState.purchasedSkillsCount <= 0) {
+        playBeep(400, 0.1, 'triangle');
+        alert("Todos os 15 pontos de perícia iniciais já foram gastos. Use pontos de PX para comprar novos níveis.");
+        return;
+      }
+      
+      playBeep(700 + (targetLvl * 60), 0.04);
+      charState.skills[skillName] = targetLvl;
+      
+      if (currentSpent >= 15 && pointsDiff > 0) {
+        charState.purchasedSkillsCount--;
+      }
+      
+      recalculateAll();
+    }
+
+    function updateUIForSkills() {
+      SKILL_DATABASE.forEach(s => {
+        const idName = s.name.replace(/\s+/g, '');
+        const currentLvl = charState.skills[s.name] || 0;
+        
+        // update dots
+        for (let i=1; i<=5; i++) {
+          const dot = document.getElementById(`dot-${idName}-${i}`);
+          if (dot) {
+            if (i <= currentLvl) dot.classList.add('active');
+            else dot.classList.remove('active');
+          }
+        }
+        
+        // update value label
+        const finalAttrs = getFinalAttributes();
+        const baseAttrVal = finalAttrs[s.attr];
+        const lbl = document.getElementById(`skill-attr-label-${idName}`);
+        if (lbl) {
+          lbl.innerText = `${s.attr.toUpperCase()}:${baseAttrVal}+${currentLvl}`;
+        }
+      });
+      
+      const spent = Object.values(charState.skills).reduce((a,b)=>a+b, 0);
+      document.getElementById('skill-points-spent').innerText = Math.min(15, spent);
+    }
+
+    function buySkillPoint() {
+      const cost = 5;
+      const avail = charState.px.total - charState.px.spent;
+      if (avail < cost) {
+        playBeep(400, 0.1, 'triangle');
+        alert(`Pontos de PX insuficientes. Requer ${cost} PX. Disponível: ${avail} PX.`);
+        return;
+      }
+      playBeep(1000, 0.1, 'sine');
+      charState.px.spent += cost;
+      charState.purchasedSkillsCount++;
+      addLog("CRA", "Operador comprou +1 nível de Perícia (-5 PX). Atribua clicando nas perícias.");
+      recalculateAll();
+    }
+
+    // POWERS INTERFACE (AGENTE 2 & 5)
+    function buildPowersInterface() {
+      const cont = document.getElementById('powers-tree-container');
+      cont.innerHTML = "";
+      
+      for (let treeName in POWER_DATABASE) {
+        const treeDiv = document.createElement('div');
+        treeDiv.className = 'power-tree';
+        
+        // Specialized checkbox logic
+        const isSpecialized = charState.specializedTree === treeName;
+        
+        treeDiv.innerHTML = `
+          <div class="power-tree-header" onclick="togglePowerTree('${treeName}')">
+            <h4>▼ Árvore: ${treeName}</h4>
+            <div class="tree-meta">
+              <label style="display:inline-flex; align-items:center; gap:5px; margin:0;" onclick="event.stopPropagation()">
+                <input type="checkbox" onchange="specializeTree('${treeName}', this.checked)" ${isSpecialized ? 'checked' : ''}>
+                ⭐ Especializado (-1 Custo Sinc, +1 Dado)
+              </label>
+              <span id="tree-count-${treeName.replace(/\s+/g,'')}">Poderes: 0</span>
+            </div>
+          </div>
+          <div class="power-tree-content" id="tree-content-${treeName.replace(/\s+/g, '')}">
+            <!-- items -->
+          </div>
+        `;
+        
+        const contentDiv = treeDiv.querySelector('.power-tree-content');
+        
+        POWER_DATABASE[treeName].forEach(p => {
+          const item = document.createElement('div');
+          item.className = 'power-item';
+          
+          const isAcquired = charState.powersAcquired.includes(p.id);
+          
+          let btnHTML = "";
+          if (isAcquired) {
+            btnHTML = `
+              <span class="power-acquired">✔ Habilitado</span>
+              <button class="btn-terminal btn-purple" style="font-size:9px; padding:2px 5px;" onclick="activatePower('${p.id}')">Ativar Poder</button>
+            `;
+          } else {
+            const pxCost = p.lvl === 1 ? 10 : p.lvl === 2 ? 15 : p.lvl === 3 ? 25 : p.lvl === 4 ? 40 : p.lvl === 5 ? 60 : 60;
+            btnHTML = `
+              <button class="btn-terminal" style="font-size:9px; padding:2px 5px;" onclick="buyPower('${p.id}', ${pxCost})">Habilitar (-${pxCost} PX)</button>
+            `;
+          }
+          
+          item.innerHTML = `
+            <div class="power-desc-col">
+              <div class="power-name-row">
+                <span class="power-name">[Nível ${p.lvl}] ${p.name}</span>
+                <span class="power-cost">Custo: ${isSpecialized ? Math.max(0, p.cost - 1) : p.cost} Sinc</span>
+              </div>
+              <p class="power-detail">${p.desc}</p>
+            </div>
+            <div class="power-btn-col">
+              ${btnHTML}
+            </div>
+          `;
+          contentDiv.appendChild(item);
+        });
+        
+        cont.appendChild(treeDiv);
+      }
+    }
+
+    function togglePowerTree(treeName) {
+      playBeep(900, 0.03);
+      const c = document.getElementById(`tree-content-${treeName.replace(/\s+/g, '')}`);
+      c.classList.toggle('active');
+    }
+
+    function updateUIForPowers() {
+      for (let treeName in POWER_DATABASE) {
+        let count = 0;
+        POWER_DATABASE[treeName].forEach(p => {
+          if (charState.powersAcquired.includes(p.id)) count++;
+        });
+        const cntSpan = document.getElementById(`tree-count-${treeName.replace(/\s+/g,'')}`);
+        if (cntSpan) cntSpan.innerText = `Poderes: ${count}`;
+      }
+    }
+
+    function specializeTree(treeName, checked) {
+      playBeep(1100, 0.08);
+      if (checked) {
+        charState.specializedTree = treeName;
+        addLog("CRA", `Redirecionando especialização neural para a Árvore de ${treeName}. Modificadores quânticos aplicados.`);
+      } else {
+        if (charState.specializedTree === treeName) {
+          charState.specializedTree = null;
+          addLog("CRA", "Desativou especialização de árvore de poderes.");
+        }
+      }
+      buildPowersInterface();
+      recalculateAll();
+    }
+
+    function buyPower(powerId, pxCost) {
+      const avail = charState.px.total - charState.px.spent;
+      if (avail < pxCost) {
+        playBeep(400, 0.1, 'triangle');
+        alert(`Pontos de PX insuficientes. Requer ${pxCost} PX. Disponível: ${avail} PX.`);
+        return;
+      }
+      
+      // Find power name
+      let pObj = null;
+      for (let tree in POWER_DATABASE) {
+        const found = POWER_DATABASE[tree].find(p => p.id === powerId);
+        if (found) pObj = found;
+      }
+      
+      playBeep(1000, 0.12, 'sine');
+      charState.px.spent += pxCost;
+      charState.powersAcquired.push(powerId);
+      addLog("CRA", `Sucesso: Ativação neural permanente do Poder '${pObj.name}' registrada (-${pxCost} PX).`);
+      
+      buildPowersInterface();
+      recalculateAll();
+    }
+
+    // ACTIVATE POWERS (AGENTE 2)
+    function activatePower(powerId) {
+      let pObj = null;
+      let treeName = "";
+      for (let tree in POWER_DATABASE) {
+        const found = POWER_DATABASE[tree].find(p => p.id === powerId);
+        if (found) {
+          pObj = found;
+          treeName = tree;
+        }
+      }
+      
+      // Requirements check (e.g. Manip. Gravitacional Local requires ESS 3+)
+      const finalAttrs = getFinalAttributes();
+      if (powerId === "manip_grav_local" && finalAttrs.ess < 3) {
+        playBeep(400, 0.15, 'sawtooth');
+        alert("Falha de Ativação: Este poder requer Essência final igual ou maior que 3.");
+        addLog("CRA", `Bloqueio: Ativação de '${pObj.name}' negada. Essência insuficiente (${finalAttrs.ess}/3).`, 'system');
+        return;
+      }
+      
+      // Calculate final cost based on specialization
+      const isSpecialized = charState.specializedTree === treeName;
+      const finalCost = isSpecialized ? Math.max(0, pObj.cost - 1) : pObj.cost;
+      
+      // Checks Sincronia
+      if (charState.sinc.current < finalCost) {
+        playBeep(400, 0.15, 'sawtooth');
+        const overloadNeeded = finalCost - charState.sinc.current;
+        const confirmOverload = confirm(`Alinhamento de Sincronia insuficiente (${charState.sinc.current}/${finalCost}). Deseja forçar o sistema e gerar uma SOBRECARGA quântica de +${overloadNeeded} pontos?`);
+        if (confirmOverload) {
+          applySincroniaOverload(overloadNeeded, pObj.name);
+          charState.sinc.current = 0;
+        } else {
+          return;
+        }
+      } else {
+        // Normal spend
+        charState.sinc.current -= finalCost;
+        playBeep(1200 - (finalCost * 40), 0.12, 'triangle');
+        
+        // Critical State Fail Chance (24% or lower Sincronia has 50% chance of failure)
+        const maxSinc = getSincroniaMaxima();
+        const pct = (charState.sinc.current / maxSinc) * 100;
+        if (pct > 0 && pct <= 24) {
+          if (Math.random() < 0.5) {
+            addLog("PODER", `FALHA DE INTEGRALIZAÇÃO: Sincronia Crítica fez o poder '${pObj.name}' falhar! [Sincronia gasta: -${finalCost}]`, 'system');
+            recalculateAll();
+            return;
+          }
+        }
+        
+        addLog("PODER", `Ativou '${pObj.name}' com sucesso! Custo de Sincronia: -${finalCost}.`, 'system');
+      }
+      
+      recalculateAll();
+    }
+
+    function applySincroniaOverload(amount, powerName) {
+      addLog("PODER", `SOBRECARGA QUÂNTICA! Operador forçou a rede para ativamente invocar '${powerName}' (+${amount} pontos acima do limite).`, 'system');
+      
+      let dano = 0;
+      let marcas = 0;
+      let desc = "";
+      
+      if (amount === 1) {
+        dano = rollDice(1).sum;
+        desc = "Sobrecarga Leve. Recebeu 1d6 de dano direto.";
+      } else if (amount <= 3) {
+        dano = rollDice(2).sum;
+        marcas = 1;
+        desc = "Sobrecarga Moderada. Causa 2d6 de dano direto + 1 Marca de Fragmentação.";
+      } else {
+        dano = rollDice(4).sum;
+        marcas = 2;
+        desc = "Sobrecarga Severa! Causa 4d6 de dano direto + 2 Marcas de Fragmentação + Alucinações Graves.";
+      }
+      
+      charState.hp.current = Math.max(0, charState.hp.current - dano);
+      charState.fragmentationMarks += marcas;
+      
+      addLog("CRA", `Gatilho de Sobrecarga: ${desc} Dano sofrido: ${dano} PV. Marcas adicionadas: ${marcas}.`);
+      
+      checkFragmentationMarks();
+    }
+
+    function checkFragmentationMarks() {
+      charState.fragmentationMarks = parseInt(document.getElementById('fragmentation-marks').value) || charState.fragmentationMarks;
+      if (charState.fragmentationMarks >= 5) {
+        playBeep(300, 0.4, 'sawtooth');
+        alert("⚠️ ATENÇÃO: 5 MARCAS DE FRAGMENTAÇÃO ALCANÇADAS! GATILHO DE FALHA CRÍTICA EXISTENCIAL DISPARADO! O mestre deve determinar a Ascensão involuntária do personagem.");
+        addLog("MJ", "FALHA CRÍTICA EXISTENCIAL DISPARADA! 5 Marcas acumuladas. O operador está se desintegrando fisicamente da realidade.");
+      }
+    }
+
+    // CALCULATIONS & FORMULAS (AGENTE 2)
+    function getSincroniaMaxima() {
+      const finalAttrs = getFinalAttributes();
+      let archBonus = 0;
+      if (charState.archetype === "Sombra") archBonus = 2;
+      else if (charState.archetype === "Guerreiro") archBonus = 2;
+      else if (charState.archetype === "Tecno") archBonus = 3;
+      else if (charState.archetype === "Embaixador") archBonus = 3;
+      else if (charState.archetype === "Buscador") archBonus = 4;
+      else if (charState.archetype === "Fantasma") archBonus = 5;
+      
+      // Implante: Núcleo de Sincronia (+1 Sinc Max)
+      let implantBonus = 0;
+      if (charState.inventory.includes("nucleo_sincronia")) {
+        implantBonus = 1;
+      }
+      
+      // Formula: 5 + (Essencia * 2) + Arquétipo + Implantes
+      return 5 + (finalAttrs.ess * 2) + archBonus + implantBonus;
+    }
+
+    function getVidaMaxima() {
+      if (charState.hp.maxOverride !== null) return charState.hp.maxOverride;
+      
+      const finalAttrs = getFinalAttributes();
+      // Formula: RES * 10
+      return finalAttrs.res * 10;
+    }
+
+    function recalculateAll() {
+      // 1. Recalculate Max Stats
+      const maxSinc = getSincroniaMaxima();
+      const maxHp = getVidaMaxima();
+      
+      document.getElementById('sinc-max').value = maxSinc;
+      document.getElementById('hp-max').value = maxHp;
+      
+      // Sync limits
+      if (charState.sinc.current > maxSinc) charState.sinc.current = maxSinc;
+      if (charState.hp.current > maxHp) charState.hp.current = maxHp;
+      
+      document.getElementById('sinc-current').value = charState.sinc.current;
+      document.getElementById('hp-current').value = charState.hp.current;
+      
+      // Calculate Percentages
+      const hpPct = maxHp > 0 ? (charState.hp.current / maxHp) * 100 : 0;
+      const sincPct = maxSinc > 0 ? (charState.sinc.current / maxSinc) * 100 : 0;
+      
+      document.getElementById('hud-hp-percent').innerText = `${Math.round(hpPct)}%`;
+      document.getElementById('hud-sinc-percent').innerText = `${Math.round(sincPct)}%`;
+      
+      document.getElementById('hp-bar-fill').style.width = `${hpPct}%`;
+      document.getElementById('sinc-bar-fill').style.width = `${sincPct}%`;
+      
+      document.getElementById('hp-bar-text').innerText = `${charState.hp.current}/${maxHp}`;
+      document.getElementById('sinc-bar-text').innerText = `${charState.sinc.current}/${maxSinc}`;
+      
+      // 2. Determine HP State & Penalty (Rapid Reference 19.1)
+      const hpStateLbl = document.getElementById('hud-hp-state');
+      hpStateLbl.className = "hud-status-desc";
+      
+      let currentHpPenalty = 0; // Negative dice modifier
+      
+      if (charState.hp.current === 0) {
+        hpStateLbl.innerText = "ESTADO: MORRENDO (Rolar 1d6 no combate)";
+        hpStateLbl.classList.add("danger");
+      } else if (hpPct > 0 && hpPct <= 24) {
+        hpStateLbl.innerText = "ESTADO: MORRENDO / CRÍTICO (Perigo de óbito)";
+        hpStateLbl.classList.add("danger");
+        currentHpPenalty = -2;
+      } else if (hpPct >= 25 && hpPct <= 49) {
+        hpStateLbl.innerText = "ESTADO: SEVERAMENTE FERIDO (-2 Defesa, Vulnerável)";
+        hpStateLbl.classList.add("warning");
+        currentHpPenalty = -1;
+      } else if (hpPct >= 50 && hpPct <= 75) {
+        hpStateLbl.innerText = "ESTADO: FERIDO (-1 dado em todos os testes)";
+        hpStateLbl.classList.add("warning");
+        currentHpPenalty = -1;
+      } else {
+        hpStateLbl.innerText = "ESTADO: SAUDÁVEL (Sem penalidades)";
+        hpStateLbl.classList.add("active");
+      }
+      
+      // 3. Determine Sincronia State & Penalty (Capítulo 7.5)
+      const sincStateLbl = document.getElementById('hud-sinc-state');
+      sincStateLbl.className = "hud-status-desc";
+      
+      let currentSincPenalty = 0; // Negative dice modifier
+      
+      if (charState.sinc.current === 0) {
+        sincStateLbl.innerText = "ESTADO: EXAUSTÃO (Colapso cerebral iminente!)";
+        sincStateLbl.classList.add("danger");
+        currentSincPenalty = -3;
+      } else if (sincPct > 0 && sincPct <= 24) {
+        sincStateLbl.innerText = "ESTADO: CRÍTICO (-3 dados, Poderes falham 50%)";
+        sincStateLbl.classList.add("danger");
+        currentSincPenalty = -3;
+      } else if (sincPct >= 25 && sincPct <= 49) {
+        sincStateLbl.innerText = "ESTADO: BAIXO (-2 dados, Alucinações leves)";
+        sincStateLbl.classList.add("warning");
+        currentSincPenalty = -2;
+      } else if (sincPct >= 50 && sincPct <= 74) {
+        sincStateLbl.innerText = "ESTADO: REDUZIDO (-1 dado em testes físicos)";
+        sincStateLbl.classList.add("warning");
+        currentSincPenalty = -1;
+      } else {
+        sincStateLbl.innerText = "ESTADO: NORMAL (Sincronia perfeita)";
+        sincStateLbl.classList.add("active");
+      }
+      
+      // 4. Calculate Stage based on total PX (Capítulo 9.4)
+      const totalPX = charState.px.total;
+      let stage = "INICIANTE";
+      if (totalPX >= 301) stage = "LENDÁRIO";
+      else if (totalPX >= 151) stage = "VETERANO";
+      else if (totalPX >= 51) stage = "OPERACIONAL";
+      
+      document.getElementById('hud-stage-display').innerText = stage;
+      
+      const pxInput = document.getElementById('px-total-input');
+      if (pxInput) pxInput.value = totalPX;
+      
+      document.getElementById('hud-px-available').innerText = `${totalPX - charState.px.spent} PX`;
+      
+      const marcosInput = document.getElementById('marcos-input');
+      if (marcosInput) marcosInput.value = charState.marcosNarrativos;
+      
+      // Sync interfaces
+      updateUIForAttributes();
+      updateUIForSkills();
+      updateUIForPowers();
+      recalculateCombatPools();
+      buildActiveInventory();
+    }
+
+    function adjustHP(amount) {
+      charState.hp.current = Math.max(0, Math.min(getVidaMaxima(), charState.hp.current + amount));
+      recalculateAll();
+    }
+
+    function adjustSinc(amount) {
+      charState.sinc.current = Math.max(0, Math.min(getSincroniaMaxima(), charState.sinc.current + amount));
+      recalculateAll();
+    }
+
+    function updateHealthFromInputs() {
+      const maxIn = parseInt(document.getElementById('hp-max').value);
+      const curIn = parseInt(document.getElementById('hp-current').value);
+      
+      charState.hp.maxOverride = maxIn;
+      charState.hp.current = Math.max(0, Math.min(maxIn, curIn));
+      recalculateAll();
+    }
+
+    function updateSincroniaFromInputs() {
+      const curIn = parseInt(document.getElementById('sinc-current').value);
+      const maxSinc = getSincroniaMaxima();
+      charState.sinc.current = Math.max(0, Math.min(maxSinc, curIn));
+      recalculateAll();
+    }
+
+    function adjustPX(amount) {
+      charState.px.total = Math.max(0, charState.px.total + amount);
+      const pxInput = document.getElementById('px-total-input');
+      if (pxInput) pxInput.value = charState.px.total;
+      addLog("CRA", `Adicionou +${amount} PX ao total acumulado. Total: ${charState.px.total} PX.`);
+      recalculateAll();
+    }
+
+    function updatePXFromInput() {
+      const val = parseInt(document.getElementById('px-total-input').value) || 0;
+      charState.px.total = Math.max(0, val);
+      addLog("CRA", `Ajustou total de PX para: ${charState.px.total} PX.`);
+      recalculateAll();
+    }
+
+    function adjustMarcos(amount) {
+      const oldMarcos = charState.marcosNarrativos;
+      charState.marcosNarrativos = Math.max(0, charState.marcosNarrativos + amount);
+      const marcosInput = document.getElementById('marcos-input');
+      if (marcosInput) marcosInput.value = charState.marcosNarrativos;
+      addLog("CRA", `Marcos Narrativos alterados de ${oldMarcos} para ${charState.marcosNarrativos}.`);
+      
+      // Automatic threshold bonus (Capítulo 9.3)
+      const oldThresholds = Math.floor(oldMarcos / 5);
+      const newThresholds = Math.floor(charState.marcosNarrativos / 5);
+      if (newThresholds > oldThresholds) {
+        const bonusCount = newThresholds - oldThresholds;
+        playBeep(1300, 0.3, 'sine');
+        alert(`✨ RECOMPENSA DE MARCO NARRATIVO! Por atingir ${charState.marcosNarrativos} Marcos, você recebe automaticamente: +${bonusCount} ponto de Atributo, +${bonusCount} ponto de Sincronia máxima e +${bonusCount} Poder livre!`);
+        addLog("CRA", `Gatilho de Recompensa: Ativou bônus de Marcos Narrativos (+${bonusCount} Atributo).`);
+        charState.purchasedAttributes += bonusCount;
+      }
+      
+      recalculateAll();
+    }
+
+    function updateMarcosFromInput() {
+      const val = parseInt(document.getElementById('marcos-input').value) || 0;
+      const oldMarcos = charState.marcosNarrativos;
+      charState.marcosNarrativos = Math.max(0, val);
+      
+      const oldThresholds = Math.floor(oldMarcos / 5);
+      const newThresholds = Math.floor(charState.marcosNarrativos / 5);
+      if (newThresholds > oldThresholds) {
+        const bonusCount = newThresholds - oldThresholds;
+        charState.purchasedAttributes += bonusCount;
+      }
+      
+      recalculateAll();
+    }
+
+    function adjustAvailablePX(amount) {
+      // purchase advantage
+      const avail = charState.px.total - charState.px.spent;
+      if (avail < amount) {
+        playBeep(400, 0.1, 'triangle');
+        alert(`Pontos de PX insuficientes.`);
+        return;
+      }
+      playBeep(1000, 0.1, 'sine');
+      charState.px.spent += amount;
+      addLog("CRA", `Adquiriu nova Vantagem registrada (-${amount} PX). Insira os detalhes no painel de Identidade.`);
+      recalculateAll();
+    }
+
+    // REST RECOVERY ACTIONS (AGENTE 2)
+    function executeRecovery(type) {
+      const maxSinc = getSincroniaMaxima();
+      const maxHp = getVidaMaxima();
+      
+      if (type === "cochilo") {
+        playBeep(900, 0.2);
+        const recoverySinc = Math.floor(maxSinc * 0.25);
+        charState.sinc.current = Math.min(maxSinc, charState.sinc.current + recoverySinc);
+        addLog("CRA", `Cochilo de 1 hora completado. Alinhamento cerebral restaurado em +${recoverySinc} Sincronia.`);
+      } else if (type === "meditar") {
+        playBeep(1100, 0.3);
+        charState.sinc.current = Math.min(maxSinc, charState.sinc.current + 1);
+        addLog("CRA", `Sessão de meditação de 10 min. Recuperou +1 de Sincronia.`);
+      } else if (type === "descanso") {
+        playBeep(800, 0.5);
+        charState.sinc.current = maxSinc;
+        charState.hp.current = maxHp;
+        addLog("CRA", `Descanso completo de 6 horas+. Integridade biológica e Sincronia restauradas em 100%.`);
+      }
+      recalculateAll();
+    }
+
+    // DICE ROLLER ENGINE (AGENTE 2 & 5)
+    function rollDice(poolSize, difficulty = 4) {
+      let results = [];
+      let successes = 0;
+      let ones = 0;
+      let sixes = 0;
+      
+      for (let i = 0; i < poolSize; i++) {
+        const val = Math.floor(Math.random() * 6) + 1;
+        results.push(val);
+        if (val === 1) ones++;
+        if (val === 6) sixes++;
+        if (val >= difficulty) successes++;
+      }
+      
+      // Determine criticals
+      const isCriticalSuccess = poolSize >= 2 && (sixes >= poolSize / 2);
+      const isCriticalFailure = results.every(v => v === 1 || v === 2);
+      
+      // Handle Success Crítico: each 6 counts as double success
+      let totalSuccesses = successes;
+      if (isCriticalSuccess) {
+        totalSuccesses += sixes; // adds extra success for each 6
+      }
+      
+      return {
+        results,
+        successes: totalSuccesses,
+        rawSuccesses: successes,
+        ones,
+        sixes,
+        isCriticalSuccess,
+        isCriticalFailure,
+        hasComplication: ones >= 3
+      };
+    }
+
+    // Evaluates pool size from raw points using table in 19.1 or direct sum (Configurable)
+    function evaluatePoolSize(pointsSum) {
+      if (!poolModeStepped) {
+        // Direct sum (Cap. 3): pool size is exactly the points
+        return Math.max(1, pointsSum);
+      } else {
+        // Stepped Pool translation (CRA table 19.1)
+        if (pointsSum <= 3) return 1;
+        if (pointsSum <= 6) return 2;
+        if (pointsSum <= 9) return 3;
+        if (pointsSum <= 12) return 4;
+        if (pointsSum <= 15) return 5;
+        if (pointsSum <= 18) return 6;
+        if (pointsSum <= 21) return 7;
+        
+        // 22+ points: 8d6 + 1d6 per each 3 points
+        const extra = Math.floor((pointsSum - 22) / 3);
+        return 8 + extra;
+      }
+    }
+
+    function rollSkillTest(skillName) {
+      const sObj = SKILL_DATABASE.find(s => s.name === skillName);
+      const finalAttrs = getFinalAttributes();
+      const baseAttrVal = finalAttrs[sObj.attr];
+      const skillLevel = charState.skills[skillName] || 0;
+      
+      let basePoints = 0;
+      let logPrefix = "";
+      
+      if (skillLevel === 0) {
+        // Untrained penalty (Cap. 6.3): base = attribute / 2 (rounded down)
+        basePoints = Math.floor(baseAttrVal / 2);
+        logPrefix = `(NÃO TREINADO! Penalidade aplicada: ${baseAttrVal} -> ${basePoints})`;
+      } else {
+        basePoints = baseAttrVal + skillLevel;
+      }
+      
+      // Apply Sincronia and HP negative modifiers
+      let modifiers = 0;
+      const hpPct = (charState.hp.current / getVidaMaxima()) * 100;
+      const sincPct = (charState.sinc.current / getSincroniaMaxima()) * 100;
+      
+      if (hpPct >= 50 && hpPct <= 75) modifiers -= 1; // Ferido -1
+      
+      // Sincronia penalty
+      if (sincPct === 0 || sincPct < 25) modifiers -= 3; // Crítico -3
+      else if (sincPct >= 25 && sincPct <= 49) modifiers -= 2; // Baixo -2
+      else if (sincPct >= 50 && sincPct <= 74 && ["for", "agi", "res"].includes(sObj.attr)) {
+        modifiers -= 1; // Reduzido -1 em físicos
+      }
+      
+      // Specialized tree bonus: +1 dice if it's a Power of the tree
+      // For standard skill, check if implant or advantage applies.
+      // (Added directly to modifications)
+      
+      const totalPoints = Math.max(1, basePoints + modifiers);
+      const pool = evaluatePoolSize(totalPoints);
+      
+      playBeep(800, 0.1);
+      const r = rollDice(pool, 4);
+      
+      // Map successes to results (Tabela 3.3)
+      let resultText = "❌ Falha";
+      if (r.isCriticalFailure) resultText = "💀 Fracasso Catastrófico (FALHA CRÍTICA!)";
+      else if (r.isCriticalSuccess) resultText = "🌠 Êxtase Mecânico (SUCESSO CRÍTICO!)";
+      else if (r.successes >= 5) resultText = "🌟 Sucesso Extraordinário";
+      else if (r.successes === 4) resultText = "✅ Sucesso Amplo";
+      else if (r.successes === 3) resultText = "✅ Sucesso Sólido";
+      else if (r.successes === 2) resultText = "✅ Sucesso Padrão";
+      else if (r.successes === 1) resultText = "✅ Sucesso Mínimo";
+      
+      if (r.hasComplication) {
+        resultText += " [⚠️ GATILHO DE COMPLICAÇÃO DISPARADO! (3+ Uns)]";
+      }
+      
+      const debugFormula = `${sObj.attr.toUpperCase()}(${baseAttrVal}) + Perícia(${skillLevel}) + Penalidades de Status(${modifiers}) = ${totalPoints} pts -> Pool: ${pool}d6`;
+      
+      addLog("ROLAGEM", `${skillName} ${logPrefix}: Rola ${pool}d6 -> [${r.results.join(', ')}] | Sucessos: ${r.successes} | Resultado: ${resultText}.<br><span style="font-size:10px; color:var(--text-muted);">${debugFormula}</span>`);
+    }
+
+    // COMBATE REDE DE COMBATE (AGENTE 2 & 3)
+    function recalculateCombatPools() {
+      const container = document.getElementById('equipped-weapons-container');
+      container.innerHTML = "";
+      
+      const finalAttrs = getFinalAttributes();
+      
+      // Read tactical modifiers checkboxes
+      let tMods = 0;
+      if (document.getElementById('mod-altitude').checked) tMods += 2;
+      if (document.getElementById('mod-flanqueamento').checked) tMods += 2;
+      if (document.getElementById('mod-situational-bonus').checked) tMods += 1;
+      if (document.getElementById('mod-situational-malus').checked) tMods -= 1;
+      
+      // Base penalties for damage/health
+      let statPenalties = 0;
+      const hpPct = (charState.hp.current / getVidaMaxima()) * 100;
+      const sincPct = (charState.sinc.current / getSincroniaMaxima()) * 100;
+      
+      if (hpPct >= 50 && hpPct <= 75) statPenalties -= 1;
+      if (sincPct === 0 || sincPct < 25) statPenalties -= 3;
+      else if (sincPct >= 25 && sincPct <= 49) statPenalties -= 2;
+      
+      // Generate active combat actions based on equipped items
+      charState.inventory.forEach(itemId => {
+        const item = EQUIPMENT_DATABASE.find(i => i.id === itemId);
+        if (!item || item.type !== "arma") return;
+        
+        let assocSkill = "Corpo a Corpo";
+        let attr = "for";
+        let dmgFormula = "";
+        let alc = "1.5 m (Corpo a Corpo)";
+        
+        if (itemId === "faca") {
+          assocSkill = "Corpo a Corpo"; attr = "for";
+          dmgFormula = `1d6 + FOR (=${finalAttrs.for})`;
+          alc = "1.5 m";
+        } else if (itemId === "pistola") {
+          assocSkill = "Pistolas"; attr = "agi";
+          dmgFormula = `2d6 + 1`;
+          alc = "Curto (15 m)";
+        } else if (itemId === "rifle") {
+          assocSkill = "Rifles"; attr = "agi";
+          dmgFormula = `3d6 + 2`;
+          alc = "Longo (150 m)";
+        } else if (itemId === "metralhadora") {
+          assocSkill = "Armas Pesadas"; attr = "for";
+          dmgFormula = `5d6 + 3`;
+          alc = "Longo (80 m)";
+        } else if (itemId === "plasma") {
+          assocSkill = "Pistolas"; attr = "agi";
+          dmgFormula = `4d6 + 2`;
+          alc = "Médio (30 m)";
+        }
+        
+        const skillLvl = charState.skills[assocSkill] || 0;
+        let totalCombatPoints = finalAttrs[attr] + skillLvl + tMods + statPenalties;
+        let finalPool = evaluatePoolSize(totalCombatPoints);
+        
+        const card = document.createElement('div');
+        card.className = "weapon-action-row";
+        card.innerHTML = `
+          <div class="weapon-meta">
+            <h5>${item.name}</h5>
+            <p>DANO: ${dmgFormula} | ALCANCE: ${alc}</p>
+            <p class="text-cyan">ATAQUE AUTOMÁTICO: ${finalPool}d6 (Soma: ${totalCombatPoints} pts)</p>
+          </div>
+          <div class="weapon-roll-controls">
+            <button class="btn-terminal" style="font-size:9px; padding:4px 8px;" onclick="rollWeaponAttack('${item.name}', ${finalPool})">Ataque</button>
+            <button class="btn-terminal btn-purple" style="font-size:9px; padding:4px 8px;" onclick="rollWeaponDamage('${itemId}')">Dano</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      
+      if (container.innerHTML === "") {
+        container.innerHTML = `<p class="text-muted" style="text-align:center; padding:15px; border: 1px dashed var(--border);">Nenhuma arma equipada no momento. Ative uma no painel de Equipamentos.</p>`;
+      }
+    }
+
+    function rollWeaponAttack(name, poolSize) {
+      playBeep(900, 0.1, 'sine');
+      const r = rollDice(poolSize, 4);
+      
+      let resultText = "❌ Falha no Ataque";
+      if (r.isCriticalFailure) resultText = "💀 Fracasso Catastrófico (FALHA CRÍTICA!)";
+      else if (r.isCriticalSuccess) resultText = "🌠 Êxtase Mecânico (SUCESSO CRÍTICO!)";
+      else if (r.successes >= 1) resultText = `✅ Sucesso! (${r.successes} Sucessos de margem)`;
+      
+      if (r.hasComplication) {
+        resultText += " [⚠️ GATILHO DE COMPLICAÇÃO! (3+ Uns)]";
+      }
+      
+      addLog("ROLAGEM", `Ataque Neural com '${name}' rolando ${poolSize}d6 -> [${r.results.join(', ')}] | Sucessos: ${r.successes} | Resultado: ${resultText}.`);
+    }
+
+    function rollWeaponDamage(itemId) {
+      playBeep(650, 0.12, 'sawtooth');
+      const finalAttrs = getFinalAttributes();
+      
+      let totalDmg = 0;
+      let dStr = "";
+      
+      if (itemId === "faca") {
+        const roll = rollDice(1);
+        totalDmg = roll.results[0] + finalAttrs.for;
+        dStr = `1d6[${roll.results[0]}] + FOR(${finalAttrs.for}) = ${totalDmg}`;
+      } else if (itemId === "pistola") {
+        const rolls = rollDice(2).results;
+        totalDmg = rolls[0] + rolls[1] + 1;
+        dStr = `2d6[${rolls.join(',')}] + 1 = ${totalDmg}`;
+      } else if (itemId === "rifle") {
+        const rolls = rollDice(3).results;
+        totalDmg = rolls[0] + rolls[1] + rolls[2] + 2;
+        dStr = `3d6[${rolls.join(',')}] + 2 = ${totalDmg}`;
+      } else if (itemId === "metralhadora") {
+        const rolls = rollDice(5).results;
+        totalDmg = rolls.reduce((a,b)=>a+b, 0) + 3;
+        dStr = `5d6[${rolls.join(',')}] + 3 = ${totalDmg}`;
+      } else if (itemId === "plasma") {
+        const rolls = rollDice(4).results;
+        totalDmg = rolls.reduce((a,b)=>a+b, 0) + 2;
+        dStr = `4d6[${rolls.join(',')}] + 2 = ${totalDmg}`;
+      }
+      
+      addLog("ROLAGEM", `Cálculo de Dano balístico: ${dStr} de dano direto à saúde.`);
+    }
+
+    // INVENTORY & IMPLANTS DATABASE (AGENTE 5)
+    function buildItemDatabase() {
+      const dbCont = document.getElementById('item-database-container');
+      dbCont.innerHTML = "";
+      
+      EQUIPMENT_DATABASE.forEach(item => {
+        const row = document.createElement('div');
+        row.className = "db-item-row";
+        
+        let label = item.type === "arma" ? "⚔️" : item.type === "implante" ? "🦾" : "🛡️";
+        
+        row.innerHTML = `
+          <div class="db-item-info">
+            <h5>${item.name} (${item.price} CR$)</h5>
+            <p>${item.desc}</p>
+          </div>
+          <button class="btn-terminal" style="font-size:9px; padding:3px 6px;" onclick="equipItem('${item.id}')">Equipar</button>
+        `;
+        dbCont.appendChild(row);
+      });
+    }
+
+    function buildActiveInventory() {
+      const container = document.getElementById('active-inventory-container');
+      container.innerHTML = "";
+      
+      charState.inventory.forEach(itemId => {
+        const item = EQUIPMENT_DATABASE.find(i => i.id === itemId);
+        if (!item) return;
+        
+        const row = document.createElement('div');
+        row.className = "inv-item-row";
+        row.innerHTML = `
+          <div class="db-item-info">
+            <h5>${item.name}</h5>
+            <p>${item.desc}</p>
+          </div>
+          <button class="btn-terminal btn-danger" style="font-size:9px; padding:3px 6px;" onclick="unequipItem('${itemId}')">Descartar</button>
+        `;
+        container.appendChild(row);
+      });
+      
+      if (charState.inventory.length === 0) {
+        container.innerHTML = `<p class="text-muted" style="text-align:center; padding:15px; border:1px dashed var(--border);">Inventário vazio no momento.</p>`;
+      }
+    }
+
+    function equipItem(itemId) {
+      const item = EQUIPMENT_DATABASE.find(i => i.id === itemId);
+      if (!item) return;
+      
+      if (charState.credits < item.price) {
+        playBeep(400, 0.1, 'triangle');
+        alert("Créditos de rede insuficientes para realizar a transação.");
+        return;
+      }
+      
+      if (charState.inventory.includes(itemId)) {
+        alert("Você já possui este item equipado.");
+        return;
+      }
+      
+      playBeep(1100, 0.1, 'sine');
+      charState.credits -= item.price;
+      charState.inventory.push(itemId);
+      
+      addLog("CRA", `Comprou e equipou: '${item.name}' | -${item.price} créditos de rede.`);
+      
+      // Automatic modifiers applied instantly on recalculateAll
+      recalculateAll();
+      syncFormToState();
+    }
+
+    function unequipItem(itemId) {
+      playBeep(600, 0.1);
+      const idx = charState.inventory.indexOf(itemId);
+      if (idx !== -1) {
+        const item = EQUIPMENT_DATABASE.find(i => i.id === itemId);
+        charState.inventory.splice(idx, 1);
+        
+        // Return 50% credits refund
+        const refund = Math.floor(item.price * 0.5);
+        charState.credits += refund;
+        
+        addLog("CRA", `Descartou: '${item.name}' | Estorno de +${refund} créditos.`);
+      }
+      recalculateAll();
+      syncFormToState();
+    }
+
+    // MASTER TAB CONFIDENTIAL CONTROLS (AGENTE 6)
+    function updateMasterData() {
+      charState.master.trueObjective = document.getElementById('master-true-objective').value;
+      charState.master.falseClues = document.getElementById('master-false-clues').value;
+      charState.master.campaignNotes = document.getElementById('master-campaign-notes').value;
+      
+      charState.master.influence.cra = parseInt(document.getElementById('influence-cra').value) || 0;
+      charState.master.influence.hepta = parseInt(document.getElementById('influence-hepta').value) || 0;
+      charState.master.influence.igreja = parseInt(document.getElementById('influence-igreja').value) || 0;
+      charState.master.influence.mercado = parseInt(document.getElementById('influence-mercado').value) || 0;
+    }
+
+    function updateProximitySlider() {
+      const val = document.getElementById('master-proximity-slider').value;
+      document.getElementById('proximity-val').innerText = val + '%';
+      charState.master.proximity = parseInt(val);
+      
+      if (val >= 90) {
+        playBeep(1500, 0.2, 'sine');
+        addLog("MJ", `GATILHO CRÍTICO: Grau de aproximação quântica em ${val}%. Anomalias pós-Ascensão podem emergir a qualquer segundo!`);
+      }
+    }
+
+    function generateQuickNPC(type) {
+      playBeep(1000, 0.1, 'sawtooth');
+      let npcText = "";
+      
+      if (type === "guarda") {
+        npcText = `🚨 GUARDA CORPORATIVO (Heptagrama)\nATRIBUTOS: FOR 3, AGI 2, RES 3, INT 2, PER 3, PRE 1, TEC 2, ESS 1\nHP: 30 | Sincronia: 7\nEQUIPAMENTO: Rifle de Precisão, Armadura Média\nROLAGEM PADRÃO: Ataque (6d6, dano 3d6+2), Defesa (AGI 2 + Defesa 1 = 3d6)`;
+      } else if (type === "hacker") {
+        npcText = `💻 NETRUNNER REBELDE (Rede do Vazio)\nATRIBUTOS: FOR 1, AGI 3, RES 2, INT 5, PER 4, PRE 2, TEC 4, ESS 3\nHP: 20 | Sincronia: 11\nEQUIPAMENTO: Implante Neural, Kit Hacker, Pistola Leve\nROLAGEM PADRÃO: Hacking (9d6 quântico), Ataque (AGI 3 + Pistolas 2 = 5d6, dano 2d6+1)`;
+      } else if (type === "agente") {
+        npcText = `🕴️ AGENTE CRA DE ELITE (Câmara de Reg.)\nATRIBUTOS: FOR 3, AGI 4, RES 4, INT 3, PER 4, PRE 3, TEC 3, ESS 3\nHP: 40 | Sincronia: 13\nEQUIPAMENTO: Pistola de Plasma, Armadura Média, Núcleo Sincronia\nROLAGEM PADRÃO: Ataque (AGI 4 + Pistolas 4 = 8d6, dano 4d6+2), Defesa (AGI 4 + Defesa 3 = 7d6)`;
+      } else if (type === "civil") {
+        npcText = `👤 CIDADÃO COMUM (Megafavela)\nATRIBUTOS: FOR 2, AGI 2, RES 2, INT 2, PER 2, PRE 2, TEC 2, ESS 2\nHP: 20 | Sincronia: 9\nEQUIPAMENTO: Smartphone neural, ferramentas básicas\nROLAGEM PADRÃO: Testes gerais (4d6)`;
+      }
+      
+      const log = document.getElementById('master-npc-log');
+      log.value = npcText + "\n\n" + log.value;
+      addLog("MJ", `Gerador de NPC: Perfil tático rápido de '${type.toUpperCase()}' injetado no terminal.`);
+    }
+
+    // EXPORT SYSTEM MULTIPLATFORM (AGENTE 7)
+    function generateJSONExport() {
+      playBeep(900, 0.05);
+      const json = JSON.stringify(charState, null, 2);
+      document.getElementById('export-format-label').innerText = "BANCO DE DADOS COMPLETO (JSON CRA):";
+      document.getElementById('export-textarea').value = json;
+      addLog("CRA", "Banco de dados completo exportado com sucesso no formato JSON.");
+    }
+
+    function generateNotionExport() {
+      playBeep(900, 0.05);
+      const finalAttrs = getFinalAttributes();
+      
+      let md = `# 🌌 FICHA DE PERSONAGEM — ASCENSÃO (CRA-2301)\n\n`;
+      md += `## 📝 IDENTIDADE REGISTRAIS\n`;
+      md += `- **Nome**: ${charState.name}\n`;
+      md += `- **Codenome**: ${charState.codename}\n`;
+      md += `- **Arquétipo**: ${charState.archetype}\n`;
+      md += `- **Facção**: ${charState.faction}\n`;
+      md += `- **Conceito**: *"${charState.concept}"*\n\n`;
+      md += `## 📊 ATRIBUTOS CORE\n`;
+      md += `| FOR | AGI | RES | INT | PER | PRE | TEC | ESS |\n`;
+      md += `| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |\n`;
+      md += `| ${finalAttrs.for} | ${finalAttrs.agi} | ${finalAttrs.res} | ${finalAttrs.int} | ${finalAttrs.per} | ${finalAttrs.pre} | ${finalAttrs.tec} | ${finalAttrs.ess} |\n\n`;
+      md += `## 🛡️ ESTADO DE SAÚDE\n`;
+      md += `- **Vida**: ${charState.hp.current} / ${getVidaMaxima()}\n`;
+      md += `- **Sincronia**: ${charState.sinc.current} / ${getSincroniaMaxima()}\n`;
+      md += `- **Marcas de Fragmentação**: ${charState.fragmentationMarks} / 5\n\n`;
+      md += `## ⚡ PODERES ADQUIRIDOS\n`;
+      charState.powersAcquired.forEach(pId => {
+        md += `- \`${pId}\`\n`;
+      });
+      
+      document.getElementById('export-format-label').innerText = "FICHA ESTRUTURADA NOTION (MARKDOWN):";
+      document.getElementById('export-textarea').value = md;
+      addLog("CRA", "Modelo de importação estruturada para o Notion gerado com sucesso.");
+    }
+
+    function generateFoundryExport() {
+      playBeep(900, 0.05);
+      const finalAttrs = getFinalAttributes();
+      
+      // Build an Actor JSON template for Foundry VTT
+      const foundryJSON = {
+        name: charState.name,
+        type: "character",
+        img: "icons/svg/mystery-man.svg",
+        system: {
+          attributes: {
+            forca: { value: finalAttrs.for },
+            agilidade: { value: finalAttrs.agi },
+            resistencia: { value: finalAttrs.res },
+            intelecto: { value: finalAttrs.int },
+            percepcao: { value: finalAttrs.per },
+            presenca: { value: finalAttrs.pre },
+            tecnologia: { value: finalAttrs.tec },
+            essencia: { value: finalAttrs.ess }
+          },
+          hp: { value: charState.hp.current, max: getVidaMaxima() },
+          sincronia: { value: charState.sinc.current, max: getSincroniaMaxima() },
+          detalhes: {
+            codenome: charState.codename,
+            arquetipo: charState.archetype,
+            faccao: charState.faction,
+            conceito: charState.concept
+          }
+        },
+        items: charState.inventory.map(id => ({ name: id, type: "equipment" }))
+      };
+      
+      document.getElementById('export-format-label').innerText = "FOUNDRY VTT ACTOR IMPORT (JSON):";
+      document.getElementById('export-textarea').value = JSON.stringify(foundryJSON, null, 2);
+      addLog("CRA", "Estrutura do Actor JSON do Foundry VTT gerada com sucesso.");
+    }
+
+    function generateRoll20Export() {
+      playBeep(900, 0.05);
+      
+      // Roll20 Dynamic Macro suite
+      let macros = `!# 🌌 MACRO SUITE DE ASCENSÃO PARA ROLL20 #!\n\n`;
+      macros += `## 🎲 ROLAGEM GERAL DE ATRIBUTO PURO\n`;
+      macros += `&{template:default} {{name=Teste de Atributo}} {{Resultado=[[?{Pool de d6|1}d6>=4]] sucessos}}\n\n`;
+      macros += `## 🔫 MACRO DE ATAQUE PISTOLA LEVE\n`;
+      macros += `&{template:default} {{name=Ataque de Pistola (AGI)}} {{Ataque=[[?{Pool Total de d6}d6>=4]] sucessos}} {{Dano=[[2d6+1]] de dano}}\n\n`;
+      macros += `## 🌌 ATIVAÇÃO DE PODER\n`;
+      macros += `&{template:default} {{name=Ativar Poder Existencial}} {{Efeito=Desconta Sincronia da Ficha}} {{Sucesso=[[?{Pool de d6}d6>=4]] sucessos}}\n`;
+      
+      document.getElementById('export-format-label').innerText = "MACROS AUTOMATIZADOS DO ROLL20:";
+      document.getElementById('export-textarea').value = macros;
+      addLog("CRA", "Conjunto de macros inteligentes para Roll20 gerado no terminal.");
+    }
+
+    function copyExportText() {
+      playBeep(1100, 0.05);
+      const area = document.getElementById('export-textarea');
+      area.select();
+      document.execCommand('copy');
+      addLog("CRA", "Cópia do código de transação enviada para a área de transferência do sistema.");
+    }
+
+    function importCharacterJSON() {
+      const input = document.getElementById('import-textarea').value;
+      if (!input.trim()) {
+        playBeep(400, 0.1, 'triangle');
+        alert("Área de importação vazia. Cole um JSON válido.");
+        return;
+      }
+      
+      try {
+        const parsed = JSON.parse(input);
+        if (parsed && parsed.name && parsed.attributes) {
+          charState = { ...charState, ...parsed };
+          syncFormToState();
+          recalculateAll();
+          playBeep(1200, 0.15, 'sine');
+          addLog("CRA", `Banco de dados recarregado com sucesso! Personagem ativo: '${charState.name}'.`);
+          alert(`Personagem ${charState.name} importado com sucesso na rede!`);
+          document.getElementById('import-textarea').value = "";
+          switchTab('identidade-tab');
+        } else {
+          throw new Error("Campos mandatórios ausentes.");
+        }
+      } catch (e) {
+        playBeep(300, 0.2, 'sawtooth');
+        alert("Falha de Decodificação: O código colado não é um banco de dados CRA/JSON válido.");
+        addLog("CRA", "Erro de importação: Sintaxe de arquivo inválida.");
+      }
+    }
+
+
+    // ============================================================
+    // Ponte de integração Supabase sem recriar a ficha original.
+    // Expõe estado/cálculos para os módulos em js/.
+    // ============================================================
+    (function installAscensaoSupabaseBridge(){
+      const defaultCharState = JSON.parse(JSON.stringify(charState));
+      const blankMasterState = {
+        trueObjective: "",
+        falseClues: "",
+        campaignNotes: "",
+        proximity: 0,
+        influence: { cra: 0, hepta: 0, igreja: 0, mercado: 0 }
+      };
+
+      function clone(value) {
+        return value == null ? value : JSON.parse(JSON.stringify(value));
+      }
+
+      function mergeDeep(target, source) {
+        const out = Array.isArray(target) ? target.slice() : { ...(target || {}) };
+        if (!source || typeof source !== 'object') return out;
+        Object.entries(source).forEach(([key, value]) => {
+          if (value && typeof value === 'object' && !Array.isArray(value)) {
+            out[key] = mergeDeep(out[key] && typeof out[key] === 'object' ? out[key] : {}, value);
+          } else {
+            out[key] = clone(value);
+          }
+        });
+        return out;
+      }
+
+      function ensureStateShape() {
+        charState = mergeDeep(defaultCharState, charState || {});
+        if (!charState.master) charState.master = clone(blankMasterState);
+        if (!charState.master.influence) charState.master.influence = clone(blankMasterState.influence);
+      }
+
+      function valueOf(id, fallback = '') {
+        const el = document.getElementById(id);
+        return el ? el.value : fallback;
+      }
+
+      function numberOf(id, fallback = 0) {
+        const n = Number(valueOf(id, fallback));
+        return Number.isFinite(n) ? n : fallback;
+      }
+
+      function syncFromDom(options = {}) {
+        ensureStateShape();
+        try {
+          charState.name = valueOf('char-name', charState.name);
+          charState.codename = valueOf('char-codename', charState.codename);
+          charState.archetype = valueOf('char-archetype', charState.archetype);
+          charState.faction = valueOf('char-faction', charState.faction);
+          charState.concept = valueOf('char-concept', charState.concept);
+          charState.advantages = valueOf('char-advantages', charState.advantages);
+          charState.disadvantages = valueOf('char-disadvantages', charState.disadvantages);
+
+          charState.clues = charState.clues || {};
+          charState.clues.dream = valueOf('clue-dream', charState.clues.dream);
+          charState.clues.name = valueOf('clue-name', charState.clues.name);
+          charState.clues.place = valueOf('clue-place', charState.clues.place);
+          charState.clues.object = valueOf('clue-object', charState.clues.object);
+          charState.clues.phrase = valueOf('clue-phrase', charState.clues.phrase);
+
+          charState.connections = charState.connections || {};
+          charState.connections.strong = valueOf('conn-strong', charState.connections.strong);
+          charState.connections.complex = valueOf('conn-complex', charState.connections.complex);
+          charState.centralQuestion = valueOf('central-question', charState.centralQuestion);
+          charState.fragmentationMarks = numberOf('fragmentation-marks', charState.fragmentationMarks || 0);
+          charState.credits = numberOf('character-credits', charState.credits || 0);
+
+          charState.hp = charState.hp || {};
+          const hpMax = numberOf('hp-max', getVidaMaxima ? getVidaMaxima() : 20);
+          charState.hp.maxOverride = hpMax;
+          charState.hp.current = Math.max(0, Math.min(hpMax, numberOf('hp-current', charState.hp.current || hpMax)));
+
+          charState.sinc = charState.sinc || {};
+          const sincMax = getSincroniaMaxima ? getSincroniaMaxima() : numberOf('sinc-max', 9);
+          charState.sinc.current = Math.max(0, Math.min(sincMax, numberOf('sinc-current', charState.sinc.current || sincMax)));
+
+          charState.px = charState.px || { total: 0, spent: 0 };
+          charState.px.total = Math.max(0, numberOf('px-total-input', charState.px.total || 0));
+          charState.marcosNarrativos = Math.max(0, numberOf('marcos-input', charState.marcosNarrativos || 0));
+
+          if (window.ASC_AUTH?.isMaster) {
+            charState.master.trueObjective = valueOf('master-true-objective', charState.master.trueObjective);
+            charState.master.falseClues = valueOf('master-false-clues', charState.master.falseClues);
+            charState.master.campaignNotes = valueOf('master-campaign-notes', charState.master.campaignNotes);
+            charState.master.proximity = numberOf('master-proximity-slider', charState.master.proximity || 0);
+            charState.master.influence.cra = numberOf('influence-cra', charState.master.influence.cra || 0);
+            charState.master.influence.hepta = numberOf('influence-hepta', charState.master.influence.hepta || 0);
+            charState.master.influence.igreja = numberOf('influence-igreja', charState.master.influence.igreja || 0);
+            charState.master.influence.mercado = numberOf('influence-mercado', charState.master.influence.mercado || 0);
+          }
+
+          document.getElementById('hud-char-name').innerText = charState.name || "Sem Nome";
+          document.getElementById('hud-char-codename').innerText = `CODENOME: ${charState.codename || "N/A"}`;
+          document.getElementById('hud-char-archetype').innerText = `ARQUÉTIPO: ${(charState.archetype || 'N/A').toUpperCase()}`;
+          if (!options.noRecalculate) recalculateAll();
+        } catch (err) {
+          console.warn('Falha ao sincronizar DOM da ficha:', err);
+        }
+        return charState;
+      }
+
+      function setMasterAccess(active) {
+        masterModeActive = Boolean(active);
+        const btn = document.getElementById('master-mode-toggle');
+        const mTab = document.getElementById('master-tab-btn');
+        if (btn) {
+          btn.innerText = masterModeActive ? "[ MODO MJ: SEGURO ATIVO ]" : "[ MODO MJ: INATIVO ]";
+          btn.style.borderColor = masterModeActive ? "var(--magenta)" : "var(--cyan)";
+          btn.style.color = masterModeActive ? "var(--magenta)" : "var(--cyan)";
+          btn.style.boxShadow = masterModeActive ? "0 0 10px var(--magenta-glow)" : "none";
+        }
+        if (mTab) mTab.style.display = masterModeActive ? "block" : "none";
+        if (!masterModeActive) {
+          charState.master = clone(blankMasterState);
+          const masterIds = ['master-true-objective','master-false-clues','master-campaign-notes'];
+          masterIds.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+          const npcLog = document.getElementById('master-npc-log');
+          if (npcLog) npcLog.value = '';
+          if (document.getElementById('master-tab')?.classList.contains('active')) switchTab('identidade-tab');
+        }
+      }
+
+      window.ASCENSAO_SHEET = {
+        getState() {
+          syncFromDom({ noRecalculate: true });
+          return clone(charState);
+        },
+        setState(nextState, options = {}) {
+          const previousMaster = clone(charState.master || blankMasterState);
+          charState = mergeDeep(charState || defaultCharState, nextState || {});
+          ensureStateShape();
+          if (options.preserveMaster) charState.master = previousMaster;
+          syncFormToState();
+          recalculateAll();
+        },
+        syncFromDom,
+        recalculate: recalculateAll,
+        switchTab,
+        addLog,
+        setMasterAccess,
+        resetToTemplate(options = {}) {
+          charState = clone(defaultCharState);
+          if (options.blankIdentity) {
+            charState.name = '';
+            charState.codename = '';
+            charState.concept = '';
+            charState.advantages = '';
+            charState.disadvantages = '';
+            charState.clues = { dream: '', name: '', place: '', object: '', phrase: '' };
+            charState.connections = { strong: '', complex: '' };
+            charState.centralQuestion = 'Sou eu quem escolhe, ou já estava escrito?';
+            charState.master = clone(blankMasterState);
+            charState.inventory = [];
+            charState.powersAcquired = [];
+            charState.skills = {};
+            charState.px = { total: 0, spent: 0 };
+            charState.hp = { current: 20, maxOverride: 20 };
+            charState.sinc = { current: 9 };
+          }
+          syncFormToState();
+          recalculateAll();
+        }
+      };
+    })();
+
+  </script>
+
+  <script type="module" src="./js/sheet-app.js"></script>
+</body>
+</html>
