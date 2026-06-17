@@ -52,12 +52,30 @@ function fillNpcSelectors() {
 }
 
 async function loadFichas() {
+  // Não usamos embed direto usuarios(...) aqui porque fichas possui duas FKs para usuarios:
+  // dono_id e atualizada_por. O PostgREST considera isso ambíguo.
   const { data, error } = await state.supabase
     .from('fichas')
-    .select('id,dono_id,nome_jogador,nome_personagem,resumo,atualizada_em,usuarios(nome,email)')
+    .select('id,dono_id,nome_jogador,nome_personagem,resumo,atualizada_em')
     .order('atualizada_em', { ascending: false });
   if (error) throw error;
-  state.fichas = data || [];
+
+  const donoIds = [...new Set((data || []).map((f) => f.dono_id).filter(Boolean))];
+  let usuariosById = {};
+
+  if (donoIds.length) {
+    const { data: usuarios, error: usuariosError } = await state.supabase
+      .from('usuarios')
+      .select('id,nome,email')
+      .in('id', donoIds);
+    if (usuariosError) throw usuariosError;
+    usuariosById = Object.fromEntries((usuarios || []).map((u) => [u.id, u]));
+  }
+
+  state.fichas = (data || []).map((f) => ({
+    ...f,
+    dono: usuariosById[f.dono_id] || null
+  }));
   renderFichas();
 }
 
@@ -80,7 +98,7 @@ function renderFichas() {
 
   body.innerHTML = rows.map((f) => {
     const r = f.resumo || {};
-    const jogador = f.usuarios?.nome || f.nome_jogador || f.usuarios?.email || '—';
+    const jogador = f.dono?.nome || f.nome_jogador || f.dono?.email || '—';
     const personagem = r.personagem || f.nome_personagem || 'Sem nome';
     return `<tr>
       <td>${esc(jogador)}</td>
