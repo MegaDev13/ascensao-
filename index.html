@@ -838,6 +838,105 @@
       align-items: flex-end;
     }
 
+
+    .power-section-label {
+      margin: 2px 0 4px;
+      padding: 6px 2px;
+      font-family: var(--font-disp);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--cyan);
+      text-transform: uppercase;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .custom-power-item {
+      display: block;
+      padding: 0;
+      gap: 0;
+      align-items: stretch;
+    }
+
+    .custom-power-summary {
+      min-height: 30px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      font-size: 11px;
+    }
+
+    .custom-power-summary:hover {
+      background: rgba(0, 245, 255, 0.05);
+    }
+
+    .custom-power-bullet {
+      color: var(--cyan);
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .custom-power-name-button {
+      flex: 1;
+      min-width: 0;
+      padding: 0;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+      font-family: var(--font-disp);
+      font-weight: bold;
+      font-size: 12px;
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .custom-power-name-button:hover {
+      color: var(--cyan);
+      text-shadow: 0 0 5px var(--cyan-glow);
+    }
+
+    .custom-power-detail-panel {
+      display: none;
+      padding: 10px 12px 12px;
+      border-top: 1px solid var(--border);
+      background: rgba(5, 7, 12, 0.75);
+    }
+
+    .custom-power-detail-panel.active {
+      display: block;
+    }
+
+    .custom-power-detail-grid {
+      display: grid;
+      grid-template-columns: 105px minmax(0, 1fr);
+      gap: 5px 10px;
+      font-size: 10px;
+      line-height: 1.35;
+    }
+
+    .custom-power-detail-label {
+      color: var(--purple);
+      font-family: var(--font-disp);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .custom-power-detail-value {
+      color: var(--text);
+      overflow-wrap: anywhere;
+    }
+
+    .custom-power-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+      justify-content: flex-end;
+    }
+
     .power-acquired {
       font-family: var(--font-mono);
       font-size: 10px;
@@ -1453,20 +1552,11 @@
 
         <!-- TAB 4: PODERES -->
         <div class="tab-content" id="poderes-tab">
-          <div class="c-card" style="margin-bottom: 15px;">
-            <div class="c-card-title">SOFTWARE DE PODERES EXISTENCIAIS</div>
-            <p style="margin-bottom: 15px;" class="text-muted">Abaixo estão as árvores quânticas e biônicas de manipulação da realidade. Se você for especializado em uma árvore, ganha +1 dado em todos os seus testes de ativação e diminui em -1 o custo de Sincronia de seus poderes. Novos poderes custam PX de acordo com o nível.</p>
-            
-            <div class="powers-container" id="powers-tree-container">
-              <!-- Generates via JS -->
-            </div>
-          </div>
-
 
           <!-- CRIADOR DE PODERES PERSONALIZADOS -->
-          <div class="c-card" style="margin-top: 20px;">
+          <div class="c-card" style="margin-bottom: 15px;">
             <div class="c-card-title">⚙️ CRIADOR DE PODERES PERSONALIZADOS</div>
-            <p style="margin-bottom: 12px;" class="text-muted">Crie poderes inéditos. Após criar, adicione à ficha e compre normalmente com PX.</p>
+            <p style="margin-bottom: 12px;" class="text-muted">Crie poderes inéditos. Depois de criados, eles entram automaticamente na árvore tecnológica abaixo, agrupados por categoria, e podem ser comprados/reembolsados como poderes reais do sistema.</p>
             
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
               <div>
@@ -1537,11 +1627,17 @@
               <textarea id="custom-evolucoes" style="width:100%; height:38px;"></textarea>
             </div>
 
-            <button class="btn-terminal" onclick="criarPoderPersonalizado()" style="width:100%;">Criar Poder Personalizado</button>
+            <button id="custom-power-submit-btn" class="btn-terminal" onclick="criarPoderPersonalizado()" style="width:100%;">Criar Poder Personalizado</button>
+            <button id="custom-power-cancel-edit-btn" class="btn-terminal" onclick="cancelarEdicaoPoderPersonalizado()" style="width:100%; margin-top:6px; display:none; background:#444; border-color:#777;">Cancelar Edição</button>
+            <p class="text-muted" style="margin-top:8px; font-size:10px; text-align:center;">Após criar, expanda a categoria abaixo e clique no nome do poder para Comprar, Editar ou Excluir.</p>
+          </div>
 
-            <!-- Lista de poderes personalizados criados -->
-            <div id="custom-powers-list" style="margin-top:15px; border-top:1px solid var(--border); padding-top:10px;">
-              <!-- Populated by JS -->
+          <div class="c-card" style="margin-bottom: 15px;">
+            <div class="c-card-title">SOFTWARE DE PODERES EXISTENCIAIS</div>
+            <p style="margin-bottom: 15px;" class="text-muted">Abaixo estão as árvores tecnológicas de poderes. Categorias e poderes personalizados começam recolhidos para manter a navegação compacta mesmo com dezenas de poderes.</p>
+            
+            <div class="powers-container" id="powers-tree-container">
+              <!-- Generates via JS -->
             </div>
           </div>
 
@@ -2032,18 +2128,125 @@
       "reescrita_personalidade": ["guerra_eletronica"]
     };
 
-    // Helper: get power definition by id
+    // Categorias oficiais dos poderes personalizados (árvore tecnológica compacta)
+    const CUSTOM_POWER_CATEGORIES = [
+      { key: 'bionica', value: '🦾 Biônica', label: '🦾 BIÔNICA', aliases: ['bionica', 'biônica'] },
+      { key: 'neural', value: '🧠 Neural', label: '🧠 NEURAL', aliases: ['neural'] },
+      { key: 'ia-embarcada', value: '🤖 IA Embarcada', label: '🤖 IA EMBARCADA', aliases: ['ia embarcada', 'ia', 'inteligencia artificial', 'inteligência artificial'] },
+      { key: 'nanotecnologia', value: '🔬 Nanotecnologia', label: '🔬 NANOTECNOLOGIA', aliases: ['nanotecnologia', 'nano'] },
+      { key: 'quantica', value: '⚛ Quântica', label: '⚛ QUÂNTICA', aliases: ['quantica', 'quântica', 'quantum'] },
+      { key: 'existencial', value: '🌌 Existencial', label: '🌌 EXISTENCIAL', aliases: ['existencial', 'existencia', 'existência'] }
+    ];
+
+    // Estado visual dos accordions. Tudo começa fechado por padrão.
+    const powerTreeOpenState = {};
+    const powerDetailOpenState = {};
+    let editingCustomPowerId = null;
+    let pendingCustomPowerDeleteId = null;
+
+    function sanitizeKey(value) {
+      return String(value || '')
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-zA-Z0-9_-]+/g, '') || 'sem-chave';
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function formatPowerField(value, fallback = '—') {
+      const normalized = String(value ?? '').trim();
+      return escapeHTML(normalized || fallback).replace(/\n/g, '<br>');
+    }
+
+    function jsArg(value) {
+      return JSON.stringify(String(value ?? ''))
+        .replace(/</g, '\u003C')
+        .replace(/'/g, '&#39;');
+    }
+
+    function normalizarCategoriaTexto(value) {
+      return String(value || '')
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-zA-Z0-9\s]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toLowerCase();
+    }
+
+    function getCustomPowerCategoryConfig(category) {
+      const normalized = normalizarCategoriaTexto(category);
+      return CUSTOM_POWER_CATEGORIES.find(cat => {
+        if (cat.key === normalized) return true;
+        if (normalizarCategoriaTexto(cat.value) === normalized) return true;
+        if (normalizarCategoriaTexto(cat.label) === normalized) return true;
+        return cat.aliases.some(alias => normalized.includes(normalizarCategoriaTexto(alias)));
+      }) || CUSTOM_POWER_CATEGORIES[CUSTOM_POWER_CATEGORIES.length - 1];
+    }
+
+    function getCustomPowers() {
+      if (!charState.customPowers) charState.customPowers = [];
+      charState.customPowers = charState.customPowers.filter(Boolean);
+      charState.customPowers.forEach((power, index) => {
+        if (!power.id) power.id = `custom_imported_${power.createdAt || Date.now()}_${index}`;
+      });
+      return charState.customPowers;
+    }
+
+    function getPowerDisplayName(power) {
+      return power?.name || power?.nome || 'Poder sem nome';
+    }
+
+    function getPowerSincroniaCost(power) {
+      const raw = power?.cost ?? power?.custoSincronia ?? power?.custoSinc ?? 0;
+      const parsed = Number(raw);
+      return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    function getPowerPXValue(power) {
+      const raw = power?.pxCost ?? power?.custoPX ?? power?.px ?? 15;
+      const parsed = Number(raw);
+      return Number.isFinite(parsed) ? parsed : 15;
+    }
+
+    function normalizeCustomPowerForSystem(power) {
+      if (!power) return null;
+      const category = getCustomPowerCategoryConfig(power.categoria || power.category || power.tree);
+      const name = getPowerDisplayName(power);
+      const sincCost = getPowerSincroniaCost(power);
+      const pxCost = getPowerPXValue(power);
+      const effect = power.efeito ?? power.desc ?? '';
+      return {
+        ...power,
+        nome: name,
+        name,
+        categoria: category.value,
+        category: category.value,
+        tree: category.label,
+        isCustom: true,
+        cost: sincCost,
+        custoSincronia: sincCost,
+        pxCost,
+        custoPX: pxCost,
+        desc: effect,
+        efeito: effect,
+        lvl: power.lvl || 1
+      };
+    }
+
+    // Helper: get power definition by id (nativos + personalizados normalizados)
     function getPowerDef(powerId) {
       for (let tree in POWER_DATABASE) {
         const found = POWER_DATABASE[tree].find(p => p.id === powerId);
         if (found) return { ...found, tree };
       }
-      // Check custom powers
-      if (charState.customPowers) {
-        const custom = charState.customPowers.find(p => p.id === powerId);
-        if (custom) return { ...custom, tree: 'Personalizados', isCustom: true };
-      }
-      return null;
+      const custom = getCustomPowers().find(p => p.id === powerId);
+      return custom ? normalizeCustomPowerForSystem(custom) : null;
     }
 
     // Helper: compute PX cost (centralized)
@@ -2178,10 +2381,9 @@ const EQUIPMENT_DATABASE = [
       buildPowersInterface();
       buildItemDatabase();
       recalculateAll();
-      if (typeof renderizarPoderes === 'function') renderizarPoderes();
+      if (typeof renderizarArvoreDePoderes === 'function') renderizarArvoreDePoderes();
       if (typeof renderizarInventario === 'function') renderizarInventario();
       if (typeof loadAvatarFromState === 'function') loadAvatarFromState();
-      if (typeof renderizarListaPoderesPersonalizados === 'function') renderizarListaPoderesPersonalizados();
       syncFormToState();
       addLog("CRA", "Banco de dados cognitivo carregado com sucesso no ano 2301.");
       
@@ -2349,7 +2551,7 @@ const EQUIPMENT_DATABASE = [
       updateUIForAttributes();
       updateUIForSkills();
       updateUIForPowers();
-      if (typeof renderizarPoderes === 'function') renderizarPoderes();
+      if (typeof renderizarArvoreDePoderes === 'function') renderizarArvoreDePoderes();
       if (typeof renderizarInventario === 'function') renderizarInventario();
       if (typeof loadAvatarFromState === 'function') loadAvatarFromState();
       if (typeof syncBackstoryToState === 'function') syncBackstoryToState();
@@ -2574,61 +2776,196 @@ const EQUIPMENT_DATABASE = [
     function renderizarPoderes() {
       const cont = document.getElementById('powers-tree-container');
       if (!cont) return;
-      cont.innerHTML = "";
-      
+      cont.innerHTML = '';
+
       const acquired = getAcquiredPowers();
-      
+
+      // 1) Poderes personalizados primeiro, logo abaixo do criador.
+      renderizarCategoriasPoderesPersonalizados(cont, acquired);
+
+      // 2) Árvores nativas continuam na mesma estrutura visual/sistêmica.
+      renderizarArvoresNativasDePoderes(cont, acquired);
+
+      updateUIForPowers();
+    }
+
+    function renderizarArvoreDePoderes() {
+      renderizarPoderes();
+    }
+
+    function renderizarCategoriasPoderesPersonalizados(cont, acquired) {
+      const customPowers = getCustomPowers();
+      const section = document.createElement('div');
+      section.className = 'power-section-label';
+      section.textContent = 'Poderes personalizados';
+      cont.appendChild(section);
+
+      CUSTOM_POWER_CATEGORIES.forEach(cat => {
+        const powersInCategory = customPowers
+          .map(normalizeCustomPowerForSystem)
+          .filter(Boolean)
+          .filter(power => getCustomPowerCategoryConfig(power.categoria).key === cat.key)
+          .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0) || a.name.localeCompare(b.name));
+
+        cont.appendChild(renderizarCategoriaPersonalizada(cat, powersInCategory, acquired));
+      });
+    }
+
+    function renderizarCategoriaPersonalizada(cat, powersInCategory, acquired) {
+      const treeKey = `custom-${cat.key}`;
+      const isOpen = !!powerTreeOpenState[treeKey];
+      const treeDiv = document.createElement('div');
+      treeDiv.className = 'power-tree custom-power-tree';
+
+      treeDiv.innerHTML = `
+        <div class="power-tree-header" data-tree-key="${treeKey}" data-tree-title="${escapeHTML(`${cat.label} (${powersInCategory.length})`)}" onclick='togglePowerTreeByKey(${jsArg(treeKey)})'>
+          <h4 id="tree-title-${treeKey}">${isOpen ? '▼' : '▶'} ${escapeHTML(cat.label)} (${powersInCategory.length})</h4>
+        </div>
+        <div class="power-tree-content ${isOpen ? 'active' : ''}" id="tree-content-${treeKey}"></div>
+      `;
+
+      const contentDiv = treeDiv.querySelector('.power-tree-content');
+      if (powersInCategory.length === 0) {
+        contentDiv.innerHTML = '<p class="text-muted" style="font-size:10px; text-align:center; margin:0;">Nenhum poder nesta categoria.</p>';
+      } else {
+        powersInCategory.forEach(power => contentDiv.appendChild(renderizarItemPoderPersonalizado(power, acquired)));
+      }
+
+      return treeDiv;
+    }
+
+    function renderizarItemPoderPersonalizado(power, acquired) {
+      const cp = normalizeCustomPowerForSystem(power);
+      const isAcquired = acquired.includes(cp.id);
+      const detailKey = sanitizeKey(cp.id);
+      const detailOpen = !!powerDetailOpenState[cp.id];
+      const category = getCustomPowerCategoryConfig(cp.categoria);
+      const item = document.createElement('div');
+      item.className = 'power-item custom-power-item';
+
+      const actionBtn = isAcquired
+        ? `<button class="btn-terminal" style="font-size:9px; padding:2px 7px; background:#c33; border-color:#c33;" onclick='removerPoder(${jsArg(cp.id)})'>Reembolsar</button>`
+        : `<button class="btn-terminal" style="font-size:9px; padding:2px 7px;" onclick='comprarPoder(${jsArg(cp.id)})'>Comprar</button>`;
+      const deletePending = pendingCustomPowerDeleteId === cp.id;
+      const deleteLabel = deletePending ? 'Confirmar Exclusão' : 'Excluir';
+      const deleteStyle = deletePending
+        ? 'font-size:9px; padding:2px 7px; background:#ff9f1a; border-color:#ff9f1a; color:#000;'
+        : 'font-size:9px; padding:2px 7px; background:#c33; border-color:#c33;';
+
+      item.innerHTML = `
+        <div class="custom-power-summary">
+          <span class="custom-power-bullet">•</span>
+          <button type="button" class="custom-power-name-button" onclick='toggleCustomPowerDetails(${jsArg(cp.id)})' title="Clique para expandir/recolher">${escapeHTML(cp.name)}</button>
+          ${isAcquired ? '<span class="power-acquired">✔ Adquirido</span>' : `<span class="power-cost">${cp.pxCost} PX</span>`}
+        </div>
+        <div class="custom-power-detail-panel ${detailOpen ? 'active' : ''}" id="custom-power-detail-${detailKey}">
+          <div class="custom-power-detail-grid">
+            <div class="custom-power-detail-label">Nome:</div>
+            <div class="custom-power-detail-value">${formatPowerField(cp.name)}</div>
+
+            <div class="custom-power-detail-label">Categoria:</div>
+            <div class="custom-power-detail-value">${escapeHTML(category.value)}</div>
+
+            <div class="custom-power-detail-label">Requisitos:</div>
+            <div class="custom-power-detail-value">${formatPowerField(cp.requisitos)}</div>
+
+            <div class="custom-power-detail-label">Custo:</div>
+            <div class="custom-power-detail-value">${escapeHTML(cp.cost)} Sincronia</div>
+
+            <div class="custom-power-detail-label">Alcance:</div>
+            <div class="custom-power-detail-value">${formatPowerField(cp.alcance)}</div>
+
+            <div class="custom-power-detail-label">Duração:</div>
+            <div class="custom-power-detail-value">${formatPowerField(cp.duracao)}</div>
+
+            <div class="custom-power-detail-label">Recarga:</div>
+            <div class="custom-power-detail-value">${formatPowerField(cp.recarga)}</div>
+
+            <div class="custom-power-detail-label">Efeito:</div>
+            <div class="custom-power-detail-value">${formatPowerField(cp.efeito)}</div>
+
+            <div class="custom-power-detail-label">Limitações:</div>
+            <div class="custom-power-detail-value">${formatPowerField(cp.limitacoes)}</div>
+
+            <div class="custom-power-detail-label">Riscos:</div>
+            <div class="custom-power-detail-value">${formatPowerField(cp.riscos)}</div>
+
+            <div class="custom-power-detail-label">Evoluções:</div>
+            <div class="custom-power-detail-value">${formatPowerField(cp.evolucoes)}</div>
+          </div>
+          <div class="custom-power-actions">
+            ${actionBtn}
+            <button class="btn-terminal" style="font-size:9px; padding:2px 7px;" onclick='editarPoderPersonalizado(${jsArg(cp.id)})'>Editar</button>
+            <button class="btn-terminal" style="${deleteStyle}" onclick='excluirPoderPersonalizado(${jsArg(cp.id)})'>${deleteLabel}</button>
+          </div>
+        </div>
+      `;
+
+      return item;
+    }
+
+    function renderizarArvoresNativasDePoderes(cont, acquired) {
+      const section = document.createElement('div');
+      section.className = 'power-section-label';
+      section.textContent = 'Árvores nativas';
+      cont.appendChild(section);
+
       for (let treeName in POWER_DATABASE) {
+        const powers = POWER_DATABASE[treeName];
+        const treeKey = `native-${sanitizeKey(treeName)}`;
+        const isOpen = !!powerTreeOpenState[treeKey];
         const treeDiv = document.createElement('div');
         treeDiv.className = 'power-tree';
         
         const isSpecialized = charState.specializedTree === treeName;
+        const acquiredCount = powers.filter(p => acquired.includes(p.id)).length;
         
         treeDiv.innerHTML = `
-          <div class="power-tree-header" onclick="togglePowerTree('${treeName}')">
-            <h4>▼ Árvore: ${treeName}</h4>
+          <div class="power-tree-header" data-tree-key="${treeKey}" data-tree-title="${escapeHTML(`Árvore: ${treeName} (${powers.length})`)}" onclick='togglePowerTreeByKey(${jsArg(treeKey)})'>
+            <h4 id="tree-title-${treeKey}">${isOpen ? '▼' : '▶'} Árvore: ${escapeHTML(treeName)} (${powers.length})</h4>
             <div class="tree-meta">
               <label style="display:inline-flex; align-items:center; gap:5px; margin:0;" onclick="event.stopPropagation()">
-                <input type="checkbox" onchange="specializeTree('${treeName}', this.checked)" ${isSpecialized ? 'checked' : ''}>
+                <input type="checkbox" onchange='specializeTree(${jsArg(treeName)}, this.checked)' ${isSpecialized ? 'checked' : ''}>
                 ⭐ Especializado (-1 Custo Sinc, +1 Dado)
               </label>
-              <span id="tree-count-${treeName.replace(/\s+/g,'')}">Poderes: 0</span>
+              <span id="tree-count-${treeKey}">Adquiridos: ${acquiredCount}/${powers.length}</span>
             </div>
           </div>
-          <div class="power-tree-content" id="tree-content-${treeName.replace(/\s+/g, '')}">
+          <div class="power-tree-content ${isOpen ? 'active' : ''}" id="tree-content-${treeKey}">
             <!-- items -->
           </div>
         `;
         
         const contentDiv = treeDiv.querySelector('.power-tree-content');
         
-        POWER_DATABASE[treeName].forEach(p => {
+        powers.forEach(p => {
           const item = document.createElement('div');
           item.className = 'power-item';
           
           const isAcquired = acquired.includes(p.id);
           const pxCost = getPowerPxCost(p);
+          const finalSincCost = isSpecialized ? Math.max(0, p.cost - 1) : p.cost;
           
-          let btnHTML = "";
+          let btnHTML = '';
           if (isAcquired) {
             btnHTML = `
               <span class="power-acquired">✔ Adquirido</span>
-              <button class="btn-terminal btn-purple" style="font-size:9px; padding:2px 5px; margin-right:4px;" onclick="activatePower('${p.id}')">Ativar Poder</button>
-              <button class="btn-terminal" style="font-size:9px; padding:2px 5px; background:#c33; border-color:#c33;" onclick="removerPoder('${p.id}')">Remover Poder / Reembolsar</button>
+              <button class="btn-terminal btn-purple" style="font-size:9px; padding:2px 5px; margin-right:4px;" onclick='activatePower(${jsArg(p.id)})'>Ativar Poder</button>
+              <button class="btn-terminal" style="font-size:9px; padding:2px 5px; background:#c33; border-color:#c33;" onclick='removerPoder(${jsArg(p.id)})'>Remover Poder / Reembolsar</button>
             `;
           } else {
             btnHTML = `
-              <button class="btn-terminal" style="font-size:9px; padding:2px 5px;" onclick="comprarPoder('${p.id}')">Comprar Poder (-${pxCost} PX)</button>
+              <button class="btn-terminal" style="font-size:9px; padding:2px 5px;" onclick='comprarPoder(${jsArg(p.id)})'>Comprar Poder (-${pxCost} PX)</button>
             `;
           }
           
           item.innerHTML = `
             <div class="power-desc-col">
               <div class="power-name-row">
-                <span class="power-name">[Nível ${p.lvl}] ${p.name}</span>
-                <span class="power-cost">Custo: ${isSpecialized ? Math.max(0, p.cost - 1) : p.cost} Sinc</span>
+                <span class="power-name">[Nível ${escapeHTML(p.lvl)}] ${escapeHTML(p.name)}</span>
+                <span class="power-cost">Custo: ${finalSincCost} Sinc</span>
               </div>
-              <p class="power-detail">${p.desc}</p>
+              <p class="power-detail">${escapeHTML(p.desc)}</p>
             </div>
             <div class="power-btn-col">
               ${btnHTML}
@@ -2639,270 +2976,317 @@ const EQUIPMENT_DATABASE = [
         
         cont.appendChild(treeDiv);
       }
-      
-      // update counts
-      updateUIForPowers();
-
-      // Render custom powers as a separate tree
-      renderizarPoderesPersonalizados();
     }
-
-    function renderizarPoderesPersonalizados() {
-      const cont = document.getElementById('powers-tree-container');
-      if (!cont || !charState.customPowers || charState.customPowers.length === 0) return;
-
-      // Create or find custom tree container
-      let customTree = document.getElementById('custom-powers-tree');
-      if (!customTree) {
-        customTree = document.createElement('div');
-        customTree.className = 'power-tree';
-        customTree.id = 'custom-powers-tree';
-        cont.appendChild(customTree);
-      }
-
-      const acquired = getAcquiredPowers();
-
-      let html = `
-        <div class="power-tree-header" onclick="togglePowerTree('Personalizados')">
-          <h4>▼ Árvore: Personalizados</h4>
-          <div class="tree-meta">
-            <span id="tree-count-Personalizados">Poderes: ${charState.customPowers.length}</span>
-          </div>
-        </div>
-        <div class="power-tree-content active" id="tree-content-Personalizados">
-      `;
-
-      charState.customPowers.forEach(cp => {
-        const isAcquired = acquired.includes(cp.id);
-        const pxCost = cp.custoPX || cp.pxCost || 15;
-        const sincCost = cp.custoSincronia || 0;
-
-        let btns = '';
-        if (isAcquired) {
-          btns = `
-            <span class="power-acquired">✔ Adquirido</span>
-            <button class="btn-terminal btn-purple" style="font-size:9px; padding:2px 5px;" onclick="activatePower('${cp.id}')">Ativar</button>
-            <button class="btn-terminal" style="font-size:9px; padding:2px 5px; background:#c33;" onclick="removerPoder('${cp.id}')">Remover</button>
-          `;
-        } else {
-          btns = `
-            <button class="btn-terminal" style="font-size:9px; padding:2px 5px;" onclick="comprarPoder('${cp.id}')">Comprar (-${pxCost} PX)</button>
-            <button class="btn-terminal" style="font-size:8px; padding:1px 4px; margin-left:3px;" onclick="editarPoderPersonalizado('${cp.id}')">Editar</button>
-            <button class="btn-terminal" style="font-size:8px; padding:1px 4px; background:#c33;" onclick="excluirPoderPersonalizado('${cp.id}')">Excluir</button>
-          `;
-        }
-
-        html += `
-          <div class="power-item">
-            <div class="power-desc-col">
-              <div class="power-name-row">
-                <span class="power-name">[Personalizado] ${cp.nome}</span>
-                <span class="power-cost">Custo: ${sincCost} Sinc / ${pxCost} PX</span>
-              </div>
-              <div style="font-size:9px; color:#888; margin:2px 0;">${cp.categoria || ''} • ${cp.requisitos || ''}</div>
-              <p class="power-detail" style="margin:2px 0; font-size:10px;">${cp.efeito || ''}</p>
-              ${cp.limitacoes ? `<div style="font-size:8px; color:#f66;">Limitações: ${cp.limitacoes}</div>` : ''}
-              ${cp.riscos ? `<div style="font-size:8px; color:#fa0;">Riscos: ${cp.riscos}</div>` : ''}
-            </div>
-            <div class="power-btn-col">
-              ${btns}
-            </div>
-          </div>
-        `;
-      });
-
-      html += `</div>`;
-      customTree.innerHTML = html;
-      renderizarListaPoderesPersonalizados();
-    }
-
 
     // Backward compat alias
     function buildPowersInterface() {
-      renderizarPoderes();
+      renderizarArvoreDePoderes();
+    }
+
     // ========== SISTEMA DE PODERES PERSONALIZADOS ==========
-    function criarPoderPersonalizado() {
-      const nome = document.getElementById('custom-nome').value.trim();
+    function setCustomFieldValue(id, value) {
+      const el = document.getElementById(id);
+      if (el) el.value = value ?? '';
+    }
+
+    function getCustomFieldValue(id) {
+      const el = document.getElementById(id);
+      return el ? el.value : '';
+    }
+
+    function numberFromCustomField(id, fallback = 0) {
+      const parsed = Number.parseInt(getCustomFieldValue(id), 10);
+      return Number.isFinite(parsed) ? Math.max(0, parsed) : fallback;
+    }
+
+    function setCustomPowerFormMode(isEditing) {
+      const submitBtn = document.getElementById('custom-power-submit-btn');
+      const cancelBtn = document.getElementById('custom-power-cancel-edit-btn');
+      if (submitBtn) {
+        submitBtn.innerText = isEditing ? 'Salvar Alterações do Poder' : 'Criar Poder Personalizado';
+        submitBtn.style.borderColor = isEditing ? 'var(--purple)' : 'var(--cyan)';
+        submitBtn.style.color = isEditing ? 'var(--purple)' : 'var(--cyan)';
+      }
+      if (cancelBtn) cancelBtn.style.display = isEditing ? 'block' : 'none';
+    }
+
+    function resetCustomPowerForm() {
+      editingCustomPowerId = null;
+      const defaults = {
+        'custom-nome': '',
+        'custom-categoria': '🦾 Biônica',
+        'custom-custoPX': 15,
+        'custom-custoSinc': 2,
+        'custom-alcance': 'Toque',
+        'custom-duracao': '1 cena',
+        'custom-recarga': '1 rodada',
+        'custom-requisitos': 'INT 3',
+        'custom-efeito': '',
+        'custom-limitacoes': '',
+        'custom-riscos': '',
+        'custom-evolucoes': ''
+      };
+
+      Object.entries(defaults).forEach(([id, value]) => setCustomFieldValue(id, value));
+      setCustomPowerFormMode(false);
+    }
+
+    function cancelarEdicaoPoderPersonalizado() {
+      const wasEditing = editingCustomPowerId;
+      resetCustomPowerForm();
+      if (wasEditing) addLog('CRA', 'Edição de poder personalizado cancelada.');
+    }
+
+    function getCustomPowerFormData(existingPower = null) {
+      const nome = getCustomFieldValue('custom-nome').trim();
       if (!nome) {
-        alert("Nome do poder é obrigatório.");
+        addLog('CRA', 'Nome do poder é obrigatório para criar ou salvar alterações.', 'system');
+        const nomeEl = document.getElementById('custom-nome');
+        if (nomeEl) {
+          nomeEl.focus();
+          nomeEl.style.borderColor = 'var(--magenta)';
+          setTimeout(() => { nomeEl.style.borderColor = ''; }, 1200);
+        }
+        return null;
+      }
+
+      const categoria = getCustomPowerCategoryConfig(getCustomFieldValue('custom-categoria'));
+      const custoSincronia = numberFromCustomField('custom-custoSinc', 0);
+      const custoPX = numberFromCustomField('custom-custoPX', 15);
+      const efeito = getCustomFieldValue('custom-efeito').trim();
+      const id = existingPower?.id || `custom_${Date.now()}`;
+
+      return {
+        ...(existingPower || {}),
+        id,
+        nome,
+        name: nome,
+        categoria: categoria.value,
+        category: categoria.value,
+        requisitos: getCustomFieldValue('custom-requisitos').trim(),
+        custoSincronia,
+        cost: custoSincronia,
+        custoPX,
+        pxCost: custoPX,
+        alcance: getCustomFieldValue('custom-alcance').trim(),
+        duracao: getCustomFieldValue('custom-duracao').trim(),
+        recarga: getCustomFieldValue('custom-recarga').trim(),
+        efeito,
+        desc: efeito,
+        limitacoes: getCustomFieldValue('custom-limitacoes').trim(),
+        riscos: getCustomFieldValue('custom-riscos').trim(),
+        evolucoes: getCustomFieldValue('custom-evolucoes').trim(),
+        lvl: existingPower?.lvl || 1,
+        isCustom: true,
+        createdAt: existingPower?.createdAt || Date.now(),
+        updatedAt: Date.now()
+      };
+    }
+
+    function preencherFormularioPoderPersonalizado(power) {
+      const p = normalizeCustomPowerForSystem(power);
+      setCustomFieldValue('custom-nome', p.nome || p.name || '');
+      setCustomFieldValue('custom-categoria', getCustomPowerCategoryConfig(p.categoria).value);
+      setCustomFieldValue('custom-custoPX', p.custoPX ?? p.pxCost ?? 15);
+      setCustomFieldValue('custom-custoSinc', p.custoSincronia ?? p.cost ?? 0);
+      setCustomFieldValue('custom-alcance', p.alcance || '');
+      setCustomFieldValue('custom-duracao', p.duracao || '');
+      setCustomFieldValue('custom-recarga', p.recarga || '');
+      setCustomFieldValue('custom-requisitos', p.requisitos || '');
+      setCustomFieldValue('custom-efeito', p.efeito || p.desc || '');
+      setCustomFieldValue('custom-limitacoes', p.limitacoes || '');
+      setCustomFieldValue('custom-riscos', p.riscos || '');
+      setCustomFieldValue('custom-evolucoes', p.evolucoes || '');
+    }
+
+    function criarPoderPersonalizado() {
+      if (editingCustomPowerId) {
+        salvarEdicaoPoderPersonalizado();
         return;
       }
 
-      if (!charState.customPowers) charState.customPowers = [];
+      const newPower = getCustomPowerFormData();
+      if (!newPower) return;
 
-      const newPower = {
-        id: 'custom_' + Date.now(),
-        nome: nome,
-        categoria: document.getElementById('custom-categoria').value,
-        requisitos: document.getElementById('custom-requisitos').value.trim(),
-        custoSincronia: parseInt(document.getElementById('custom-custoSinc').value) || 0,
-        custoPX: parseInt(document.getElementById('custom-custoPX').value) || 15,
-        alcance: document.getElementById('custom-alcance').value.trim(),
-        duracao: document.getElementById('custom-duracao').value.trim(),
-        recarga: document.getElementById('custom-recarga').value.trim(),
-        efeito: document.getElementById('custom-efeito').value.trim(),
-        limitacoes: document.getElementById('custom-limitacoes').value.trim(),
-        riscos: document.getElementById('custom-riscos').value.trim(),
-        evolucoes: document.getElementById('custom-evolucoes').value.trim(),
-        lvl: 1,
-        createdAt: Date.now()
-      };
-
-      charState.customPowers.push(newPower);
-      addLog("CRA", `Poder personalizado criado: ${nome}`);
-
-      // Clear form
-      document.querySelectorAll('#poderes-tab input, #poderes-tab textarea, #poderes-tab select').forEach(el => {
-        if (el.id && el.id.startsWith('custom-')) {
-          if (el.tagName === 'SELECT') el.selectedIndex = 0;
-          else el.value = el.type === 'number' ? (el.id.includes('custo') ? (el.id.includes('PX') ? 15 : 2) : '') : '';
-        }
-      });
-
-      renderizarPoderes();
-      renderizarPoderesPersonalizados();
-      renderizarListaPoderesPersonalizados();
+      getCustomPowers().push(newPower);
+      pendingCustomPowerDeleteId = null;
+      addLog('CRA', `Poder personalizado criado: ${newPower.nome}`);
+      resetCustomPowerForm();
+      renderizarArvoreDePoderes();
       syncFormToState();
     }
 
     function editarPoderPersonalizado(id) {
       const p = getCustomPower(id);
-      if (!p) return;
+      if (!p) {
+        addLog('CRA', `Poder personalizado não encontrado para edição: ${id}`, 'system');
+        return;
+      }
 
-      // Simple inline edit via prompts for now (can be improved later)
-      const novoNome = prompt("Novo nome:", p.nome) || p.nome;
-      const novoEfeito = prompt("Novo efeito:", p.efeito) || p.efeito;
-      const novoCustoPX = parseInt(prompt("Novo custo PX:", p.custoPX)) || p.custoPX;
+      pendingCustomPowerDeleteId = null;
+      editingCustomPowerId = id;
+      preencherFormularioPoderPersonalizado(p);
+      setCustomPowerFormMode(true);
 
-      p.nome = novoNome;
-      p.efeito = novoEfeito;
-      p.custoPX = novoCustoPX;
+      const catKey = getCustomPowerCategoryConfig(p.categoria).key;
+      powerTreeOpenState[`custom-${catKey}`] = true;
+      powerDetailOpenState[id] = true;
+      renderizarArvoreDePoderes();
 
-      addLog("CRA", `Poder personalizado editado: ${novoNome}`);
-      renderizarPoderes();
-      renderizarPoderesPersonalizados();
-      renderizarListaPoderesPersonalizados();
+      const formCard = document.getElementById('custom-nome')?.closest('.c-card');
+      if (formCard) formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const nomeEl = document.getElementById('custom-nome');
+      if (nomeEl) nomeEl.focus();
+      addLog('CRA', `Editando poder personalizado: ${p.nome || p.name}. Altere os campos e clique em [Salvar Alterações do Poder].`);
+    }
+
+    function salvarEdicaoPoderPersonalizado() {
+      const p = getCustomPower(editingCustomPowerId);
+      if (!p) {
+        addLog('CRA', 'Não foi possível salvar: poder personalizado em edição não existe mais.', 'system');
+        resetCustomPowerForm();
+        renderizarArvoreDePoderes();
+        return;
+      }
+
+      const editedPower = getCustomPowerFormData(p);
+      if (!editedPower) return;
+
+      Object.assign(p, editedPower);
+      pendingCustomPowerDeleteId = null;
+      addLog('CRA', `Poder personalizado editado: ${p.nome}`);
+      recalcularPX();
+      resetCustomPowerForm();
+      renderizarArvoreDePoderes();
+      recalculateAll();
       syncFormToState();
     }
 
     function excluirPoderPersonalizado(id) {
       const p = getCustomPower(id);
-      if (!p) return;
+      if (!p) {
+        addLog('CRA', `Poder personalizado não encontrado para exclusão: ${id}`, 'system');
+        return;
+      }
+
+      const nome = p.nome || p.name || id;
+
+      // Confirmação sem prompt/confirm nativo: primeiro clique arma, segundo clique exclui.
+      if (pendingCustomPowerDeleteId !== id) {
+        pendingCustomPowerDeleteId = id;
+        const catKey = getCustomPowerCategoryConfig(p.categoria).key;
+        powerTreeOpenState[`custom-${catKey}`] = true;
+        powerDetailOpenState[id] = true;
+        renderizarArvoreDePoderes();
+        addLog('CRA', `Confirmação necessária: clique em [Confirmar Exclusão] para excluir "${nome}".`);
+        return;
+      }
 
       const acquired = getAcquiredPowers();
       if (acquired.includes(id)) {
-        if (!confirm("Este poder já foi adquirido. Removê-lo da ficha e excluir completamente?")) return;
-        // Remove from acquired first
         const idx = charState.powersAcquired.indexOf(id);
         if (idx > -1) charState.powersAcquired.splice(idx, 1);
-        // Refund using existing logic
-        const custo = p.custoPX || 15;
-        charState.px.spent = Math.max(0, charState.px.spent - custo);
-      } else {
-        if (!confirm(`Excluir o poder personalizado "${p.nome}"?`)) return;
       }
 
-      charState.customPowers = charState.customPowers.filter(cp => cp.id !== id);
-      addLog("CRA", `Poder personalizado excluído: ${p.nome}`);
+      charState.customPowers = getCustomPowers().filter(cp => cp.id !== id);
+      if (editingCustomPowerId === id) resetCustomPowerForm();
+      pendingCustomPowerDeleteId = null;
+      delete powerDetailOpenState[id];
+      addLog('CRA', `Poder personalizado excluído: ${nome}`);
 
-      renderizarPoderes();
-      renderizarPoderesPersonalizados();
+      recalcularPX();
+      renderizarArvoreDePoderes();
       recalculateAll();
       syncFormToState();
     }
 
     function adicionarPoderPersonalizadoAoFicha(id) {
-      // This is now handled by the "Comprar" button in the list which calls comprarPoder
-      // We keep this for backward compat if needed
       comprarPoder(id);
     }
 
-
+    // Compatibilidade: chamadas antigas agora apenas reconstruem a árvore real.
     function renderizarListaPoderesPersonalizados() {
-      const container = document.getElementById('custom-powers-list');
-      if (!container) return;
-      container.innerHTML = '';
-
-      if (!charState.customPowers || charState.customPowers.length === 0) {
-        container.innerHTML = '<p class="text-muted" style="font-size:10px; text-align:center;">Nenhum poder personalizado criado ainda.</p>';
-        return;
-      }
-
-      const acquired = getAcquiredPowers();
-
-      charState.customPowers.forEach(cp => {
-        const isAcq = acquired.includes(cp.id);
-        const div = document.createElement('div');
-        div.style.cssText = 'border:1px solid var(--border); padding:6px; margin-bottom:6px; border-radius:3px; font-size:10px;';
-        
-        let actionBtns = '';
-        if (isAcq) {
-          actionBtns = `<button class="btn-terminal" style="font-size:8px; padding:1px 5px;" onclick="removerPoder('${cp.id}')">Remover da Ficha</button>`;
-        } else {
-          actionBtns = `
-            <button class="btn-terminal" style="font-size:8px; padding:1px 5px;" onclick="comprarPoder('${cp.id}')">Adicionar à Ficha</button>
-            <button class="btn-terminal" style="font-size:8px; padding:1px 5px; margin-left:3px;" onclick="editarPoderPersonalizado('${cp.id}')">Editar</button>
-            <button class="btn-terminal" style="font-size:8px; padding:1px 5px; margin-left:3px; background:#c33;" onclick="excluirPoderPersonalizado('${cp.id}')">Excluir</button>
-          `;
-        }
-
-        div.innerHTML = `
-          <div style="font-weight:600;">${cp.nome} <span style="color:#888; font-size:8px;">(${cp.categoria})</span></div>
-          <div style="font-size:8px; color:#aaa;">Custo: ${cp.custoPX || 15} PX / ${cp.custoSincronia || 0} Sinc</div>
-          <div style="margin-top:4px;">${actionBtns}</div>
-        `;
-        container.appendChild(div);
-      });
+      renderizarArvoreDePoderes();
     }
 
-    // Make sure custom powers are considered when updating counts
-    const originalUpdateUIForPowers = updateUIForPowers;
-    updateUIForPowers = function() {
-      originalUpdateUIForPowers();
-      const cnt = document.getElementById('tree-count-Personalizados');
-      if (cnt && charState.customPowers) {
-        cnt.innerText = `Poderes: ${charState.customPowers.length}`;
-      }
-    };
+    function togglePowerTreeByKey(treeKey) {
+      const key = sanitizeKey(treeKey);
+      const content = document.getElementById(`tree-content-${key}`);
+      if (!content) return;
+      playBeep(900, 0.03);
+      const willOpen = !content.classList.contains('active');
+      powerTreeOpenState[key] = willOpen;
+      content.classList.toggle('active', willOpen);
 
+      const title = document.getElementById(`tree-title-${key}`);
+      const header = document.querySelector(`[data-tree-key="${key}"]`);
+      const titleText = header?.dataset?.treeTitle || (title ? title.innerText.replace(/^[▶▼]\s*/, '') : '');
+      if (title) title.innerText = `${willOpen ? '▼' : '▶'} ${titleText}`;
     }
 
     function togglePowerTree(treeName) {
-      playBeep(900, 0.03);
-      const c = document.getElementById(`tree-content-${treeName.replace(/\s+/g, '')}`);
-      c.classList.toggle('active');
+      const directKey = sanitizeKey(treeName);
+      if (document.getElementById(`tree-content-${directKey}`)) {
+        togglePowerTreeByKey(directKey);
+        return;
+      }
+      const nativeKey = `native-${sanitizeKey(treeName)}`;
+      if (document.getElementById(`tree-content-${nativeKey}`)) {
+        togglePowerTreeByKey(nativeKey);
+        return;
+      }
+      const customKey = `custom-${getCustomPowerCategoryConfig(treeName).key}`;
+      togglePowerTreeByKey(customKey);
+    }
+
+    function toggleCustomPowerDetails(powerId) {
+      const key = sanitizeKey(powerId);
+      const panel = document.getElementById(`custom-power-detail-${key}`);
+      if (!panel) return;
+      playBeep(980, 0.03);
+      const willOpen = !panel.classList.contains('active');
+      powerDetailOpenState[powerId] = willOpen;
+      panel.classList.toggle('active', willOpen);
     }
 
     function updateUIForPowers() {
       const acquired = getAcquiredPowers();
+
       for (let treeName in POWER_DATABASE) {
-        let count = 0;
-        POWER_DATABASE[treeName].forEach(p => {
-          if (acquired.includes(p.id)) count++;
-        });
-        const cntSpan = document.getElementById(`tree-count-${treeName.replace(/\s+/g,'')}`);
-        if (cntSpan) cntSpan.innerText = `Poderes: ${count}`;
+        const treeKey = `native-${sanitizeKey(treeName)}`;
+        const total = POWER_DATABASE[treeName].length;
+        const count = POWER_DATABASE[treeName].filter(p => acquired.includes(p.id)).length;
+        const cntSpan = document.getElementById(`tree-count-${treeKey}`);
+        if (cntSpan) cntSpan.innerText = `Adquiridos: ${count}/${total}`;
       }
+
+      const customPowers = getCustomPowers().map(normalizeCustomPowerForSystem).filter(Boolean);
+      CUSTOM_POWER_CATEGORIES.forEach(cat => {
+        const total = customPowers.filter(power => getCustomPowerCategoryConfig(power.categoria).key === cat.key).length;
+        const cntSpan = document.getElementById(`tree-count-custom-${cat.key}`);
+        if (cntSpan) cntSpan.innerText = `${total} poder${total === 1 ? '' : 'es'}`;
+      });
     }
 
     function specializeTree(treeName, checked) {
       playBeep(1100, 0.08);
       if (checked) {
         charState.specializedTree = treeName;
-        addLog("CRA", `Redirecionando especialização neural para a Árvore de ${treeName}. Modificadores quânticos aplicados.`);
+        addLog('CRA', `Redirecionando especialização neural para a Árvore de ${treeName}. Modificadores quânticos aplicados.`);
       } else {
         if (charState.specializedTree === treeName) {
           charState.specializedTree = null;
-          addLog("CRA", "Desativou especialização de árvore de poderes.");
+          addLog('CRA', 'Desativou especialização de árvore de poderes.');
         }
       }
-      buildPowersInterface();
+      renderizarArvoreDePoderes();
       recalculateAll();
     }
 
     // ========== CENTRAL POWER FUNCTIONS (refactored: buy/remove are exact inverses) ==========
     function comprarPoder(powerId) {
       if (!charState.powersAcquired) charState.powersAcquired = [];
+      pendingCustomPowerDeleteId = null;
       
       const p = getPowerDef(powerId);
       if (!p) {
@@ -2933,12 +3317,13 @@ const EQUIPMENT_DATABASE = [
       
       // Auto recalc + UI + persist
       recalcularPX();
-      renderizarPoderes();
+      renderizarArvoreDePoderes();
       recalculateAll();
     }
 
     function removerPoder(powerId) {
       if (!charState.powersAcquired) charState.powersAcquired = [];
+      pendingCustomPowerDeleteId = null;
       
       if (!charState.powersAcquired.includes(powerId)) {
         alert("Poder não está adquirido.");
@@ -2977,7 +3362,7 @@ Remova primeiro os poderes dependentes.`);
       
       // Full inverse recalc + UI
       recalcularPX();
-      renderizarPoderes();
+      renderizarArvoreDePoderes();
       recalculateAll();
     }
 
@@ -3023,15 +3408,14 @@ Remova primeiro os poderes dependentes.`);
 
     // ACTIVATE POWERS (AGENTE 2)
     function activatePower(powerId) {
-      let pObj = null;
-      let treeName = "";
-      for (let tree in POWER_DATABASE) {
-        const found = POWER_DATABASE[tree].find(p => p.id === powerId);
-        if (found) {
-          pObj = found;
-          treeName = tree;
-        }
+      const pObj = getPowerDef(powerId);
+      if (!pObj) {
+        alert('Poder não encontrado.');
+        return;
       }
+
+      const treeName = pObj.tree || '';
+      const baseCost = getPowerSincroniaCost(pObj);
       
       // Requirements check (e.g. Manip. Gravitacional Local requires ESS 3+)
       const finalAttrs = getFinalAttributes();
@@ -3043,8 +3427,8 @@ Remova primeiro os poderes dependentes.`);
       }
       
       // Calculate final cost based on specialization
-      const isSpecialized = charState.specializedTree === treeName;
-      const finalCost = isSpecialized ? Math.max(0, pObj.cost - 1) : pObj.cost;
+      const isSpecialized = !pObj.isCustom && charState.specializedTree === treeName;
+      const finalCost = isSpecialized ? Math.max(0, baseCost - 1) : baseCost;
       
       // Checks Sincronia
       if (charState.sinc.current < finalCost) {
@@ -3700,24 +4084,21 @@ Remova primeiro os poderes dependentes.`);
       if (item.reembolsavel !== undefined) return !!item.reembolsavel;
       if (isUnico(item)) return false;
       return true;
-   
+    }
+
     function getCustomPower(id) {
-      if (!charState.customPowers) charState.customPowers = [];
-      return charState.customPowers.find(p => p.id === id);
+      return getCustomPowers().find(p => p.id === id);
     }
 
     function getAllPowerDefs() {
       // Returns both native and custom for lookups
       const list = [];
       for (let tree in POWER_DATABASE) {
-        POWER_DATABASE[tree].forEach(p => list.push({...p, tree}));
+        POWER_DATABASE[tree].forEach(p => list.push({ ...p, tree }));
       }
-      if (charState.customPowers) {
-        charState.customPowers.forEach(cp => list.push({...cp, tree: 'Personalizado', isCustom: true}));
-      }
-      return list;
+      getCustomPowers().forEach(cp => list.push(normalizeCustomPowerForSystem(cp)));
+      return list.filter(Boolean);
     }
- }
 
     function renderizarInventario() {
       const container = document.getElementById('active-inventory-container');
@@ -4152,10 +4533,9 @@ Deseja continuar?`;
           charState = { ...charState, ...parsed };
           syncFormToState();
           recalculateAll();
-          if (typeof renderizarPoderes === 'function') renderizarPoderes();
+          if (typeof renderizarArvoreDePoderes === 'function') renderizarArvoreDePoderes();
           if (typeof renderizarInventario === 'function') renderizarInventario();
           if (typeof loadAvatarFromState === 'function') loadAvatarFromState();
-          if (typeof renderizarListaPoderesPersonalizados === 'function') renderizarListaPoderesPersonalizados();
           if (typeof loadBackstoryFromState === 'function') loadBackstoryFromState();
           playBeep(1200, 0.15, 'sine');
           addLog("CRA", `Banco de dados recarregado com sucesso! Personagem ativo: '${charState.name}'.`);
@@ -4467,6 +4847,7 @@ Deseja continuar?`;
           if (options.preserveMaster) charState.master = previousMaster;
           syncFormToState();
           recalculateAll();
+          if (typeof renderizarArvoreDePoderes === 'function') renderizarArvoreDePoderes();
         },
         syncFromDom,
         recalculate: recalculateAll,
@@ -4506,6 +4887,7 @@ Deseja continuar?`;
           }
           syncFormToState();
           recalculateAll();
+          if (typeof renderizarArvoreDePoderes === 'function') renderizarArvoreDePoderes();
           if (typeof renderizarInventario === 'function') renderizarInventario();
           if (typeof loadAvatarFromState === 'function') loadAvatarFromState();
         }
@@ -4515,5 +4897,5 @@ Deseja continuar?`;
   </script>
 
   <script type="module" src="./js/sheet-app.js"></script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0e2aac65a35f204',t:'MTc4MTg3MzUwNg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0e2aac65a35f204',t:'MTc4MTg3MzUwNg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0e3f4b85e2852b4',t:'MTc4MTg4NzAyMA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
