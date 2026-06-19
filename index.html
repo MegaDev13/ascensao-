@@ -1910,20 +1910,29 @@
     }
 
 const EQUIPMENT_DATABASE = [
-      { id: "faca", name: "🔪 Faca Tática", type: "arma", price: 200, desc: "Dano: 1d6 + FOR. Alcance: Corpo a Corpo." },
-      { id: "pistola", name: "🔫 Pistola Leve", type: "arma", price: 800, desc: "Dano: 2d6 + 1. Alcance: Curto (15 m)." },
-      { id: "rifle", name: "🎯 Rifle de Precisão", type: "arma", price: 3500, desc: "Dano: 3d6 + 2. Alcance: Longo (150 m)." },
-      { id: "metralhadora", name: "💥 Metralhadora Portátil", type: "arma", price: 6000, desc: "Dano: 5d6 + 3. Alcance: Longo (80 m). Requer FOR." },
-      { id: "plasma", name: "⚡ Pistola de Plasma", type: "arma", price: 12000, desc: "Dano: 4d6 + 2. Alcance: Médio (30 m). Energia quântica." },
+      // ARMAS — ACUMULÁVEIS (reembolsavel: true)
+      { id: "faca", name: "🔪 Faca Tática", type: "arma", price: 200, desc: "Dano: 1d6 + FOR. Alcance: Corpo a Corpo.", stackable: true, unico: false, reembolsavel: true },
+      { id: "pistola", name: "🔫 Pistola Leve", type: "arma", price: 800, desc: "Dano: 2d6 + 1. Alcance: Curto (15 m).", stackable: true, unico: false, reembolsavel: true },
+      { id: "rifle", name: "🎯 Rifle de Precisão", type: "arma", price: 3500, desc: "Dano: 3d6 + 2. Alcance: Longo (150 m).", stackable: true, unico: false, reembolsavel: true },
+      { id: "metralhadora", name: "💥 Metralhadora Portátil", type: "arma", price: 6000, desc: "Dano: 5d6 + 3. Alcance: Longo (80 m). Requer FOR.", stackable: true, unico: false, reembolsavel: true },
+      { id: "plasma", name: "⚡ Pistola de Plasma", type: "arma", price: 12000, desc: "Dano: 4d6 + 2. Alcance: Médio (30 m). Energia quântica.", stackable: true, unico: false, reembolsavel: true },
       
-      { id: "braco_bionico", name: "🦾 Braço Biônico (Básico)", type: "implante", price: 15000, desc: "Implante biônico de alta potência. Aplica +2 FOR permanentemente." },
-      { id: "pele_sintetica", name: "🛡️ Pele Sintética Reforçada", type: "implante", price: 30000, desc: "Fibras de kevlar dérmico. Aplica +1 RES permanentemente." },
-      { id: "nucleo_sincronia", name: "🔮 Núcleo de Sincronia CRA", type: "implante", price: 35000, desc: "Estabilizador de rede existencial. Aplica +1 Sincronia Máxima." },
-      { id: "olho_cibernetico", name: "👁️ Olho Cibernético v4", type: "implante", price: 10000, desc: "Visão quântica/térmica. Concede +1 dado em Percepção visual." },
-      { id: "implante_neural", name: "🧠 Implante Neural Cognitivo", type: "implante", price: 20000, desc: "Interface mental direta. Concede +1 dado em Hacking e Tecnologia." },
+      // IMPLANTES / PRÓTESES / MODIFICAÇÕES — ÚNICOS (reembolsavel: false)
+      { id: "braco_bionico", name: "🦾 Braço Biônico (Básico)", type: "implante", price: 15000, desc: "Implante biônico de alta potência. Aplica +2 FOR permanentemente.", stackable: false, unico: true, reembolsavel: false },
+      { id: "pele_sintetica", name: "🛡️ Pele Sintética Reforçada", type: "implante", price: 30000, desc: "Fibras de kevlar dérmico. Aplica +1 RES permanentemente.", stackable: false, unico: true, reembolsavel: false },
+      { id: "nucleo_sincronia", name: "🔮 Núcleo de Sincronia CRA", type: "implante", price: 35000, desc: "Estabilizador de rede existencial. Aplica +1 Sincronia Máxima.", stackable: false, unico: true, reembolsavel: false },
+      { id: "olho_cibernetico", name: "👁️ Olho Cibernético v4", type: "implante", price: 10000, desc: "Visão quântica/térmica. Concede +1 dado em Percepção visual.", stackable: false, unico: true, reembolsavel: false },
+      { id: "implante_neural", name: "🧠 Implante Neural Cognitivo", type: "implante", price: 20000, desc: "Interface mental direta. Concede +1 dado em Hacking e Tecnologia.", stackable: false, unico: true, reembolsavel: false },
       
-      { id: "armadura_media", name: "🛡️ Armadura Corporal Média", type: "defesa", price: 4000, desc: "Reduz dano recebido em 2. Modificador: -1 em Acrobacias." },
-      { id: "armadura_pesada", name: "🛡️ Armadura Corporal Pesada", type: "defesa", price: 12000, desc: "Reduz dano recebido em 4. Modificador: -1 dado em AGI." }
+      // ARMADURAS / EXOESQUELETOS / VESTÍVEIS PERMANENTES — ÚNICOS (reembolsavel: false)
+      { id: "armadura_media", name: "🛡️ Armadura Corporal Média", type: "defesa", price: 4000, desc: "Reduz dano recebido em 2. Modificador: -1 em Acrobacias.", stackable: false, unico: true, reembolsavel: false },
+      { id: "armadura_pesada", name: "🛡️ Armadura Corporal Pesada", type: "defesa", price: 12000, desc: "Reduz dano recebido em 4. Modificador: -1 dado em AGI.", stackable: false, unico: true, reembolsavel: false },
+
+      // ACUMULÁVEIS (consumíveis, munição, kits, etc.) — reembolsavel: true
+      { id: "medkit", name: "🩹 Kit Médico", type: "consumivel", price: 150, desc: "Restaura 2d6+3 PV. Uso único por cena.", stackable: true, unico: false, reembolsavel: true },
+      { id: "granada_frag", name: "💣 Granada de Fragmentação", type: "consumivel", price: 300, desc: "Explosão 3d6 em raio de 4m. Área.", stackable: true, unico: false, reembolsavel: true },
+      { id: "municao_pistola", name: "🔫 Munição Pistola (10 tiros)", type: "municao", price: 80, desc: "Recarrega 10 disparos para pistolas.", stackable: true, unico: false, reembolsavel: true },
+      { id: "bateria_quântica", name: "🔋 Bateria Quântica", type: "recurso", price: 250, desc: "Recarrega implantes ou dispositivos portáteis.", stackable: true, unico: false, reembolsavel: true }
     ];
 
     // Character State Object
@@ -1982,7 +1991,9 @@ const EQUIPMENT_DATABASE = [
           mercado: 4
         }
       },
-      inventory: ["pistola"] // Equipped standard pistol on load
+      inventory: [
+        { id: "pistola", quantidade: 1 }
+      ],
     };
 
     // System Settings State
@@ -1996,6 +2007,7 @@ const EQUIPMENT_DATABASE = [
       buildItemDatabase();
       recalculateAll();
       if (typeof renderizarPoderes === 'function') renderizarPoderes();
+      if (typeof renderizarInventario === 'function') renderizarInventario();
       syncFormToState();
       addLog("CRA", "Banco de dados cognitivo carregado com sucesso no ano 2301.");
       
@@ -2138,6 +2150,9 @@ const EQUIPMENT_DATABASE = [
       document.getElementById('character-credits').value = charState.credits;
       document.getElementById('fragmentation-marks').value = charState.fragmentationMarks;
       
+      const creditsEl = document.getElementById('character-credits');
+      if (creditsEl) creditsEl.value = charState.credits;
+
       const pxInput = document.getElementById('px-total-input');
       if (pxInput) pxInput.value = charState.px.total;
       
@@ -2161,6 +2176,7 @@ const EQUIPMENT_DATABASE = [
       updateUIForSkills();
       updateUIForPowers();
       if (typeof renderizarPoderes === 'function') renderizarPoderes();
+      if (typeof renderizarInventario === 'function') renderizarInventario();
     }
 
     function changeArchetype() {
@@ -2222,11 +2238,11 @@ const EQUIPMENT_DATABASE = [
       let finalAttrs = { ...charState.attributes };
       
       // Braço Biônico: +2 FOR
-      if (charState.inventory.includes("braco_bionico")) {
+      if (getInventoryIds().includes("braco_bionico")) {
         finalAttrs.for += 2;
       }
       // Pele Sintética: +1 RES
-      if (charState.inventory.includes("pele_sintetica")) {
+      if (getInventoryIds().includes("pele_sintetica")) {
         finalAttrs.res += 1;
       }
       
@@ -2719,7 +2735,8 @@ Remova primeiro os poderes dependentes.`);
       
       // Implante: Núcleo de Sincronia (+1 Sinc Max)
       let implantBonus = 0;
-      if (charState.inventory.includes("nucleo_sincronia")) {
+      const invIds = getInventoryIds();
+      if (invIds.includes("nucleo_sincronia")) {
         implantBonus = 1;
       }
       
@@ -2828,6 +2845,9 @@ Remova primeiro os poderes dependentes.`);
       
       document.getElementById('hud-stage-display').innerText = stage;
       
+      const creditsEl = document.getElementById('character-credits');
+      if (creditsEl) creditsEl.value = charState.credits;
+
       const pxInput = document.getElementById('px-total-input');
       if (pxInput) pxInput.value = totalPX;
       
@@ -2841,7 +2861,8 @@ Remova primeiro os poderes dependentes.`);
       updateUIForSkills();
       updateUIForPowers();
       recalculateCombatPools();
-      buildActiveInventory();
+      if (typeof renderizarInventario === 'function') renderizarInventario();
+      else if (typeof buildActiveInventory === 'function') buildActiveInventory();
     }
 
     function adjustHP(amount) {
@@ -2872,6 +2893,9 @@ Remova primeiro os poderes dependentes.`);
 
     function adjustPX(amount) {
       charState.px.total = Math.max(0, charState.px.total + amount);
+      const creditsEl = document.getElementById('character-credits');
+      if (creditsEl) creditsEl.value = charState.credits;
+
       const pxInput = document.getElementById('px-total-input');
       if (pxInput) pxInput.value = charState.px.total;
       addLog("CRA", `Adicionou +${amount} PX ao total acumulado. Total: ${charState.px.total} PX.`);
@@ -3100,7 +3124,8 @@ Remova primeiro os poderes dependentes.`);
       else if (sincPct >= 25 && sincPct <= 49) statPenalties -= 2;
       
       // Generate active combat actions based on equipped items
-      charState.inventory.forEach(itemId => {
+      const invIds = getInventoryIds();
+      invIds.forEach(itemId => {
         const item = EQUIPMENT_DATABASE.find(i => i.id === itemId);
         if (!item || item.type !== "arma") return;
         
@@ -3214,85 +3239,348 @@ Remova primeiro os poderes dependentes.`);
         row.className = "db-item-row";
         
         let label = item.type === "arma" ? "⚔️" : item.type === "implante" ? "🦾" : "🛡️";
+        const isStack = item.stackable === true;
+        const btnText = isStack ? "Comprar" : "Equipar";
         
         row.innerHTML = `
           <div class="db-item-info">
             <h5>${item.name} (${item.price} CR$)</h5>
             <p>${item.desc}</p>
           </div>
-          <button class="btn-terminal" style="font-size:9px; padding:3px 6px;" onclick="equipItem('${item.id}')">Equipar</button>
+          <button class="btn-terminal" style="font-size:9px; padding:3px 6px;" onclick="equipItem('${item.id}')">${btnText}</button>
         `;
         dbCont.appendChild(row);
       });
     }
 
     function buildActiveInventory() {
+      renderizarInventario();
+    }
+
+    // ========== CENTRAL INVENTORY SYSTEM (QUANTITY-BASED) ==========
+    function getInventory() {
+      if (!Array.isArray(charState.inventory)) charState.inventory = [];
+      charState.inventory = charState.inventory.map(entry => {
+        if (typeof entry === 'string') return { id: entry, quantidade: 1 };
+        if (entry && typeof entry === 'object' && entry.id) {
+          return { id: entry.id, quantidade: entry.quantidade || 1 };
+        }
+        return null;
+      }).filter(Boolean);
+      return charState.inventory;
+    }
+
+    function getInventoryIds() {
+      return getInventory().filter(e => (e.quantidade || 0) > 0).map(e => e.id);
+    }
+
+    function getInventoryEntry(itemId) {
+      return getInventory().find(e => e.id === itemId);
+    }
+
+    function hasItem(itemId) {
+      const e = getInventoryEntry(itemId);
+      return !!(e && e.quantidade > 0);
+    }
+
+    function getItemDef(id) {
+      return EQUIPMENT_DATABASE.find(i => i.id === id) || null;
+    }
+
+    function isUnico(item) {
+      if (!item) return false;
+      if (item.unico === true) return true;
+      return item.stackable !== true;
+    }
+
+    function isStackable(item) {
+      if (!item) return false;
+      if (item.stackable === true) return true;
+      if (item.unico === true) return false;
+      return true;
+    }
+
+    function isReembolsavel(item) {
+      if (!item) return false;
+      if (item.reembolsavel !== undefined) return !!item.reembolsavel;
+      if (isUnico(item)) return false;
+      return true;
+    }
+
+    function renderizarInventario() {
       const container = document.getElementById('active-inventory-container');
+      if (!container) return;
       container.innerHTML = "";
-      
-      charState.inventory.forEach(itemId => {
-        const item = EQUIPMENT_DATABASE.find(i => i.id === itemId);
+
+      const inv = getInventory();
+
+      if (!inv || inv.length === 0) {
+        container.innerHTML = `<p class="text-muted" style="text-align:center; padding:15px; border:1px dashed var(--border);">Inventário vazio no momento.</p>`;
+        return;
+      }
+
+      inv.forEach(entry => {
+        const item = getItemDef(entry.id);
         if (!item) return;
-        
+
+        const qty = entry.quantidade || 1;
+        const isUnq = isUnico(item);
+
         const row = document.createElement('div');
         row.className = "inv-item-row";
+        row.style.display = "flex";
+        row.style.alignItems = "center";
+        row.style.gap = "8px";
+        row.style.marginBottom = "8px";
+        row.style.padding = "6px 8px";
+        row.style.border = "1px solid var(--border)";
+        row.style.borderRadius = "4px";
+
+        let infoHTML = "";
+        let buttonsHTML = "";
+
+        if (isUnq) {
+          // ÚNICO: nome + descrição + botão REMOVER (sem quantidade)
+          infoHTML = `
+            <div style="flex:1; min-width:0;">
+              <div style="font-weight:600; font-size:13px;">${item.name}</div>
+              <div style="font-size:10px; color:#aaa;">${item.desc}</div>
+            </div>
+          `;
+          buttonsHTML = `
+            <button class="btn-terminal btn-danger" style="font-size:9px; padding:2px 6px;" onclick="removerTodasUnidades('${entry.id}')">REMOVER</button>
+          `;
+        } else {
+          // ACUMULÁVEL: nome + quantidade + botões completos
+          infoHTML = `
+            <div style="flex:1; min-width:0;">
+              <div style="font-weight:600; font-size:13px;">${item.name}</div>
+              <div style="font-size:10px; color:#aaa;">${item.desc}</div>
+              <div style="margin-top:2px; font-size:12px;">
+                <strong>Quantidade: <span style="color:#0ff;">${qty}</span></strong>
+              </div>
+            </div>
+          `;
+          buttonsHTML = `
+            <button class="btn-terminal" style="font-size:10px; padding:2px 7px;" onclick="alterarQuantidade('${entry.id}', 1)">+1</button>
+            <button class="btn-terminal" style="font-size:10px; padding:2px 7px; background:#2a5; color:white;" onclick="usarItem('${entry.id}')">USAR</button>
+            <button class="btn-terminal" style="font-size:9px; padding:2px 6px;" onclick="removerItem('${entry.id}')">REMOVER</button>
+            <button class="btn-terminal btn-danger" style="font-size:9px; padding:2px 6px;" onclick="removerTodasUnidades('${entry.id}')">REMOVER TUDO</button>
+          `;
+        }
+
         row.innerHTML = `
-          <div class="db-item-info">
-            <h5>${item.name}</h5>
-            <p>${item.desc}</p>
+          ${infoHTML}
+          <div style="display:flex; gap:4px; flex-wrap:wrap;">
+            ${buttonsHTML}
           </div>
-          <button class="btn-terminal btn-danger" style="font-size:9px; padding:3px 6px;" onclick="unequipItem('${itemId}')">Descartar</button>
         `;
         container.appendChild(row);
       });
-      
-      if (charState.inventory.length === 0) {
-        container.innerHTML = `<p class="text-muted" style="text-align:center; padding:15px; border:1px dashed var(--border);">Inventário vazio no momento.</p>`;
-      }
     }
 
-    function equipItem(itemId) {
-      const item = EQUIPMENT_DATABASE.find(i => i.id === itemId);
+    function adicionarItem(itemId) {
+      const item = getItemDef(itemId);
       if (!item) return;
-      
-      if (charState.credits < item.price) {
+
+      const entry = getInventoryEntry(itemId);
+      const price = item.price || 0;
+
+      if (charState.credits < price) {
         playBeep(400, 0.1, 'triangle');
-        alert("Créditos de rede insuficientes para realizar a transação.");
+        alert("Créditos de rede insuficientes.");
         return;
       }
-      
-      if (charState.inventory.includes(itemId)) {
-        alert("Você já possui este item equipado.");
-        return;
+
+      if (entry) {
+        if (isUnico(item) || (entry.quantidade >= 1 && !isStackable(item))) {
+          playBeep(400, 0.1, 'triangle');
+          alert("Você já possui este equipamento.");
+          return;
+        }
+        entry.quantidade = (entry.quantidade || 1) + 1;
+      } else {
+        getInventory().push({ id: itemId, quantidade: 1 });
       }
-      
-      playBeep(1100, 0.1, 'sine');
-      charState.credits -= item.price;
-      charState.inventory.push(itemId);
-      
-      addLog("CRA", `Comprou e equipou: '${item.name}' | -${item.price} créditos de rede.`);
-      
-      // Automatic modifiers applied instantly on recalculateAll
+
+      charState.credits -= price;
+
+      addLog("CRA", `Adicionado: ${item.name} x1 (-${price} CR)`);
+      renderizarInventario();
       recalculateAll();
       syncFormToState();
     }
 
-    function unequipItem(itemId) {
-      playBeep(600, 0.1);
-      const idx = charState.inventory.indexOf(itemId);
-      if (idx !== -1) {
-        const item = EQUIPMENT_DATABASE.find(i => i.id === itemId);
-        charState.inventory.splice(idx, 1);
-        
-        // Return 50% credits refund
-        const refund = Math.floor(item.price * 0.5);
+    function removerItem(itemId) {
+      const item = getItemDef(itemId);
+      if (!item) return;
+
+      const entry = getInventoryEntry(itemId);
+      if (!entry || entry.quantidade <= 0) return;
+
+      const price = item.price || 0;
+      const isReemb = isReembolsavel(item);
+
+      // UNIQUE / non-reembolsavel items: no refund + confirmation
+      if (!isReemb) {
+        const confirmMsg = `Este item é permanente.\nA remoção não devolverá créditos.\n\nDeseja continuar?`;
+        if (!confirm(confirmMsg)) {
+          return;
+        }
+        // Remove without refund
+        entry.quantidade -= 1;
+        if (entry.quantidade <= 0) {
+          charState.inventory = getInventory().filter(e => e.id !== itemId);
+        }
+        addLog("CRA", `Removido (permanente): ${item.name} (sem reembolso)`);
+      } else {
+        // Reembolsável (stackable only)
+        const refund = Math.floor(price * 0.5);
+        entry.quantidade -= 1;
+        if (entry.quantidade <= 0) {
+          charState.inventory = getInventory().filter(e => e.id !== itemId);
+        }
         charState.credits += refund;
-        
-        addLog("CRA", `Descartou: '${item.name}' | Estorno de +${refund} créditos.`);
+        addLog("CRA", `Removida 1 unidade de ${item.name} (+${refund} CR)`);
       }
+
+      // If it was an implant/armor, bonuses will be removed on next recalculate
+      renderizarInventario();
       recalculateAll();
       syncFormToState();
     }
+
+    function removerTodasUnidades(itemId) {
+      const item = getItemDef(itemId);
+      if (!item) return;
+
+      const entry = getInventoryEntry(itemId);
+      if (!entry) return;
+
+      const qty = entry.quantidade || 0;
+      if (qty <= 0) return;
+
+      const isReemb = isReembolsavel(item);
+
+      if (!isReemb) {
+        const confirmMsg = `Este item é permanente.
+A remoção não devolverá créditos.
+
+Deseja continuar?`;
+        if (!confirm(confirmMsg)) {
+          return; // cancelled
+        }
+      }
+
+      // Safe to remove now
+      charState.inventory = getInventory().filter(e => e.id !== itemId);
+
+      if (isReemb) {
+        const price = item.price || 0;
+        const refund = Math.floor(price * qty * 0.5);
+        charState.credits += refund;
+        addLog("CRA", `Removidas todas as unidades de ${item.name} x${qty} (+${refund} CR)`);
+      } else {
+        addLog("CRA", `Removido (permanente): ${item.name} x${qty} (sem reembolso)`);
+      }
+
+      renderizarInventario();
+      recalculateAll();
+      syncFormToState();
+    }
+
+
+    // ==================== NOVA AÇÃO: USAR ITEM ====================
+    // Apenas itens ACUMULÁVEIS (stackable: true)
+    // - Reduz quantidade em 1
+    // - NÃO devolve créditos (sem reembolso jamais)
+    // - Atualiza UI imediatamente
+    // - Registra no log
+    function usarItem(itemId) {
+      const item = getItemDef(itemId);
+      if (!item) return;
+
+      const entry = getInventoryEntry(itemId);
+      if (!entry || (entry.quantidade || 0) < 1) {
+        playBeep(400, 0.1, 'triangle');
+        alert("Não há unidades disponíveis para usar.");
+        return;
+      }
+
+      if (!isStackable(item)) {
+        playBeep(400, 0.1, 'triangle');
+        alert("Este item não pode ser consumido/usado desta forma.");
+        return;
+      }
+
+      // CONSUMO PURO
+      entry.quantidade = (entry.quantidade || 1) - 1;
+
+      if (entry.quantidade <= 0) {
+        charState.inventory = getInventory().filter(e => e.id !== itemId);
+      }
+
+      playBeep(800, 0.08, 'sine');
+      addLog("CRA", `Usou item: ${item.name} (-1 unidade consumida - sem reembolso).`);
+
+      renderizarInventario();
+      recalculateAll();
+      syncFormToState();
+    }
+
+
+    function alterarQuantidade(itemId, delta) {
+      const item = getItemDef(itemId);
+      if (!item) return;
+
+      const entry = getInventoryEntry(itemId);
+      if (!entry) {
+        if (delta > 0) adicionarItem(itemId);
+        return;
+      }
+
+      const current = entry.quantidade || 0;
+      const newQty = Math.max(0, current + delta);
+
+      if (newQty === 0) {
+        removerTodasUnidades(itemId);
+        return;
+      }
+
+      if (isUnico(item) && newQty > 1) {
+        alert("Este equipamento é único e não pode ter mais de 1 unidade.");
+        return;
+      }
+
+      if (delta > 0) {
+        const price = item.price || 0;
+        if (charState.credits < price) {
+          alert("Créditos insuficientes para adicionar mais.");
+          return;
+        }
+        charState.credits -= price;
+      } else {
+        const price = item.price || 0;
+        const refund = Math.floor(price * 0.5);
+        charState.credits += refund;
+      }
+
+      entry.quantidade = newQty;
+      addLog("CRA", `${delta > 0 ? 'Adicionada' : 'Removida'} 1 unidade de ${item.name} (agora ${newQty})`);
+      renderizarInventario();
+      recalculateAll();
+      syncFormToState();
+    }
+
+    function recalcularCreditos() {
+      // Currently credits are adjusted directly in adicionar/remover.
+    }
+
+    // Backward compatibility shims
+    function equipItem(itemId) { adicionarItem(itemId); }
+    function unequipItem(itemId) { removerTodasUnidades(itemId); }
+
+
 
     // MASTER TAB CONFIDENTIAL CONTROLS (AGENTE 6)
     function updateMasterData() {
@@ -3405,7 +3693,7 @@ Remova primeiro os poderes dependentes.`);
             conceito: charState.concept
           }
         },
-        items: charState.inventory.map(id => ({ name: id, type: "equipment" }))
+        items: getInventoryIds().map(id => ({ name: id, type: "equipment" }))
       };
       
       document.getElementById('export-format-label').innerText = "FOUNDRY VTT ACTOR IMPORT (JSON):";
@@ -3453,6 +3741,7 @@ Remova primeiro os poderes dependentes.`);
           syncFormToState();
           recalculateAll();
           if (typeof renderizarPoderes === 'function') renderizarPoderes();
+          if (typeof renderizarInventario === 'function') renderizarInventario();
           playBeep(1200, 0.15, 'sine');
           addLog("CRA", `Banco de dados recarregado com sucesso! Personagem ativo: '${charState.name}'.`);
           alert(`Personagem ${charState.name} importado com sucesso na rede!`);
@@ -3635,6 +3924,7 @@ Remova primeiro os poderes dependentes.`);
           }
           syncFormToState();
           recalculateAll();
+          if (typeof renderizarInventario === 'function') renderizarInventario();
         }
       };
     })();
@@ -3642,6 +3932,5 @@ Remova primeiro os poderes dependentes.`);
   </script>
 
   <script type="module" src="./js/sheet-app.js"></script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0e24307ffc8f247',t:'MTc4MTg2OTI1Ng=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0e271089e256d55',t:'MTc4MTg3MTE0MQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
