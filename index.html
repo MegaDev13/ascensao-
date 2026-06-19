@@ -1166,6 +1166,71 @@
         color: #000 !important;
       }
     }
+
+    /* VANTAGENS / DESVANTAGENS DYNAMIC CARDS */
+    .traits-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .trait-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border: 1px solid var(--border);
+      background: rgba(10, 15, 25, 0.7);
+      padding: 8px 10px;
+      font-size: 11px;
+      border-left: 3px solid var(--cyan);
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .trait-card:hover {
+      background: rgba(0, 245, 255, 0.06);
+      border-color: var(--cyan);
+    }
+    .trait-card.disadvantage {
+      border-left-color: var(--magenta);
+    }
+    .trait-card.disadvantage:hover {
+      background: rgba(255, 0, 127, 0.06);
+      border-color: var(--magenta);
+    }
+    .trait-card .trait-desc {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .trait-card .trait-type {
+      font-size: 9px;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 1px 5px;
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+    .trait-card .trait-px {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      min-width: 36px;
+      text-align: right;
+    }
+    .trait-card button {
+      font-size: 9px;
+      padding: 2px 6px;
+      border: 1px solid var(--red);
+      color: var(--red);
+      background: transparent;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .trait-card button:hover {
+      background: var(--red);
+      color: #fff;
+    }
   </style>
   <link rel="stylesheet" href="./css/app.css">
 </head>
@@ -1392,23 +1457,48 @@
               </div>
             </div>
 
+            <!-- REGISTRO DE VANTAGENS E DESVANTAGENS -->
+            <div class="c-card" style="grid-column: span 2;">
+              <div class="c-card-title">REGISTRO DE VANTAGENS E DESVANTAGENS</div>
+              <div class="form-group" style="display: grid; grid-template-columns: 1fr 160px 100px; gap: 10px; align-items: end;">
+                <div>
+                  <label for="trait-descricao">Descrição</label>
+                  <input type="text" id="trait-descricao" placeholder="Ex: Memória Fotográfica, Rico, Contatos Policiais..." style="width: 100%;">
+                </div>
+                <div>
+                  <label for="trait-tipo">Tipo</label>
+                  <select id="trait-tipo" style="width: 100%;">
+                    <option value="vantagem_menor">Vantagem Menor (-1 PX)</option>
+                    <option value="vantagem_maior">Vantagem Maior (-2 PX)</option>
+                    <option value="desvantagem_menor">Desvantagem Menor (+1 PX)</option>
+                    <option value="desvantagem_maior">Desvantagem Maior (+2 PX)</option>
+                  </select>
+                </div>
+                <div>
+                  <button class="btn-terminal" style="width: 100%;" onclick="addTrait()">Adicionar</button>
+                </div>
+              </div>
+              <div class="g-flex-between text-muted" style="font-size: 10px; margin-top: 6px;">
+                <span>Impacto PX: Vantagem Menor -1 | Vantagem Maior -2 | Desvantagem Menor +1 | Desvantagem Maior +2</span>
+                <span id="traits-px-summary">Vantagens: 0 PX | Desvantagens: 0 PX</span>
+              </div>
+              <!-- Hidden legacy textareas for backward compatibility with external sync modules -->
+              <textarea id="char-advantages" style="display:none;"></textarea>
+              <textarea id="char-disadvantages" style="display:none;"></textarea>
+            </div>
+
             <div class="c-card">
               <div class="c-card-title">VANTAGENS REGISTRADAS</div>
-              <div class="form-group">
-                <textarea id="char-advantages" placeholder="Insira uma vantagem por linha..." style="height: 100px;">• Talentoso em Infiltração (+2 Furtividade)&#10;• Contatos no submundo</textarea>
-              </div>
-              <div class="g-flex">
-                <button class="btn-terminal" onclick="adjustAvailablePX(10)" style="font-size: 10px;">+1 Vantagem Menor (-10 PX)</button>
-                <button class="btn-terminal btn-purple" onclick="adjustAvailablePX(25)" style="font-size: 10px;">+1 Vantagem Maior (-25 PX)</button>
+              <div id="vantagens-list" class="traits-list" style="min-height: 60px;">
+                <!-- Gerado dinamicamente -->
               </div>
             </div>
 
             <div class="c-card">
               <div class="c-card-title">DESVANTAGENS REGISTRADAS</div>
-              <div class="form-group">
-                <textarea id="char-disadvantages" placeholder="Insira uma desvantagem por linha..." style="height: 100px;">• Paranoico (-1 PRE)&#10;• Vício em estimulantes</textarea>
+              <div id="desvantagens-list" class="traits-list" style="min-height: 60px;">
+                <!-- Gerado dinamicamente -->
               </div>
-              <p class="text-muted" style="font-size: 10px;">Desvantagens Menores concedem +1 ponto de perícia extra. Desvantagens Maiores concedem +2 pontos.</p>
             </div>
           </div>
         </div>
@@ -2302,18 +2392,28 @@ const EQUIPMENT_DATABASE = [
       archetype: "Sombra",
       faction: "MercadoNegro",
       concept: "Eu sou alguém que conhece todos os segredos, menos o meu.",
-      advantages: "• Talentoso em Infiltração (+2 Furtividade)\n• Contatos no submundo",
-      disadvantages: "• Paranoico (-1 PRE)\n• Vício em estimulantes",
+      // Legacy text fields kept empty for compatibility; use traits array below.
+      advantages: "",
+      disadvantages: "",
+      // Structured traits: vantagens/desvantagens (id, descricao, tipo, px)
+      traits: [
+        { id: "vant_talentoso_infiltracao", descricao: "Talentoso em Infiltração (+2 Furtividade)", tipo: "vantagem_menor", px: -1 },
+        { id: "vant_contatos_submundo", descricao: "Contatos no submundo", tipo: "vantagem_menor", px: -1 },
+        { id: "desv_paranoico", descricao: "Paranoico (-1 PRE)", tipo: "desvantagem_menor", px: 1 },
+        { id: "desv_vicio_estimulantes", descricao: "Vício em estimulantes", tipo: "desvantagem_menor", px: 1 }
+      ],
       
       attributes: {
         for: 2, agi: 4, res: 2, int: 4, per: 3, pre: 2, tec: 3, ess: 2
       },
-      purchasedAttributes: 0,
+      purchasedAttributes: 0,         // available saldo (bought + free bonuses)
+      purchasedAttributesTotal: 0,    // total bought with PX (truth source for refund)
       
       skills: {
         "Furtividade": 4, "Parkour": 3, "Invasão de Sistemas": 3, "Pistolas": 2, "Camuflagem": 2, "Investigação": 2, "Intimidação": 1
       },
-      purchasedSkillsCount: 0,
+      purchasedSkillsCount: 0,        // available saldo
+      purchasedSkillsTotal: 0,          // total bought with PX
       
       powersAcquired: ["camuflagem_optica"],
       customPowers: [],
@@ -2380,6 +2480,7 @@ const EQUIPMENT_DATABASE = [
       buildSkillsInterface();
       buildPowersInterface();
       buildItemDatabase();
+      loadCharacter();
       recalculateAll();
       if (typeof renderizarArvoreDePoderes === 'function') renderizarArvoreDePoderes();
       if (typeof renderizarInventario === 'function') renderizarInventario();
@@ -2494,11 +2595,203 @@ const EQUIPMENT_DATABASE = [
       charState.name = document.getElementById('char-name').value;
       charState.codename = document.getElementById('char-codename').value;
       charState.concept = document.getElementById('char-concept').value;
-      charState.advantages = document.getElementById('char-advantages').value;
-      charState.disadvantages = document.getElementById('char-disadvantages').value;
+      // Legacy textareas are kept in sync via renderTraits(); do not overwrite traits here.
       
       document.getElementById('hud-char-name').innerText = charState.name || "Sem Nome";
       document.getElementById('hud-char-codename').innerText = `CODENOME: ${charState.codename || "N/A"}`;
+    }
+
+    // TRAITS / VANTAGENS / DESVANTAGENS SYSTEM
+    const TRAIT_TYPE_CONFIG = {
+      vantagem_menor: { label: "Vantagem Menor", px: -1 },
+      vantagem_maior: { label: "Vantagem Maior", px: -2 },
+      desvantagem_menor: { label: "Desvantagem Menor", px: 1 },
+      desvantagem_maior: { label: "Desvantagem Maior", px: 2 }
+    };
+
+    function generateTraitId() {
+      return 'trait_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7);
+    }
+
+    function addTrait() {
+      const descInput = document.getElementById('trait-descricao');
+      const tipoInput = document.getElementById('trait-tipo');
+      const descricao = (descInput.value || '').trim();
+      const tipo = tipoInput.value;
+      
+      if (!descricao) {
+        playBeep(400, 0.1, 'triangle');
+        alert("Informe a descrição da vantagem ou desvantagem.");
+        return;
+      }
+      
+      const config = TRAIT_TYPE_CONFIG[tipo];
+      if (!config) return;
+      
+      // Vantagens cost PX; disadvantages grant bonus PX.
+      if (config.px < 0) {
+        const available = charState.px.total - charState.px.spent + (charState.px.bonus || 0);
+        if (available < Math.abs(config.px)) {
+          playBeep(400, 0.1, 'triangle');
+          alert(`Pontos de PX insuficientes para ${config.label}. Requer ${Math.abs(config.px)} PX. Disponível: ${available} PX.`);
+          return;
+        }
+      }
+      
+      playBeep(1000, 0.1, 'sine');
+      charState.traits = charState.traits || [];
+      charState.traits.push({
+        id: generateTraitId(),
+        descricao: descricao,
+        tipo: tipo,
+        px: config.px
+      });
+      
+      descInput.value = '';
+      tipoInput.value = 'vantagem_menor';
+      addLog("CRA", `Registro adicionado: ${descricao} (${config.label}${config.px > 0 ? '+' : ''}${config.px} PX).`);
+      recalculateAll();
+    }
+
+    function removeTrait(id) {
+      const trait = (charState.traits || []).find(t => t.id === id);
+      if (!trait) return;
+      
+      playBeep(900, 0.08, 'sine');
+      charState.traits = (charState.traits || []).filter(t => t.id !== id);
+      addLog("CRA", `Registro removido: ${trait.descricao} (${TRAIT_TYPE_CONFIG[trait.tipo].label}${trait.px > 0 ? '+' : ''}${trait.px} PX). Efeito revertido.`);
+      recalculateAll();
+    }
+
+    function getTraitTypeLabel(tipo) {
+      return TRAIT_TYPE_CONFIG[tipo]?.label || tipo;
+    }
+
+    function renderTraits() {
+      if (!charState.traits) charState.traits = [];
+      
+      const vantagensList = document.getElementById('vantagens-list');
+      const desvantagensList = document.getElementById('desvantagens-list');
+      const summaryEl = document.getElementById('traits-px-summary');
+      if (!vantagensList || !desvantagensList) return;
+      
+      vantagensList.innerHTML = '';
+      desvantagensList.innerHTML = '';
+      
+      let vantagemPx = 0;
+      let desvantagemPx = 0;
+      let vantagensCount = 0;
+      let desvantagensCount = 0;
+      
+      charState.traits.forEach(t => {
+        const isDisadvantage = t.px > 0;
+        const card = document.createElement('div');
+        card.className = 'trait-card' + (isDisadvantage ? ' disadvantage' : '');
+        card.innerHTML = `
+          <span class="trait-desc" title="${t.descricao}">${t.descricao}</span>
+          <span class="trait-type">${getTraitTypeLabel(t.tipo)}</span>
+          <span class="trait-px" style="color: ${isDisadvantage ? 'var(--green)' : 'var(--red)'};">${t.px > 0 ? '+' : ''}${t.px} PX</span>
+          <button onclick="removeTrait('${t.id}')">Excluir</button>
+        `;
+        
+        if (isDisadvantage) {
+          desvantagensList.appendChild(card);
+          desvantagemPx += t.px;
+          desvantagensCount++;
+        } else {
+          vantagensList.appendChild(card);
+          vantagemPx += Math.abs(t.px);
+          vantagensCount++;
+        }
+      });
+      
+      if (vantagensCount === 0) {
+        vantagensList.innerHTML = '<p class="text-muted" style="font-size: 10px; margin: 0;">Nenhuma vantagem registrada.</p>';
+      }
+      if (desvantagensCount === 0) {
+        desvantagensList.innerHTML = '<p class="text-muted" style="font-size: 10px; margin: 0;">Nenhuma desvantagem registrada.</p>';
+      }
+      
+      if (summaryEl) {
+        summaryEl.innerText = `Vantagens: -${vantagemPx} PX | Desvantagens: +${desvantagemPx} PX`;
+      }
+      
+      syncLegacyTraitTextareas();
+    }
+
+    function syncLegacyTraitTextareas() {
+      // Keep legacy textareas populated for external sync/export modules that read them.
+      const advText = charState.traits
+        .filter(t => t.px < 0)
+        .map(t => `• ${t.descricao} (${getTraitTypeLabel(t.tipo)})`)
+        .join('\n');
+      const disText = charState.traits
+        .filter(t => t.px > 0)
+        .map(t => `• ${t.descricao} (${getTraitTypeLabel(t.tipo)})`)
+        .join('\n');
+      const advEl = document.getElementById('char-advantages');
+      const disEl = document.getElementById('char-disadvantages');
+      if (advEl) advEl.value = advText;
+      if (disEl) disEl.value = disText;
+      charState.advantages = advText;
+      charState.disadvantages = disText;
+    }
+
+    // PERSISTENCE & AUTO-SAVE
+    function autoSave() {
+      try {
+        localStorage.setItem('ascensao_charState', JSON.stringify(charState));
+      } catch (e) {
+        console.warn('Auto-save failed:', e);
+      }
+    }
+
+    function saveCharacter() {
+      autoSave();
+      playBeep(1100, 0.05);
+      addLog("CRA", "Ficha salva no armazenamento local.");
+    }
+
+    function loadCharacter() {
+      try {
+        const saved = localStorage.getItem('ascensao_charState');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          charState = { ...charState, ...parsed };
+          migrateLegacyTraitState();
+          syncFormToState();
+          recalculateAll();
+          addLog("CRA", "Ficha carregada do armazenamento local.");
+        }
+      } catch (e) {
+        console.warn('Load failed:', e);
+      }
+    }
+
+    function migrateLegacyTraitState() {
+      // If a loaded state has legacy text traits but no structured traits, convert them.
+      if (!charState.traits && (charState.advantages || charState.disadvantages)) {
+        charState.traits = [];
+        (charState.advantages || '').split('\n').forEach(line => {
+          const clean = line.replace(/^•\s*/, '').trim();
+          if (clean) charState.traits.push({ id: generateTraitId(), descricao: clean, tipo: 'vantagem_menor', px: -1 });
+        });
+        (charState.disadvantages || '').split('\n').forEach(line => {
+          const clean = line.replace(/^•\s*/, '').trim();
+          if (clean) charState.traits.push({ id: generateTraitId(), descricao: clean, tipo: 'desvantagem_menor', px: 1 });
+        });
+      }
+      // Migrate old counters used as total spent to new total-bought counters.
+      const attrSum = Object.values(charState.attributes || {}).reduce((a,b) => a+b, 0);
+      const attrAboveInitial = Math.max(0, attrSum - 8);
+      if (charState.purchasedAttributesTotal === undefined && charState.purchasedAttributes !== undefined) {
+        charState.purchasedAttributesTotal = Math.max(0, attrAboveInitial - (charState.purchasedAttributes || 0));
+      }
+      const skillSum = Object.values(charState.skills || {}).reduce((a,b) => a+b, 0);
+      const skillAboveInitial = Math.max(0, skillSum - 15);
+      if (charState.purchasedSkillsTotal === undefined && charState.purchasedSkillsCount !== undefined) {
+        charState.purchasedSkillsTotal = Math.max(0, skillAboveInitial - (charState.purchasedSkillsCount || 0));
+      }
     }
 
     function syncFormToState() {
@@ -2580,7 +2873,8 @@ const EQUIPMENT_DATABASE = [
       const baseAttributesSum = Object.values(charState.attributes).reduce((a, b) => a + b, 0);
       const initialSpent = baseAttributesSum - 8; // base starts at 1, so 8 is starting sum
       
-      if (amount > 0 && initialSpent >= 8 && charState.purchasedAttributes <= 0) {
+      // purchasedAttributes is the available saldo (bought + free bonuses not yet spent)
+      if (amount > 0 && initialSpent >= 8 && (charState.purchasedAttributes || 0) <= 0) {
         playBeep(400, 0.1, 'triangle');
         alert("Todos os 8 pontos iniciais já foram distribuídos. Use pontos de PX para comprar novos aumentos.");
         return;
@@ -2589,8 +2883,14 @@ const EQUIPMENT_DATABASE = [
       playBeep(700 + (newBase * 50), 0.05);
       charState.attributes[attr] = newBase;
       
-      if (initialSpent >= 8 && amount > 0) {
-        charState.purchasedAttributes--;
+      if (amount > 0 && initialSpent >= 8) {
+        charState.purchasedAttributes = Math.max(0, (charState.purchasedAttributes || 0) - 1);
+      }
+      
+      // When removing a point that was bought with PX, refund it (truth source is purchasedAttributesTotal)
+      if (amount < 0 && initialSpent > 8 && (charState.purchasedAttributesTotal || 0) > 0) {
+        charState.purchasedAttributesTotal = Math.max(0, (charState.purchasedAttributesTotal || 0) - 1);
+        addLog("CRA", "Ponto de Atributo de evolução removido. Reembolsados +20 PX.");
       }
       
       recalculateAll();
@@ -2598,15 +2898,17 @@ const EQUIPMENT_DATABASE = [
 
     function buyAttributePoint() {
       const cost = 20;
-      const avail = charState.px.total - charState.px.spent;
-      if (avail < cost) {
+      // Available must consider bonuses from disadvantages as usable PX
+      const available = charState.px.total - charState.px.spent + (charState.px.bonus || 0);
+      if (available < cost) {
         playBeep(400, 0.1, 'triangle');
-        alert(`Pontos de PX insuficientes. Requer ${cost} PX. Disponível: ${avail} PX.`);
+        alert(`Pontos de PX insuficientes. Requer ${cost} PX. Disponível: ${available} PX.`);
         return;
       }
       playBeep(1000, 0.1, 'sine');
-      charState.px.spent += cost;
-      charState.purchasedAttributes++;
+      // Track purchase history; recalcularPX() will derive px.spent from this truth source.
+      charState.purchasedAttributes = (charState.purchasedAttributes || 0) + 1;
+      charState.purchasedAttributesTotal = (charState.purchasedAttributesTotal || 0) + 1;
       addLog("CRA", "Operador adquiriu +1 ponto de Atributo de evolução (-20 PX). Distribua usando o botão [+].");
       recalculateAll();
     }
@@ -2714,7 +3016,7 @@ const EQUIPMENT_DATABASE = [
       const currentSpent = Object.values(charState.skills).reduce((a,b)=>a+b, 0);
       const pointsDiff = targetLvl - (charState.skills[skillName] || 0);
       
-      if (pointsDiff > 0 && currentSpent >= 15 && charState.purchasedSkillsCount <= 0) {
+      if (pointsDiff > 0 && currentSpent >= 15 && (charState.purchasedSkillsCount || 0) <= 0) {
         playBeep(400, 0.1, 'triangle');
         alert("Todos os 15 pontos de perícia iniciais já foram gastos. Use pontos de PX para comprar novos níveis.");
         return;
@@ -2723,8 +3025,14 @@ const EQUIPMENT_DATABASE = [
       playBeep(700 + (targetLvl * 60), 0.04);
       charState.skills[skillName] = targetLvl;
       
-      if (currentSpent >= 15 && pointsDiff > 0) {
-        charState.purchasedSkillsCount--;
+      if (pointsDiff > 0 && currentSpent >= 15) {
+        charState.purchasedSkillsCount = Math.max(0, (charState.purchasedSkillsCount || 0) - 1);
+      }
+      
+      // Refund when removing a level bought with PX (spent above 15 initial points)
+      if (pointsDiff < 0 && currentSpent > 15 && (charState.purchasedSkillsTotal || 0) > 0) {
+        charState.purchasedSkillsTotal = Math.max(0, (charState.purchasedSkillsTotal || 0) - 1);
+        addLog("CRA", "Nível de Perícia de evolução removido. Reembolsados +5 PX.");
       }
       
       recalculateAll();
@@ -2759,15 +3067,16 @@ const EQUIPMENT_DATABASE = [
 
     function buySkillPoint() {
       const cost = 5;
-      const avail = charState.px.total - charState.px.spent;
-      if (avail < cost) {
+      const available = charState.px.total - charState.px.spent + (charState.px.bonus || 0);
+      if (available < cost) {
         playBeep(400, 0.1, 'triangle');
-        alert(`Pontos de PX insuficientes. Requer ${cost} PX. Disponível: ${avail} PX.`);
+        alert(`Pontos de PX insuficientes. Requer ${cost} PX. Disponível: ${available} PX.`);
         return;
       }
       playBeep(1000, 0.1, 'sine');
-      charState.px.spent += cost;
-      charState.purchasedSkillsCount++;
+      // Track purchase history; recalcularPX() derives px.spent from this truth source.
+      charState.purchasedSkillsCount = (charState.purchasedSkillsCount || 0) + 1;
+      charState.purchasedSkillsTotal = (charState.purchasedSkillsTotal || 0) + 1;
       addLog("CRA", "Operador comprou +1 nível de Perícia (-5 PX). Atribua clicando nas perícias.");
       recalculateAll();
     }
@@ -3381,20 +3690,36 @@ Remova primeiro os poderes dependentes.`);
     }
 
     function recalcularPX() {
-      // Recompute spent from actual acquired powers (truth source)
+      // Single source of truth: recalculate all PX commitments from state.
       if (!charState.powersAcquired) charState.powersAcquired = [];
+      if (!charState.traits) charState.traits = [];
+      if (!charState.px) charState.px = { total: 0, spent: 0 };
       
-      let totalSpent = 0;
+      // Powers
+      let powerSpent = 0;
       charState.powersAcquired.forEach(id => {
         const p = getPowerDef(id);
-        if (p) {
-          totalSpent += getPowerPxCost(p);
-        }
+        if (p) powerSpent += getPowerPxCost(p);
       });
       
-      charState.px.spent = totalSpent;
+      // Attributes & skills bought with PX (history counters)
+      const attrTotal = charState.purchasedAttributesTotal || 0;
+      const skillTotal = charState.purchasedSkillsTotal || 0;
+      const attributeSpent = attrTotal * 20;
+      const skillSpent = skillTotal * 5;
       
-      // Ensure total >= spent
+      // Vantagens / Desvantagens
+      let traitSpent = 0;   // vantagens reduce available PX (cost)
+      let traitBonus = 0;   // desvantagens increase available PX (bonus)
+      charState.traits.forEach(t => {
+        if (t.px < 0) traitSpent += Math.abs(t.px);
+        else if (t.px > 0) traitBonus += t.px;
+      });
+      
+      charState.px.spent = powerSpent + attributeSpent + skillSpent + traitSpent;
+      charState.px.bonus = traitBonus;
+      
+      // Ensure total >= spent (without counting bonuses)
       if (charState.px.total < charState.px.spent) {
         charState.px.total = charState.px.spent;
       }
@@ -3629,7 +3954,8 @@ Remova primeiro os poderes dependentes.`);
       const pxInput = document.getElementById('px-total-input');
       if (pxInput) pxInput.value = totalPX;
       
-      document.getElementById('hud-px-available').innerText = `${totalPX - charState.px.spent} PX`;
+      const availablePX = totalPX - charState.px.spent + (charState.px.bonus || 0);
+      document.getElementById('hud-px-available').innerText = `${availablePX} PX`;
       
       const marcosInput = document.getElementById('marcos-input');
       if (marcosInput) marcosInput.value = charState.marcosNarrativos;
@@ -3642,6 +3968,13 @@ Remova primeiro os poderes dependentes.`);
       if (typeof renderizarInventario === 'function') renderizarInventario();
       else if (typeof buildActiveInventory === 'function') buildActiveInventory();
       if (typeof loadAvatarFromState === 'function') loadAvatarFromState();
+      
+      // Render traits and sync legacy textareas
+      renderTraits();
+      syncLegacyTraitTextareas();
+      
+      // Auto-save on every significant change
+      autoSave();
     }
 
     function adjustHP(amount) {
@@ -4763,8 +5096,8 @@ Deseja continuar?`;
           charState.archetype = valueOf('char-archetype', charState.archetype);
           charState.faction = valueOf('char-faction', charState.faction);
           charState.concept = valueOf('char-concept', charState.concept);
-          charState.advantages = valueOf('char-advantages', charState.advantages);
-          charState.disadvantages = valueOf('char-disadvantages', charState.disadvantages);
+          // Legacy textareas are kept in sync by renderTraits(); preserve structured traits array.
+          charState.traits = charState.traits || [];
 
           charState.clues = charState.clues || {};
           charState.clues.dream = valueOf('clue-dream', charState.clues.dream);
@@ -4844,6 +5177,7 @@ Deseja continuar?`;
           const previousMaster = clone(charState.master || blankMasterState);
           charState = mergeDeep(charState || defaultCharState, nextState || {});
           ensureStateShape();
+          migrateLegacyTraitState();
           if (options.preserveMaster) charState.master = previousMaster;
           syncFormToState();
           recalculateAll();
