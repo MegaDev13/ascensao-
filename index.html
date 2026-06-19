@@ -1850,7 +1850,66 @@
       ]
     };
 
-    const EQUIPMENT_DATABASE = [
+    
+    // POWER PREREQUISITES (for dependency blocking - buy/remove are exact inverses)
+    const POWER_PREREQS = {
+      // Invisibilidade
+      "camuflagem_ativa": ["camuflagem_optica"],
+      "distorcao_percepcao": ["camuflagem_ativa"],
+      "anulacao_sensorial": ["distorcao_percepcao"],
+      "freq_ausencia": ["anulacao_sensorial"],
+      // Mobilidade
+      "salto_ampliado": ["corrida_extrema"],
+      "parkour_avancado": ["salto_ampliado"],
+      "propulsao_aerea": ["parkour_avancado"],
+      "manip_grav_local": ["propulsao_aerea"],
+      "transcensao_cinetica": ["manip_grav_local"],
+      // Teleporte
+      "teleporte_combate": ["salto_curto"],
+      "tunel_quantico": ["teleporte_combate"],
+      "transferencia_estado": ["tunel_quantico"],
+      "singularidade_portatil": ["transferencia_estado"],
+      // Combate Avançado
+      "reflexos_acelerados": ["aprimoramento_fisico"],
+      "campo_forca": ["reflexos_acelerados"],
+      "arma_energetica": ["campo_forca"],
+      "drone_embarcado": ["arma_energetica"],
+      "sobrecarga_cinetica": ["drone_embarcado"],
+      // Controle
+      "sabotagem_neural": ["hackear_implantes"],
+      "bloqueio_sensorial": ["sabotagem_neural"],
+      "guerra_eletronica": ["bloqueio_sensorial"],
+      "reescrita_personalidade": ["guerra_eletronica"]
+    };
+
+    // Helper: get power definition by id
+    function getPowerDef(powerId) {
+      for (let tree in POWER_DATABASE) {
+        const found = POWER_DATABASE[tree].find(p => p.id === powerId);
+        if (found) return { ...found, tree };
+      }
+      return null;
+    }
+
+    // Helper: compute PX cost (centralized)
+    function getPowerPxCost(p) {
+      if (!p) return 60;
+      if (p.pxCost !== undefined) return p.pxCost;
+      const lvl = p.lvl || 1;
+      if (lvl === 1) return 10;
+      if (lvl === 2) return 15;
+      if (lvl === 3) return 25;
+      if (lvl === 4) return 40;
+      if (lvl === 5) return 60;
+      return 60;
+    }
+
+    // Helper: get acquired powers ids
+    function getAcquiredPowers() {
+      return charState.powersAcquired || [];
+    }
+
+const EQUIPMENT_DATABASE = [
       { id: "faca", name: "🔪 Faca Tática", type: "arma", price: 200, desc: "Dano: 1d6 + FOR. Alcance: Corpo a Corpo." },
       { id: "pistola", name: "🔫 Pistola Leve", type: "arma", price: 800, desc: "Dano: 2d6 + 1. Alcance: Curto (15 m)." },
       { id: "rifle", name: "🎯 Rifle de Precisão", type: "arma", price: 3500, desc: "Dano: 3d6 + 2. Alcance: Longo (150 m)." },
@@ -1936,6 +1995,7 @@
       buildPowersInterface();
       buildItemDatabase();
       recalculateAll();
+      if (typeof renderizarPoderes === 'function') renderizarPoderes();
       syncFormToState();
       addLog("CRA", "Banco de dados cognitivo carregado com sucesso no ano 2301.");
       
@@ -2100,6 +2160,7 @@
       updateUIForAttributes();
       updateUIForSkills();
       updateUIForPowers();
+      if (typeof renderizarPoderes === 'function') renderizarPoderes();
     }
 
     function changeArchetype() {
@@ -2318,15 +2379,17 @@
     }
 
     // POWERS INTERFACE (AGENTE 2 & 5)
-    function buildPowersInterface() {
+    function renderizarPoderes() {
       const cont = document.getElementById('powers-tree-container');
+      if (!cont) return;
       cont.innerHTML = "";
+      
+      const acquired = getAcquiredPowers();
       
       for (let treeName in POWER_DATABASE) {
         const treeDiv = document.createElement('div');
         treeDiv.className = 'power-tree';
         
-        // Specialized checkbox logic
         const isSpecialized = charState.specializedTree === treeName;
         
         treeDiv.innerHTML = `
@@ -2351,18 +2414,19 @@
           const item = document.createElement('div');
           item.className = 'power-item';
           
-          const isAcquired = charState.powersAcquired.includes(p.id);
+          const isAcquired = acquired.includes(p.id);
+          const pxCost = getPowerPxCost(p);
           
           let btnHTML = "";
           if (isAcquired) {
             btnHTML = `
-              <span class="power-acquired">✔ Habilitado</span>
-              <button class="btn-terminal btn-purple" style="font-size:9px; padding:2px 5px;" onclick="activatePower('${p.id}')">Ativar Poder</button>
+              <span class="power-acquired">✔ Adquirido</span>
+              <button class="btn-terminal btn-purple" style="font-size:9px; padding:2px 5px; margin-right:4px;" onclick="activatePower('${p.id}')">Ativar Poder</button>
+              <button class="btn-terminal" style="font-size:9px; padding:2px 5px; background:#c33; border-color:#c33;" onclick="removerPoder('${p.id}')">Remover Poder / Reembolsar</button>
             `;
           } else {
-            const pxCost = p.lvl === 1 ? 10 : p.lvl === 2 ? 15 : p.lvl === 3 ? 25 : p.lvl === 4 ? 40 : p.lvl === 5 ? 60 : 60;
             btnHTML = `
-              <button class="btn-terminal" style="font-size:9px; padding:2px 5px;" onclick="buyPower('${p.id}', ${pxCost})">Habilitar (-${pxCost} PX)</button>
+              <button class="btn-terminal" style="font-size:9px; padding:2px 5px;" onclick="comprarPoder('${p.id}')">Comprar Poder (-${pxCost} PX)</button>
             `;
           }
           
@@ -2383,6 +2447,14 @@
         
         cont.appendChild(treeDiv);
       }
+      
+      // update counts
+      updateUIForPowers();
+    }
+
+    // Backward compat alias
+    function buildPowersInterface() {
+      renderizarPoderes();
     }
 
     function togglePowerTree(treeName) {
@@ -2392,10 +2464,11 @@
     }
 
     function updateUIForPowers() {
+      const acquired = getAcquiredPowers();
       for (let treeName in POWER_DATABASE) {
         let count = 0;
         POWER_DATABASE[treeName].forEach(p => {
-          if (charState.powersAcquired.includes(p.id)) count++;
+          if (acquired.includes(p.id)) count++;
         });
         const cntSpan = document.getElementById(`tree-count-${treeName.replace(/\s+/g,'')}`);
         if (cntSpan) cntSpan.innerText = `Poderes: ${count}`;
@@ -2417,29 +2490,126 @@
       recalculateAll();
     }
 
-    function buyPower(powerId, pxCost) {
+    // ========== CENTRAL POWER FUNCTIONS (refactored: buy/remove are exact inverses) ==========
+    function comprarPoder(powerId) {
+      if (!charState.powersAcquired) charState.powersAcquired = [];
+      
+      const p = getPowerDef(powerId);
+      if (!p) {
+        alert("Poder não encontrado.");
+        return;
+      }
+      
+      // Already acquired?
+      if (charState.powersAcquired.includes(powerId)) {
+        alert("Poder já adquirido.");
+        return;
+      }
+      
+      const pxCost = getPowerPxCost(p);
       const avail = charState.px.total - charState.px.spent;
+      
       if (avail < pxCost) {
         playBeep(400, 0.1, 'triangle');
         alert(`Pontos de PX insuficientes. Requer ${pxCost} PX. Disponível: ${avail} PX.`);
         return;
       }
       
-      // Find power name
-      let pObj = null;
-      for (let tree in POWER_DATABASE) {
-        const found = POWER_DATABASE[tree].find(p => p.id === powerId);
-        if (found) pObj = found;
-      }
-      
       playBeep(1000, 0.12, 'sine');
       charState.px.spent += pxCost;
       charState.powersAcquired.push(powerId);
-      addLog("CRA", `Sucesso: Ativação neural permanente do Poder '${pObj.name}' registrada (-${pxCost} PX).`);
       
-      buildPowersInterface();
+      addLog("CRA", `Sucesso: Ativação neural permanente do Poder '${p.name}' registrada (-${pxCost} PX).`);
+      
+      // Auto recalc + UI + persist
+      recalcularPX();
+      renderizarPoderes();
       recalculateAll();
     }
+
+    function removerPoder(powerId) {
+      if (!charState.powersAcquired) charState.powersAcquired = [];
+      
+      if (!charState.powersAcquired.includes(powerId)) {
+        alert("Poder não está adquirido.");
+        return;
+      }
+      
+      // VALIDATE DEPENDENCIES: block if other acquired powers depend on this
+      const dependents = validarDependencias(powerId);
+      if (dependents.length > 0) {
+        const depNames = dependents.map(d => {
+          const def = getPowerDef(d);
+          return def ? def.name : d;
+        }).join(', ');
+        playBeep(400, 0.15, 'sawtooth');
+        alert(`Não é possível remover '${getPowerDef(powerId)?.name || powerId}'.
+
+Poderes dependentes ainda adquiridos: ${depNames}
+
+Remova primeiro os poderes dependentes.`);
+        addLog("CRA", `Bloqueio: Tentativa de remoção de '${getPowerDef(powerId)?.name}' negada. Dependentes: ${depNames}`, 'system');
+        return;
+      }
+      
+      const p = getPowerDef(powerId);
+      const pxCost = getPowerPxCost(p);
+      
+      playBeep(700, 0.1, 'triangle');
+      
+      // Exact inverse: remove + refund
+      const idx = charState.powersAcquired.indexOf(powerId);
+      if (idx !== -1) charState.powersAcquired.splice(idx, 1);
+      
+      charState.px.spent = Math.max(0, charState.px.spent - pxCost);
+      
+      addLog("CRA", `Removido: Poder '${p ? p.name : powerId}' reembolsado +${pxCost} PX. Estado resetado.`);
+      
+      // Full inverse recalc + UI
+      recalcularPX();
+      renderizarPoderes();
+      recalculateAll();
+    }
+
+    function validarDependencias(powerId) {
+      // Return list of acquired powerIds that have this powerId as prerequisite
+      const dependents = [];
+      const acquired = getAcquiredPowers();
+      
+      for (let depId in POWER_PREREQS) {
+        const prereqs = POWER_PREREQS[depId] || [];
+        if (prereqs.includes(powerId) && acquired.includes(depId)) {
+          dependents.push(depId);
+        }
+      }
+      return dependents;
+    }
+
+    function recalcularPX() {
+      // Recompute spent from actual acquired powers (truth source)
+      if (!charState.powersAcquired) charState.powersAcquired = [];
+      
+      let totalSpent = 0;
+      charState.powersAcquired.forEach(id => {
+        const p = getPowerDef(id);
+        if (p) {
+          totalSpent += getPowerPxCost(p);
+        }
+      });
+      
+      charState.px.spent = totalSpent;
+      
+      // Ensure total >= spent
+      if (charState.px.total < charState.px.spent) {
+        charState.px.total = charState.px.spent;
+      }
+    }
+
+    function buyPower(powerId, pxCost) {
+      // Legacy shim (for old calls) - delegates to new comprarPoder
+      comprarPoder(powerId);
+    }
+
 
     // ACTIVATE POWERS (AGENTE 2)
     function activatePower(powerId) {
@@ -2566,6 +2736,9 @@
     }
 
     function recalculateAll() {
+      // Centralized power spent recalc (ensures buy/remove symmetry)
+      if (typeof recalcularPX === 'function') recalcularPX();
+      
       // 1. Recalculate Max Stats
       const maxSinc = getSincroniaMaxima();
       const maxHp = getVidaMaxima();
@@ -3192,8 +3365,10 @@
       md += `- **Sincronia**: ${charState.sinc.current} / ${getSincroniaMaxima()}\n`;
       md += `- **Marcas de Fragmentação**: ${charState.fragmentationMarks} / 5\n\n`;
       md += `## ⚡ PODERES ADQUIRIDOS\n`;
-      charState.powersAcquired.forEach(pId => {
-        md += `- \`${pId}\`\n`;
+      (charState.powersAcquired || []).forEach(pId => {
+        const def = (typeof getPowerDef === 'function') ? getPowerDef(pId) : null;
+        const display = def ? `${def.name} (lvl ${def.lvl})` : pId;
+        md += `- ${display} \`${pId}\`\n`;
       });
       
       document.getElementById('export-format-label').innerText = "FICHA ESTRUTURADA NOTION (MARKDOWN):";
@@ -3277,6 +3452,7 @@
           charState = { ...charState, ...parsed };
           syncFormToState();
           recalculateAll();
+          if (typeof renderizarPoderes === 'function') renderizarPoderes();
           playBeep(1200, 0.15, 'sine');
           addLog("CRA", `Banco de dados recarregado com sucesso! Personagem ativo: '${charState.name}'.`);
           alert(`Personagem ${charState.name} importado com sucesso na rede!`);
@@ -3466,5 +3642,6 @@
   </script>
 
   <script type="module" src="./js/sheet-app.js"></script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0e24307ffc8f247',t:'MTc4MTg2OTI1Ng=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
