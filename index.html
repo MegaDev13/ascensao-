@@ -1051,17 +1051,174 @@
     .active-inventory {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 12px;
     }
 
     .inv-item-row {
-      background: #111422;
+      background: linear-gradient(135deg, rgba(17, 20, 34, 0.96), rgba(7, 10, 18, 0.98));
       border: 1px solid var(--border);
-      padding: 8px 12px;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 112px minmax(0, 1fr);
+      gap: 12px;
+      align-items: stretch;
+      border-left: 3px solid var(--purple);
+      box-shadow: 0 0 18px rgba(157, 0, 255, 0.08), inset 0 0 18px rgba(0, 255, 255, 0.025);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .inv-item-row::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(90deg, rgba(0,255,255,0.05), transparent 35%, rgba(255,0,255,0.04));
+      opacity: 0.75;
+    }
+
+    .inv-item-media {
+      position: relative;
+      min-height: 112px;
+      border: 1px solid rgba(0, 255, 255, 0.32);
+      background: radial-gradient(circle at 50% 35%, rgba(0,255,255,0.12), rgba(10,12,22,0.95) 62%);
+      box-shadow: inset 0 0 18px rgba(0, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .inv-item-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .inv-item-placeholder {
+      font-family: var(--font-disp);
+      color: var(--cyan);
+      text-align: center;
+      text-shadow: 0 0 10px var(--cyan-glow);
+      letter-spacing: 1px;
+      padding: 8px;
+    }
+
+    .inv-item-placeholder .placeholder-icon {
+      display: block;
+      font-size: 30px;
+      margin-bottom: 6px;
+    }
+
+    .inv-item-placeholder .placeholder-text {
+      display: block;
+      font-size: 9px;
+      line-height: 1.2;
+      color: var(--text-muted);
+    }
+
+    .inv-item-content {
+      position: relative;
+      z-index: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .inv-item-header {
       display: flex;
       justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .inv-item-title {
+      font-family: var(--font-disp);
+      font-size: 14px;
+      color: var(--text);
+      text-shadow: 0 0 8px rgba(0,255,255,0.18);
+      line-height: 1.25;
+    }
+
+    .inv-item-type {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 2px 6px;
+      border: 1px solid rgba(0,255,255,0.3);
+      color: var(--cyan);
+      background: rgba(0,255,255,0.04);
+      font-family: var(--font-mono);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .inv-item-system-desc {
+      font-size: 10px;
+      color: var(--text-muted);
+      line-height: 1.35;
+      border-left: 2px solid rgba(157,0,255,0.42);
+      padding-left: 7px;
+    }
+
+    .inv-custom-desc {
+      width: 100%;
+      min-height: 58px;
+      resize: vertical;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1.35;
+      color: var(--text);
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(0,255,255,0.24);
+      padding: 7px;
+    }
+
+    .inv-custom-desc:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 10px var(--cyan-glow);
+      outline: none;
+    }
+
+    .inv-image-controls {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 6px;
       align-items: center;
-      border-left: 3px solid var(--purple);
+    }
+
+    .inv-image-controls input[type="url"] {
+      min-width: 0;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      height: 26px;
+      padding: 3px 7px;
+      background: rgba(0,0,0,0.35);
+    }
+
+    .inv-item-actions {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    @media (max-width: 900px) {
+      .inventory-section {
+        grid-template-columns: 1fr;
+      }
+      .inv-item-row {
+        grid-template-columns: 92px minmax(0, 1fr);
+      }
+      .inv-item-media {
+        min-height: 92px;
+      }
+      .inv-image-controls {
+        grid-template-columns: 1fr;
+      }
     }
 
     /* MODO MESTRE PANEL (AGENTE 6) */
@@ -4373,13 +4530,42 @@ Remova primeiro os poderes dependentes.`);
     function getInventory() {
       if (!Array.isArray(charState.inventory)) charState.inventory = [];
       charState.inventory = charState.inventory.map(entry => {
-        if (typeof entry === 'string') return { id: entry, quantidade: 1 };
+        if (typeof entry === 'string') {
+          return { id: entry, quantidade: 1, customDescription: "", customImage: "" };
+        }
         if (entry && typeof entry === 'object' && entry.id) {
-          return { id: entry.id, quantidade: entry.quantidade || 1 };
+          return {
+            ...entry,
+            id: entry.id,
+            quantidade: entry.quantidade || 1,
+            customDescription: entry.customDescription || "",
+            customImage: entry.customImage || ""
+          };
         }
         return null;
       }).filter(Boolean);
       return charState.inventory;
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function getInventoryTypeLabel(type) {
+      const labels = {
+        arma: "Arma",
+        implante: "Implante",
+        defesa: "Defesa",
+        consumivel: "Consumível",
+        municao: "Munição",
+        recurso: "Recurso"
+      };
+      return labels[type] || type || "Equipamento";
     }
 
     function getInventoryIds() {
@@ -4445,64 +4631,120 @@ Remova primeiro os poderes dependentes.`);
         return;
       }
 
-      inv.forEach(entry => {
+      inv.forEach((entry, index) => {
         const item = getItemDef(entry.id);
         if (!item) return;
 
         const qty = entry.quantidade || 1;
         const isUnq = isUnico(item);
+        const safeId = escapeHTML(entry.id);
+        const safeName = escapeHTML(item.name);
+        const safeType = escapeHTML(getInventoryTypeLabel(item.type));
+        const safeSystemDesc = escapeHTML(item.desc);
+        const safeCustomDesc = escapeHTML(entry.customDescription || "");
+        const safeImage = escapeHTML(entry.customImage || "");
+        const itemIdLiteral = JSON.stringify(entry.id).replace(/"/g, '&quot;');
+        const fileInputId = `inv-image-file-${index}`;
+        const urlInputId = `inv-image-url-${index}`;
 
-        const row = document.createElement('div');
-        row.className = "inv-item-row";
-        row.style.display = "flex";
-        row.style.alignItems = "center";
-        row.style.gap = "8px";
-        row.style.marginBottom = "8px";
-        row.style.padding = "6px 8px";
-        row.style.border = "1px solid var(--border)";
-        row.style.borderRadius = "4px";
+        const mediaHTML = entry.customImage
+          ? `<img src="${safeImage}" alt="Imagem de ${safeName}" onerror="this.parentElement.innerHTML='<div class=&quot;inv-item-placeholder&quot;><span class=&quot;placeholder-icon&quot;>▧</span><span class=&quot;placeholder-text&quot;>IMAGEM<br>INDISPONÍVEL</span></div>'">`
+          : `<div class="inv-item-placeholder"><span class="placeholder-icon">▧</span><span class="placeholder-text">SEM IMAGEM<br>PERSONALIZADA</span></div>`;
 
-        let infoHTML = "";
         let buttonsHTML = "";
-
         if (isUnq) {
-          // ÚNICO: nome + descrição + botão REMOVER (sem quantidade)
-          infoHTML = `
-            <div style="flex:1; min-width:0;">
-              <div style="font-weight:600; font-size:13px;">${item.name}</div>
-              <div style="font-size:10px; color:#aaa;">${item.desc}</div>
-            </div>
-          `;
           buttonsHTML = `
-            <button class="btn-terminal btn-danger" style="font-size:9px; padding:2px 6px;" onclick="removerTodasUnidades('${entry.id}')">REMOVER</button>
+            <button class="btn-terminal btn-danger" style="font-size:9px; padding:2px 6px;" onclick="removerTodasUnidades(${itemIdLiteral})">REMOVER</button>
           `;
         } else {
-          // ACUMULÁVEL: nome + quantidade + botões completos
-          infoHTML = `
-            <div style="flex:1; min-width:0;">
-              <div style="font-weight:600; font-size:13px;">${item.name}</div>
-              <div style="font-size:10px; color:#aaa;">${item.desc}</div>
-              <div style="margin-top:2px; font-size:12px;">
-                <strong>Quantidade: <span style="color:#0ff;">${qty}</span></strong>
-              </div>
-            </div>
-          `;
           buttonsHTML = `
-            <button class="btn-terminal" style="font-size:10px; padding:2px 7px;" onclick="alterarQuantidade('${entry.id}', 1)">+1</button>
-            <button class="btn-terminal" style="font-size:10px; padding:2px 7px; background:#2a5; color:white;" onclick="usarItem('${entry.id}')">USAR</button>
-            <button class="btn-terminal" style="font-size:9px; padding:2px 6px;" onclick="removerItem('${entry.id}')">REMOVER</button>
-            <button class="btn-terminal btn-danger" style="font-size:9px; padding:2px 6px;" onclick="removerTodasUnidades('${entry.id}')">REMOVER TUDO</button>
+            <button class="btn-terminal" style="font-size:10px; padding:2px 7px;" onclick="alterarQuantidade(${itemIdLiteral}, 1)">+1</button>
+            <button class="btn-terminal" style="font-size:10px; padding:2px 7px; background:#2a5; color:white;" onclick="usarItem(${itemIdLiteral})">USAR</button>
+            <button class="btn-terminal" style="font-size:9px; padding:2px 6px;" onclick="removerItem(${itemIdLiteral})">REMOVER</button>
+            <button class="btn-terminal btn-danger" style="font-size:9px; padding:2px 6px;" onclick="removerTodasUnidades(${itemIdLiteral})">REMOVER TUDO</button>
           `;
         }
 
+        const row = document.createElement('div');
+        row.className = "inv-item-row";
         row.innerHTML = `
-          ${infoHTML}
-          <div style="display:flex; gap:4px; flex-wrap:wrap;">
-            ${buttonsHTML}
+          <div class="inv-item-media">
+            ${mediaHTML}
+          </div>
+
+          <div class="inv-item-content">
+            <div class="inv-item-header">
+              <div style="min-width:0;">
+                <div class="inv-item-title">${safeName}</div>
+                <span class="inv-item-type">${safeType}${isUnq ? '' : ` · QTD ${qty}`}</span>
+              </div>
+              <div class="inv-item-actions">
+                ${buttonsHTML}
+              </div>
+            </div>
+
+            <div class="inv-item-system-desc">${safeSystemDesc}</div>
+
+            <label style="font-size:9px; color:var(--cyan); font-family:var(--font-mono); letter-spacing:.8px;">DESCRIÇÃO PERSONALIZADA DO OPERADOR</label>
+            <textarea class="inv-custom-desc" placeholder="Aparência, modificações, histórico/lore, observações táticas..." oninput="updateInventoryCustomDescription(${itemIdLiteral}, this.value)">${safeCustomDesc}</textarea>
+
+            <div class="inv-image-controls">
+              <input type="url" id="${urlInputId}" value="${safeImage}" placeholder="URL da imagem ou use upload local" onchange="setInventoryImageUrl(${itemIdLiteral}, this.value)">
+              <button class="btn-terminal" style="font-size:9px; padding:4px 7px;" onclick="document.getElementById('${fileInputId}').click()">UPLOAD</button>
+              <button class="btn-terminal" style="font-size:9px; padding:4px 7px;" onclick="clearInventoryImage(${itemIdLiteral})">LIMPAR</button>
+              <input type="file" id="${fileInputId}" accept="image/*" style="display:none;" onchange="uploadInventoryImage(${itemIdLiteral}, this)">
+            </div>
           </div>
         `;
         container.appendChild(row);
       });
+    }
+
+    function updateInventoryCustomDescription(itemId, value) {
+      const entry = getInventoryEntry(itemId);
+      if (!entry) return;
+      entry.customDescription = value || "";
+      autoSave();
+    }
+
+    function setInventoryImageUrl(itemId, value) {
+      const entry = getInventoryEntry(itemId);
+      if (!entry) return;
+      entry.customImage = (value || "").trim();
+      renderizarInventario();
+      autoSave();
+    }
+
+    function uploadInventoryImage(itemId, input) {
+      const file = input && input.files && input.files[0];
+      if (!file) return;
+      if (!file.type || !file.type.startsWith('image/')) {
+        alert("Selecione um arquivo de imagem válido.");
+        input.value = "";
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const entry = getInventoryEntry(itemId);
+        if (!entry) return;
+        entry.customImage = event.target.result;
+        addLog("CRA", "Imagem personalizada de equipamento atualizada.");
+        renderizarInventario();
+        autoSave();
+      };
+      reader.onerror = function() {
+        alert("Não foi possível carregar a imagem selecionada.");
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearInventoryImage(itemId) {
+      const entry = getInventoryEntry(itemId);
+      if (!entry) return;
+      entry.customImage = "";
+      renderizarInventario();
+      autoSave();
     }
 
     function adicionarItem(itemId) {
