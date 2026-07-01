@@ -674,7 +674,7 @@
 
     .skill-row {
       display: grid;
-      grid-template-columns: 100px 70px 1fr 40px;
+      grid-template-columns: 100px 70px 1fr 70px 34px;
       align-items: center;
       gap: 8px;
       padding: 6px 0;
@@ -1284,6 +1284,139 @@
     .text-green { color: var(--green) !important; }
     .text-muted { color: var(--text-muted) !important; }
 
+
+
+    /* MOBILE APP NAV + RESPONSIVE REFINEMENTS (2026) */
+    .mobile-tab-label { display: none; }
+    .skill-roll-formula {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--green);
+      white-space: nowrap;
+      text-align: right;
+    }
+    .skill-clear-btn {
+      min-width: 22px;
+      height: 22px;
+      border: 1px solid var(--border);
+      background: rgba(220,20,60,0.08);
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      cursor: pointer;
+    }
+    .skill-clear-btn:hover { border-color: var(--magenta); color: var(--magenta); }
+    .custom-archetype-modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0,0,0,.78);
+      z-index: 1000;
+    }
+    .custom-archetype-modal.active { display: flex; }
+    .custom-archetype-card {
+      width: min(920px, 100%);
+      max-height: 92vh;
+      overflow: auto;
+      background: var(--bg-panel);
+      border: 1px solid var(--cyan);
+      box-shadow: 0 0 30px var(--cyan-glow);
+      padding: 18px;
+    }
+    .custom-archetype-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .custom-attr-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .official-print-sheet { display:none; }
+
+    @media (max-width: 900px) {
+      body { font-size: 13px; }
+      .app-container {
+        height: auto !important;
+        min-height: 100vh;
+        grid-template-rows: auto auto auto !important;
+        padding-bottom: calc(72px + env(safe-area-inset-bottom));
+      }
+      .top-bar { padding: 8px 10px; gap: 8px; }
+      .brand-title { font-size: 12px; letter-spacing: .1em; width: 100%; }
+      .top-controls { width: 100%; justify-content: flex-start; }
+      .main-grid { display: block !important; overflow: visible; }
+      .hud-sidebar {
+        max-height: none !important;
+        padding: 10px;
+        gap: 10px;
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .workspace { overflow: visible; min-height: auto; }
+      .tab-content { padding: 10px; overflow: visible; }
+      .tabs-nav {
+        position: fixed;
+        left: 0; right: 0; bottom: 0;
+        z-index: 900;
+        height: calc(62px + env(safe-area-inset-bottom));
+        padding: 7px 7px calc(7px + env(safe-area-inset-bottom));
+        display: grid;
+        grid-template-columns: repeat(9, 1fr);
+        gap: 4px;
+        border-top: 1px solid var(--cyan);
+        border-bottom: 0;
+        background: rgba(5,6,10,.98);
+        box-shadow: 0 -4px 18px rgba(0,245,255,.18);
+        overflow: visible;
+      }
+      .tab-button {
+        min-width: 0;
+        padding: 6px 2px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        font-size: 0 !important;
+        letter-spacing: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+      }
+      .tab-button::before {
+        content: attr(data-icon);
+        font-size: 23px;
+        line-height: 1;
+      }
+      .tab-button.active::after {
+        content: attr(data-label);
+        position: absolute;
+        bottom: calc(100% + 6px);
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 3px 8px;
+        border: 1px solid var(--cyan);
+        border-radius: 999px;
+        background: #08090e;
+        color: var(--cyan);
+        font: 10px var(--font-mono);
+        white-space: nowrap;
+        box-shadow: 0 0 10px var(--cyan-glow);
+      }
+      .terminal-panel { display: none; }
+      .card-grid, .combat-cockpit, .master-panel-grid, .inventory-section,
+      .custom-archetype-grid, .custom-attr-grid {
+        grid-template-columns: 1fr !important;
+      }
+      .c-card { grid-column: auto !important; padding: 11px; }
+      input[type="text"], input[type="number"], select, textarea { min-height: 42px; font-size: 16px; }
+      .btn-terminal, .btn-circle, .rest-btn { min-height: 38px; }
+      .attributes-list, .skills-section-grid { grid-template-columns: 1fr !important; }
+      .attr-row { padding: 10px; gap: 8px; }
+      .skill-row { grid-template-columns: minmax(92px, 1fr) 64px minmax(105px, auto) 70px 34px !important; gap: 5px; }
+      .skill-dot { width: 16px; height: 16px; }
+      .skill-dots { gap: 4px; }
+      .power-item, .weapon-action-row, .db-item-row { flex-direction: column; align-items: stretch; }
+      .trait-card { align-items: flex-start; flex-wrap: wrap; }
+      .trait-card .trait-desc { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }
+      #trait-descricao { min-height: 110px; resize: vertical; }
+    }
+
     /* PRINT LAYOUT */
     @media print {
       body {
@@ -1531,9 +1664,12 @@
               <button class="btn-circle" onclick="adjustPX(10)" style="width: 24px; height: 18px; font-size: 9px; border-radius: 2px;">+10</button>
             </div>
           </div>
-          <div class="g-flex-between" style="font-family: var(--font-mono); font-size: 11px; margin-bottom: 4px;">
+          <div class="g-flex-between" style="font-family: var(--font-mono); font-size: 11px; align-items: center; margin-bottom: 4px;">
             <span class="text-muted">PX DISPONÍVEL:</span>
-            <span id="hud-px-available" class="text-green" style="font-weight: bold;">0 PX</span>
+            <div class="g-flex" style="gap:4px;">
+              <input type="number" id="px-available-input" value="0" onchange="updateAvailablePXFromInput()" title="PX disponíveis controláveis manualmente pelo Mestre" style="width: 65px; height: 20px; padding: 0 3px; font-family: var(--font-mono); font-size: 11px; text-align: center; color: var(--green); font-weight: bold;">
+              <button class="btn-circle" onclick="resetAvailablePXAuto()" title="Voltar ao cálculo automático" style="width: 24px; height: 18px; font-size: 9px; border-radius: 2px;">A</button>
+            </div>
           </div>
           <div class="g-flex-between" style="font-family: var(--font-mono); font-size: 11px; align-items: center;">
             <span class="text-muted">MARCOS REG.:</span>
@@ -1550,16 +1686,16 @@
       <main class="workspace">
         
         <!-- TABS BAR -->
-        <nav class="tabs-nav">
-          <button class="tab-button active" onclick="switchTab('identidade-tab')">📑 Identidade</button>
-          <button class="tab-button" onclick="switchTab('atributos-tab')">📊 Atributos</button>
-          <button class="tab-button" onclick="switchTab('pericias-tab')">🎯 Perícias</button>
-          <button class="tab-button" onclick="switchTab('poderes-tab')">⚡ Poderes</button>
-          <button class="tab-button" onclick="switchTab('combate-tab')">⚔️ Combate</button>
-          <button class="tab-button" onclick="switchTab('equipamento-tab')">🦾 Equipamentos</button>
-          <button class="tab-button" onclick="switchTab('objetivos-tab')">🌌 Objetivos</button>
-          <button class="tab-button master-only" id="master-tab-btn" onclick="switchTab('master-tab')" style="display: none;">💀 Diagnóstico MJ</button>
-          <button class="tab-button" onclick="switchTab('export-tab')">💾 Exportação</button>
+        <nav class="tabs-nav" aria-label="Navegação da ficha">
+          <button class="tab-button active" data-label="Identidade" data-icon="👤" onclick="switchTab('identidade-tab')">👤 Identidade</button>
+          <button class="tab-button" data-label="Atributos" data-icon="🏠" onclick="switchTab('atributos-tab')">🏠 Atributos</button>
+          <button class="tab-button" data-label="Perícias" data-icon="🧠" onclick="switchTab('pericias-tab')">🧠 Perícias</button>
+          <button class="tab-button" data-label="Poderes" data-icon="✨" onclick="switchTab('poderes-tab')">✨ Poderes</button>
+          <button class="tab-button" data-label="Combate" data-icon="⚔️" onclick="switchTab('combate-tab')">⚔️ Combate</button>
+          <button class="tab-button" data-label="Equipamentos" data-icon="🎒" onclick="switchTab('equipamento-tab')">🎒 Equipamentos</button>
+          <button class="tab-button" data-label="História" data-icon="📖" onclick="switchTab('objetivos-tab')">📖 Objetivos</button>
+          <button class="tab-button master-only" data-label="Mestre" data-icon="💀" id="master-tab-btn" onclick="switchTab('master-tab')" style="display: none;">💀 Diagnóstico MJ</button>
+          <button class="tab-button" data-label="Exportar" data-icon="⚙️" onclick="switchTab('export-tab')">⚙️ Exportação</button>
         </nav>
 
         <!-- TAB 1: IDENTIDADE -->
@@ -1585,11 +1721,13 @@
                     <option value="Embaixador">🗣️ Embaixador (Manipulação Bioquímica sugerida)</option>
                     <option value="Buscador">🔬 Buscador (Campos de Manipulação sugerida)</option>
                     <option value="Fantasma">🎭 Fantasmagórico (Distorção de Percepção sugerida)</option>
+                    <option value="Personalizado">🧬 Arquétipo Personalizado</option>
                   </select>
+                  <button type="button" class="btn-terminal" id="edit-custom-archetype-btn" onclick="openCustomArchetypeModal()" style="display:none; width:100%; margin-top:6px; font-size:9px; padding:4px 6px;">Editar Arquétipo Personalizado</button>
                 </div>
                 <div class="form-group">
                   <label for="char-faction">Facção de Origem / Filiação</label>
-                  <select id="char-faction">
+                  <select id="char-faction" onchange="updateFactionFields()">
                     <option value="CRA">Câmara de Registro de Ascensões (CRA)</option>
                     <option value="Heptagrama">Heptagrama Corp</option>
                     <option value="Igreja">A Igreja da Última Pergunta</option>
@@ -1605,7 +1743,17 @@
                     <option value="MedicosSemEscalas">Médicos Sem Escalas</option>
                     <option value="CompanhiaSussurros">A Companhia dos Sussurros</option>
                     <option value="SombraCorporativa">A Sombra Corporativa</option>
+                    <option value="Nenhuma">Nenhuma dessas</option>
+                    <option value="Outra">Outra</option>
                   </select>
+                </div>
+                <div class="form-group" id="char-faction-other-wrap" style="display:none;">
+                  <label for="char-faction-other">Nome da Facção</label>
+                  <input type="text" id="char-faction-other" placeholder="Digite o nome da facção personalizada" oninput="updateFactionFields(false)">
+                </div>
+                <div class="form-group">
+                  <label for="char-faction-lore">Lore / Objetivos da Facção</label>
+                  <textarea id="char-faction-lore" style="min-height: 96px; resize: vertical;" placeholder="História, objetivos, descrição e motivações da facção..." oninput="updateFactionFields(false)"></textarea>
                 </div>
               </div>
               <div class="form-group" style="margin-top: 10px;">
@@ -1620,7 +1768,7 @@
               <div class="form-group" style="display: grid; grid-template-columns: 1fr 160px 100px; gap: 10px; align-items: end;">
                 <div>
                   <label for="trait-descricao">Descrição</label>
-                  <input type="text" id="trait-descricao" placeholder="Ex: Memória Fotográfica, Rico, Contatos Policiais..." style="width: 100%;">
+                  <textarea id="trait-descricao" placeholder="Ex: Memória Fotográfica, Rico, Contatos Policiais..." style="width: 100%; min-height: 120px; resize: vertical;" oninput="autoGrowTextarea(this)"></textarea>
                 </div>
                 <div>
                   <label for="trait-tipo">Tipo</label>
@@ -1973,6 +2121,12 @@
             </div>
 
           </div>
+
+          <div class="c-card" style="margin-top: 15px;">
+            <div class="c-card-title">EQUIPAMENTOS PERSONALIZADOS</div>
+            <p class="text-muted" style="margin-bottom:10px;">Texto livre para itens que não existem no banco: Notebook Militar, Kit de Primeiros Socorros, Máscara Tática, Drone Customizado etc.</p>
+            <textarea id="equipment-custom-text" style="min-height: 170px; resize: vertical; font-family: var(--font-mono);" placeholder="Liste seus equipamentos personalizados, um por linha..." oninput="updateCustomEquipmentText()"></textarea>
+          </div>
         </div>
 
         <!-- TAB 7: OBJETIVOS & CONEXÕES -->
@@ -2188,7 +2342,7 @@
               <button class="btn-terminal btn-purple" onclick="generateNotionExport()">Exportar p/ Notion</button>
               <button class="btn-terminal" onclick="generateFoundryExport()">Exportar p/ Foundry</button>
               <button class="btn-terminal btn-purple" onclick="generateRoll20Export()">Exportar p/ Roll20</button>
-              <button class="btn-terminal btn-danger" onclick="window.print()">Exportar PDF / Imprimir</button>
+              <button class="btn-terminal btn-danger" onclick="exportOfficialPDF()">Exportar PDF Oficial</button>
             </div>
 
             <div class="copy-output-area">
@@ -2228,6 +2382,44 @@
       </div>
     </footer>
 
+  </div>
+
+
+  <div class="custom-archetype-modal" id="custom-archetype-modal" role="dialog" aria-modal="true" aria-labelledby="custom-archetype-title">
+    <div class="custom-archetype-card">
+      <div class="c-card-title" id="custom-archetype-title">🧬 Arquétipo Personalizado</div>
+      <p class="text-muted" style="margin-bottom:12px;">Configure bônus temporários do arquétipo sem alterar os arquétipos oficiais. Estes dados ficam salvos em <code>charState.customArchetype</code>.</p>
+      <div class="custom-archetype-grid">
+        <div class="form-group"><label for="custom-arch-name">Nome</label><input id="custom-arch-name" type="text" placeholder="Ex: Cronista Neural"></div>
+        <div class="form-group"><label for="custom-arch-sync">Sincronia bônus</label><input id="custom-arch-sync" type="number" value="0"></div>
+        <div class="form-group" style="grid-column:1/-1;"><label for="custom-arch-desc">Descrição</label><textarea id="custom-arch-desc" style="min-height:80px; resize:vertical;"></textarea></div>
+        <div class="form-group"><label for="custom-arch-life">Vida bônus</label><input id="custom-arch-life" type="number" value="0"></div>
+        <div class="form-group"><label for="custom-arch-powers">Poderes / bônus de poderes</label><textarea id="custom-arch-powers" style="min-height:70px; resize:vertical;" placeholder="Poderes sugeridos ou concedidos..."></textarea></div>
+      </div>
+      <div class="c-card" style="margin: 10px 0;">
+        <div class="c-card-title">Atributos bônus</div>
+        <div class="custom-attr-grid">
+          <label>FOR<input id="custom-arch-attr-for" type="number" value="0"></label>
+          <label>AGI<input id="custom-arch-attr-agi" type="number" value="0"></label>
+          <label>RES<input id="custom-arch-attr-res" type="number" value="0"></label>
+          <label>INT<input id="custom-arch-attr-int" type="number" value="0"></label>
+          <label>PER<input id="custom-arch-attr-per" type="number" value="0"></label>
+          <label>PRE<input id="custom-arch-attr-pre" type="number" value="0"></label>
+          <label>TEC<input id="custom-arch-attr-tec" type="number" value="0"></label>
+          <label>ESS<input id="custom-arch-attr-ess" type="number" value="0"></label>
+        </div>
+      </div>
+      <div class="custom-archetype-grid">
+        <div class="form-group"><label for="custom-arch-skills">Perícias bônus</label><textarea id="custom-arch-skills" style="min-height:92px; resize:vertical;" placeholder="Uma por linha. Ex: Furtividade: 2"></textarea></div>
+        <div class="form-group"><label for="custom-arch-equipment">Equipamentos</label><textarea id="custom-arch-equipment" style="min-height:92px; resize:vertical;"></textarea></div>
+        <div class="form-group"><label for="custom-arch-advantages">Vantagens</label><textarea id="custom-arch-advantages" style="min-height:80px; resize:vertical;"></textarea></div>
+        <div class="form-group"><label for="custom-arch-disadvantages">Desvantagens</label><textarea id="custom-arch-disadvantages" style="min-height:80px; resize:vertical;"></textarea></div>
+      </div>
+      <div class="g-flex" style="justify-content:flex-end; margin-top:12px; flex-wrap:wrap;">
+        <button class="btn-terminal" type="button" onclick="closeCustomArchetypeModal()">Cancelar</button>
+        <button class="btn-terminal btn-purple" type="button" onclick="saveCustomArchetype()">Confirmar Arquétipo</button>
+      </div>
+    </div>
   </div>
 
   <!-- SOUNDS & LOGIC JAVASCRIPT -->
@@ -2432,7 +2624,14 @@
         if (cat.key === normalized) return true;
         if (normalizarCategoriaTexto(cat.value) === normalized) return true;
         if (normalizarCategoriaTexto(cat.label) === normalized) return true;
-        return cat.aliases.some(alias => normalized.includes(normalizarCategoriaTexto(alias)));
+        return cat.aliases.some(alias => {
+          const a = normalizarCategoriaTexto(alias);
+          if (!a) return false;
+          if (normalized === a) return true;
+          // Evita falso positivo: "Nanotecnologia" não pode casar com alias curto "ia".
+          if (a.length <= 3) return new RegExp(`(^|\s)${a}($|\s)`).test(normalized);
+          return normalized.includes(a);
+        });
       }) || CUSTOM_POWER_CATEGORIES[CUSTOM_POWER_CATEGORIES.length - 1];
     }
 
@@ -2574,6 +2773,8 @@ const EQUIPMENT_DATABASE = [
       codename: "A Sombra",
       archetype: "Sombra",
       faction: "MercadoNegro",
+      factionOtherName: "",
+      factionLore: "",
       concept: "Eu sou alguém que conhece todos os segredos, menos o meu.",
       // Legacy text fields kept empty for compatibility; use traits array below.
       advantages: "",
@@ -2614,13 +2815,15 @@ const EQUIPMENT_DATABASE = [
       appearance: "",
       notes: "",
       customPowers: [],
+      customArchetype: null,
+      customEquipmentText: "",
       specializedTree: "Invisibilidade",
       
       hp: { current: 20, maxOverride: null },
       sinc: { current: 9 },
       fragmentationMarks: 0,
       credits: 2000,
-      px: { total: 0, spent: 0 },
+      px: { total: 0, spent: 0, availableOverride: null },
       marcosNarrativos: 0,
       
       clues: {
@@ -2774,6 +2977,140 @@ const EQUIPMENT_DATABASE = [
     }
 
     // Form synchronization
+
+
+    function autoGrowTextarea(el) {
+      if (!el) return;
+      el.style.height = 'auto';
+      el.style.height = Math.max(el.scrollHeight, 90) + 'px';
+    }
+
+    function getComputedAvailablePX() {
+      if (!charState.px) charState.px = { total: 0, spent: 0, availableOverride: null };
+      return (charState.px.total || 0) - (charState.px.spent || 0) + (charState.px.bonus || 0);
+    }
+
+    function getAvailablePX() {
+      if (!charState.px) charState.px = { total: 0, spent: 0, availableOverride: null };
+      const ov = charState.px.availableOverride;
+      return (ov === null || ov === undefined || ov === '') ? getComputedAvailablePX() : Number(ov) || 0;
+    }
+
+    function updateAvailablePXFromInput() {
+      const el = document.getElementById('px-available-input');
+      if (!charState.px) charState.px = { total: 0, spent: 0, availableOverride: null };
+      if (charState.px.availableOverride === undefined) charState.px.availableOverride = null;
+      charState.px.availableOverride = Math.max(0, parseInt(el?.value, 10) || 0);
+      addLog('CRA', `PX disponíveis definidos manualmente para ${charState.px.availableOverride} PX.`);
+      recalculateAll();
+    }
+
+    function resetAvailablePXAuto() {
+      if (!charState.px) charState.px = { total: 0, spent: 0, availableOverride: null };
+      if (charState.px.availableOverride === undefined) charState.px.availableOverride = null;
+      charState.px.availableOverride = null;
+      addLog('CRA', 'PX disponíveis voltaram ao cálculo automático.');
+      recalculateAll();
+    }
+
+    function getFactionDisplayName() {
+      if (charState.faction === 'Outra') return charState.factionOtherName || 'Outra';
+      if (charState.faction === 'Nenhuma') return 'Nenhuma dessas';
+      const opt = document.querySelector(`#char-faction option[value="${CSS.escape(charState.faction || '')}"]`);
+      return opt ? opt.textContent : (charState.faction || '');
+    }
+
+    function updateFactionFields(recalculate = true) {
+      const select = document.getElementById('char-faction');
+      const otherWrap = document.getElementById('char-faction-other-wrap');
+      const otherInput = document.getElementById('char-faction-other');
+      const loreInput = document.getElementById('char-faction-lore');
+      if (!select) return;
+      charState.faction = select.value;
+      charState.factionOtherName = otherInput?.value || '';
+      charState.factionLore = loreInput?.value || '';
+      if (otherWrap) otherWrap.style.display = charState.faction === 'Outra' ? 'block' : 'none';
+      if (recalculate) recalculateAll();
+      else autoSave();
+    }
+
+    function updateCustomEquipmentText() {
+      charState.customEquipmentText = document.getElementById('equipment-custom-text')?.value || '';
+      autoSave();
+    }
+
+    function parseSkillBonusText(text) {
+      const out = {};
+      String(text || '').split(/\n|;/).forEach(line => {
+        const m = line.match(/^\s*([^:+=-]+?)\s*[:+=]\s*(-?\d+)/);
+        if (m) out[m[1].trim()] = Number(m[2]) || 0;
+      });
+      return out;
+    }
+
+    function getCustomArchetypeSkillBonus(skillName) {
+      if (charState.archetype !== 'Personalizado' || !charState.customArchetype) return 0;
+      const bonuses = charState.customArchetype.skillBonuses || parseSkillBonusText(charState.customArchetype.skillsText || '');
+      return Number(bonuses[skillName] || 0);
+    }
+
+    function getActiveCustomArchetype() {
+      return charState.archetype === 'Personalizado' ? (charState.customArchetype || null) : null;
+    }
+
+    function openCustomArchetypeModal() {
+      const modal = document.getElementById('custom-archetype-modal');
+      const arch = charState.customArchetype || {};
+      const attrs = arch.attributeBonuses || {};
+      document.getElementById('custom-arch-name').value = arch.name || '';
+      document.getElementById('custom-arch-desc').value = arch.description || '';
+      document.getElementById('custom-arch-sync').value = arch.sincroniaBonus || 0;
+      document.getElementById('custom-arch-life').value = arch.vidaBonus || 0;
+      ['for','agi','res','int','per','pre','tec','ess'].forEach(a => {
+        const el = document.getElementById(`custom-arch-attr-${a}`);
+        if (el) el.value = attrs[a] || 0;
+      });
+      document.getElementById('custom-arch-skills').value = arch.skillsText || '';
+      document.getElementById('custom-arch-equipment').value = arch.equipment || '';
+      document.getElementById('custom-arch-powers').value = arch.powers || '';
+      document.getElementById('custom-arch-advantages').value = arch.advantages || '';
+      document.getElementById('custom-arch-disadvantages').value = arch.disadvantages || '';
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeCustomArchetypeModal() {
+      document.getElementById('custom-archetype-modal')?.classList.remove('active');
+    }
+
+    function saveCustomArchetype() {
+      const name = (document.getElementById('custom-arch-name')?.value || '').trim() || 'Arquétipo Personalizado';
+      const attrs = {};
+      ['for','agi','res','int','per','pre','tec','ess'].forEach(a => {
+        attrs[a] = parseInt(document.getElementById(`custom-arch-attr-${a}`)?.value, 10) || 0;
+      });
+      const skillsText = document.getElementById('custom-arch-skills')?.value || '';
+      charState.customArchetype = {
+        name,
+        description: document.getElementById('custom-arch-desc')?.value || '',
+        sincroniaBonus: parseInt(document.getElementById('custom-arch-sync')?.value, 10) || 0,
+        vidaBonus: parseInt(document.getElementById('custom-arch-life')?.value, 10) || 0,
+        attributeBonuses: attrs,
+        skillsText,
+        skillBonuses: parseSkillBonusText(skillsText),
+        equipment: document.getElementById('custom-arch-equipment')?.value || '',
+        powers: document.getElementById('custom-arch-powers')?.value || '',
+        advantages: document.getElementById('custom-arch-advantages')?.value || '',
+        disadvantages: document.getElementById('custom-arch-disadvantages')?.value || '',
+        updatedAt: Date.now()
+      };
+      charState.archetype = 'Personalizado';
+      const select = document.getElementById('char-archetype');
+      if (select) select.value = 'Personalizado';
+      closeCustomArchetypeModal();
+      addLog('CRA', `Arquétipo personalizado configurado: ${name}.`);
+      recalculateAll();
+    }
+
     function syncIdentity() {
       charState.name = document.getElementById('char-name').value;
       charState.codename = document.getElementById('char-codename').value;
@@ -2813,7 +3150,7 @@ const EQUIPMENT_DATABASE = [
       
       // Vantagens cost PX; disadvantages grant bonus PX.
       if (config.px < 0) {
-        const available = charState.px.total - charState.px.spent + (charState.px.bonus || 0);
+        const available = getAvailablePX();
         if (available < Math.abs(config.px)) {
           playBeep(400, 0.1, 'triangle');
           alert(`Pontos de PX insuficientes para ${config.label}. Requer ${Math.abs(config.px)} PX. Disponível: ${available} PX.`);
@@ -2953,7 +3290,7 @@ const EQUIPMENT_DATABASE = [
 
     function migrateLegacyTraitState() {
       // If a loaded state has legacy text traits but no structured traits, convert them.
-      if (!charState.traits && (charState.advantages || charState.disadvantages)) {
+      if ((!charState.traits || charState.traits.length === 0) && (charState.advantages || charState.disadvantages)) {
         charState.traits = [];
         (charState.advantages || '').split('\n').forEach(line => {
           const clean = line.replace(/^•\s*/, '').trim();
@@ -2964,6 +3301,12 @@ const EQUIPMENT_DATABASE = [
           if (clean) charState.traits.push({ id: generateTraitId(), descricao: clean, tipo: 'desvantagem_menor', px: 1 });
         });
       }
+      if (!charState.px) charState.px = { total: 0, spent: 0, availableOverride: null };
+      if (charState.px.availableOverride === undefined) charState.px.availableOverride = null;
+      if (charState.factionOtherName === undefined) charState.factionOtherName = '';
+      if (charState.factionLore === undefined) charState.factionLore = '';
+      if (charState.customEquipmentText === undefined) charState.customEquipmentText = '';
+      if (charState.customArchetype === undefined) charState.customArchetype = null;
       // Migrate old counters used as total spent to new total-bought counters.
       const attrSum = Object.values(charState.attributes || {}).reduce((a,b) => a+b, 0);
       const attrAboveInitial = Math.max(0, attrSum - 8);
@@ -2988,7 +3331,16 @@ const EQUIPMENT_DATABASE = [
       document.getElementById('hud-char-codename').innerText = `CODENOME: ${charState.codename}`;
       document.getElementById('hud-char-archetype').innerText = `ARQUÉTIPO: ${charState.archetype.toUpperCase()}`;
       document.getElementById('char-archetype').value = charState.archetype;
+      const archLabel = charState.archetype === 'Personalizado' && charState.customArchetype?.name ? charState.customArchetype.name : charState.archetype;
+      document.getElementById('hud-char-archetype').innerText = `ARQUÉTIPO: ${String(archLabel || 'N/A').toUpperCase()}`;
+      const editArchBtn = document.getElementById('edit-custom-archetype-btn');
+      if (editArchBtn) editArchBtn.style.display = charState.archetype === 'Personalizado' ? 'block' : 'none';
       document.getElementById('char-faction').value = charState.faction;
+      const factionOther = document.getElementById('char-faction-other');
+      if (factionOther) factionOther.value = charState.factionOtherName || '';
+      const factionLore = document.getElementById('char-faction-lore');
+      if (factionLore) factionLore.value = charState.factionLore || '';
+      updateFactionFields(false);
       
       document.getElementById('clue-dream').value = charState.clues.dream;
       document.getElementById('clue-name').value = charState.clues.name;
@@ -3004,6 +3356,8 @@ const EQUIPMENT_DATABASE = [
       
       const creditsEl = document.getElementById('character-credits');
       if (creditsEl) creditsEl.value = charState.credits;
+      const customEquipEl = document.getElementById('equipment-custom-text');
+      if (customEquipEl) customEquipEl.value = charState.customEquipmentText || '';
 
       const pxInput = document.getElementById('px-total-input');
       if (pxInput) pxInput.value = charState.px.total;
@@ -3030,13 +3384,17 @@ const EQUIPMENT_DATABASE = [
       if (typeof renderizarArvoreDePoderes === 'function') renderizarArvoreDePoderes();
       if (typeof renderizarInventario === 'function') renderizarInventario();
       if (typeof loadAvatarFromState === 'function') loadAvatarFromState();
-      if (typeof syncBackstoryToState === 'function') syncBackstoryToState();
+      if (typeof loadBackstoryFromState === 'function') loadBackstoryFromState();
     }
 
     function changeArchetype() {
       playBeep(880, 0.05);
       charState.archetype = document.getElementById('char-archetype').value;
-      document.getElementById('hud-char-archetype').innerText = `ARQUÉTIPO: ${charState.archetype.toUpperCase()}`;
+      if (charState.archetype === 'Personalizado' && !charState.customArchetype) openCustomArchetypeModal();
+      const archLabel = charState.archetype === 'Personalizado' && charState.customArchetype?.name ? charState.customArchetype.name : charState.archetype;
+      document.getElementById('hud-char-archetype').innerText = `ARQUÉTIPO: ${String(archLabel).toUpperCase()}`;
+      const editBtn = document.getElementById('edit-custom-archetype-btn');
+      if (editBtn) editBtn.style.display = charState.archetype === 'Personalizado' ? 'block' : 'none';
       
       addLog("CRA", `Arquétipo reconfigurado para ${charState.archetype}. Sincronia máxima recalculada.`);
       recalculateAll();
@@ -3082,7 +3440,7 @@ const EQUIPMENT_DATABASE = [
     function buyAttributePoint() {
       const cost = 20;
       // Available must consider bonuses from disadvantages as usable PX
-      const available = charState.px.total - charState.px.spent + (charState.px.bonus || 0);
+      const available = getAvailablePX();
       if (available < cost) {
         playBeep(400, 0.1, 'triangle');
         alert(`Pontos de PX insuficientes. Requer ${cost} PX. Disponível: ${available} PX.`);
@@ -3109,6 +3467,12 @@ const EQUIPMENT_DATABASE = [
         finalAttrs.res += 1;
       }
       
+      const customArch = getActiveCustomArchetype();
+      if (customArch?.attributeBonuses) {
+        Object.entries(customArch.attributeBonuses).forEach(([attr, bonus]) => {
+          if (finalAttrs[attr] !== undefined) finalAttrs[attr] += Number(bonus) || 0;
+        });
+      }
       return finalAttrs;
     }
 
@@ -3167,7 +3531,8 @@ const EQUIPMENT_DATABASE = [
             <span class="skill-name" title="${s.desc}">${s.name}</span>
             <span class="skill-attr" id="skill-attr-label-${s.name.replace(/\s+/g, '')}">${s.attr.toUpperCase()}: 0</span>
             <div class="skill-dots">${dotsHTML}</div>
-            <button class="btn-roll-skill" onclick="rollSkillTest('${s.name}')">🎲</button>
+            <span class="skill-roll-formula" id="skill-roll-${s.name.replace(/\s+/g, '')}">0d6 + 0d6</span>
+            <div class="g-flex" style="gap:4px;"><button class="btn-roll-skill" onclick="rollSkillTest('${s.name}')">🎲</button><button class="skill-clear-btn" onclick="setSkillLevel('${s.name}', 0)" title="Zerar perícia">0</button></div>
           `;
           
           groupDiv.appendChild(row);
@@ -3182,10 +3547,10 @@ const EQUIPMENT_DATABASE = [
       const assocAttr = SKILL_DATABASE.find(s => s.name === skillName).attr;
       const attrLimit = finalAttrs[assocAttr];
       
-      // If click same level, reset to level - 1 or 0
-      let targetLvl = level;
-      if (charState.skills[skillName] === level) {
-        targetLvl = level - 1;
+      // Se clicar no nível atual, reduz 1; o botão "0" limpa totalmente.
+      let targetLvl = Math.max(0, level);
+      if (level > 0 && charState.skills[skillName] === level) {
+        targetLvl = Math.max(0, level - 1);
       }
       
       // Check attribute cap for creation
@@ -3206,7 +3571,8 @@ const EQUIPMENT_DATABASE = [
       }
       
       playBeep(700 + (targetLvl * 60), 0.04);
-      charState.skills[skillName] = targetLvl;
+      if (targetLvl <= 0) delete charState.skills[skillName];
+      else charState.skills[skillName] = targetLvl;
       
       if (pointsDiff > 0 && currentSpent >= 15) {
         charState.purchasedSkillsCount = Math.max(0, (charState.purchasedSkillsCount || 0) - 1);
@@ -3224,7 +3590,9 @@ const EQUIPMENT_DATABASE = [
     function updateUIForSkills() {
       SKILL_DATABASE.forEach(s => {
         const idName = s.name.replace(/\s+/g, '');
-        const currentLvl = charState.skills[s.name] || 0;
+        const baseSkillLvl = charState.skills[s.name] || 0;
+        const archSkillBonus = getCustomArchetypeSkillBonus(s.name);
+        const currentLvl = Math.max(0, baseSkillLvl + archSkillBonus);
         
         // update dots
         for (let i=1; i<=5; i++) {
@@ -3241,7 +3609,10 @@ const EQUIPMENT_DATABASE = [
         const lbl = document.getElementById(`skill-attr-label-${idName}`);
         if (lbl) {
           lbl.innerText = `${s.attr.toUpperCase()}:${baseAttrVal}+${currentLvl}`;
+          if (archSkillBonus) lbl.title = `Inclui bônus de arquétipo personalizado: +${archSkillBonus}`;
         }
+        const rollLbl = document.getElementById(`skill-roll-${idName}`);
+        if (rollLbl) rollLbl.innerText = `${baseAttrVal}d6 + ${currentLvl}d6`;
       });
       
       const spent = Object.values(charState.skills).reduce((a,b)=>a+b, 0);
@@ -3250,7 +3621,7 @@ const EQUIPMENT_DATABASE = [
 
     function buySkillPoint() {
       const cost = 5;
-      const available = charState.px.total - charState.px.spent + (charState.px.bonus || 0);
+      const available = getAvailablePX();
       if (available < cost) {
         playBeep(400, 0.1, 'triangle');
         alert(`Pontos de PX insuficientes. Requer ${cost} PX. Disponível: ${available} PX.`);
@@ -3793,7 +4164,7 @@ const EQUIPMENT_DATABASE = [
       }
       
       const pxCost = getPowerPxCost(p);
-      const avail = charState.px.total - charState.px.spent;
+      const avail = getAvailablePX();
       
       if (avail < pxCost) {
         playBeep(400, 0.1, 'triangle');
@@ -3876,7 +4247,8 @@ Remova primeiro os poderes dependentes.`);
       // Single source of truth: recalculate all PX commitments from state.
       if (!charState.powersAcquired) charState.powersAcquired = [];
       if (!charState.traits) charState.traits = [];
-      if (!charState.px) charState.px = { total: 0, spent: 0 };
+      if (!charState.px) charState.px = { total: 0, spent: 0, availableOverride: null };
+      if (charState.px.availableOverride === undefined) charState.px.availableOverride = null;
       
       // Powers
       let powerSpent = 0;
@@ -4018,6 +4390,7 @@ Remova primeiro os poderes dependentes.`);
       else if (charState.archetype === "Embaixador") archBonus = 3;
       else if (charState.archetype === "Buscador") archBonus = 4;
       else if (charState.archetype === "Fantasma") archBonus = 5;
+      else if (charState.archetype === "Personalizado") archBonus = Number(charState.customArchetype?.sincroniaBonus || 0);
       
       // Implante: Núcleo de Sincronia (+1 Sinc Max)
       let implantBonus = 0;
@@ -4034,8 +4407,8 @@ Remova primeiro os poderes dependentes.`);
       if (charState.hp.maxOverride !== null) return charState.hp.maxOverride;
       
       const finalAttrs = getFinalAttributes();
-      // Formula: RES * 10
-      return finalAttrs.res * 10;
+      // Formula: RES * 10 + bônus eventual de arquétipo personalizado
+      return (finalAttrs.res * 10) + Number(getActiveCustomArchetype()?.vidaBonus || 0);
     }
 
     function recalculateAll() {
@@ -4044,10 +4417,18 @@ Remova primeiro os poderes dependentes.`);
       
       // 1. Recalculate Max Stats
       const maxSinc = getSincroniaMaxima();
-      const maxHp = getVidaMaxima();
+      let maxHp = getVidaMaxima();
       
       document.getElementById('sinc-max').value = maxSinc;
-      document.getElementById('hp-max').value = maxHp;
+      const hpMaxInput = document.getElementById('hp-max');
+      const computedHpMax = (getFinalAttributes().res * 10) + Number(getActiveCustomArchetype()?.vidaBonus || 0);
+      if (charState.hp.maxOverride === null || Number(charState.hp.maxOverride) === computedHpMax || Number(charState.hp.maxOverride) < computedHpMax) {
+        charState.hp.maxOverride = null;
+        maxHp = computedHpMax;
+        if (hpMaxInput) hpMaxInput.value = maxHp;
+      } else if (hpMaxInput) {
+        hpMaxInput.value = maxHp;
+      }
       
       // Sync limits
       if (charState.sinc.current > maxSinc) charState.sinc.current = maxSinc;
@@ -4137,8 +4518,12 @@ Remova primeiro os poderes dependentes.`);
       const pxInput = document.getElementById('px-total-input');
       if (pxInput) pxInput.value = totalPX;
       
-      const availablePX = totalPX - charState.px.spent + (charState.px.bonus || 0);
-      document.getElementById('hud-px-available').innerText = `${availablePX} PX`;
+      const availablePX = getAvailablePX();
+      const pxAvailInput = document.getElementById('px-available-input');
+      if (pxAvailInput) {
+        pxAvailInput.value = availablePX;
+        pxAvailInput.title = charState.px.availableOverride === null ? `Automático: ${getComputedAvailablePX()} PX` : 'Valor manual de PX disponíveis';
+      }
       
       const marcosInput = document.getElementById('marcos-input');
       if (marcosInput) marcosInput.value = charState.marcosNarrativos;
@@ -4242,7 +4627,7 @@ Remova primeiro os poderes dependentes.`);
 
     function adjustAvailablePX(amount) {
       // purchase advantage
-      const avail = charState.px.total - charState.px.spent;
+      const avail = getAvailablePX();
       if (avail < amount) {
         playBeep(400, 0.1, 'triangle');
         alert(`Pontos de PX insuficientes.`);
@@ -4339,7 +4724,7 @@ Remova primeiro os poderes dependentes.`);
       const sObj = SKILL_DATABASE.find(s => s.name === skillName);
       const finalAttrs = getFinalAttributes();
       const baseAttrVal = finalAttrs[sObj.attr];
-      const skillLevel = charState.skills[skillName] || 0;
+      const skillLevel = (charState.skills[skillName] || 0) + getCustomArchetypeSkillBonus(skillName);
       
       let basePoints = 0;
       let logPrefix = "";
@@ -5024,6 +5409,61 @@ Deseja continuar?`;
     }
 
     // EXPORT SYSTEM MULTIPLATFORM (AGENTE 7)
+
+    function textToHTML(value) {
+      return escapeHTML(value || '').replace(/\n/g, '<br>');
+    }
+
+    function buildOfficialPDFHTML() {
+      if (window.ASCENSAO_SHEET?.syncFromDom) window.ASCENSAO_SHEET.syncFromDom({ noRecalculate: true });
+      const attrs = getFinalAttributes();
+      const factionName = getFactionDisplayName();
+      const powers = (charState.powersAcquired || []).map(id => getPowerDef(id)).filter(Boolean);
+      const inv = getInventory().map(e => ({ entry: e, item: getItemDef(e.id) })).filter(x => x.item);
+      const advantages = (charState.traits || []).filter(t => t.px < 0);
+      const disadvantages = (charState.traits || []).filter(t => t.px > 0);
+      const skills = SKILL_DATABASE.map(s => {
+        const lvl = (charState.skills[s.name] || 0) + getCustomArchetypeSkillBonus(s.name);
+        if (!lvl) return '';
+        const attrVal = attrs[s.attr];
+        return `<tr><td>${escapeHTML(s.name)}</td><td>${s.attr.toUpperCase()} ${attrVal}</td><td>${lvl}</td><td><strong>${attrVal}d6 + ${lvl}d6</strong></td></tr>`;
+      }).join('');
+      const archLabel = charState.archetype === 'Personalizado' && charState.customArchetype?.name ? charState.customArchetype.name : charState.archetype;
+      return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Ficha Oficial — ${escapeHTML(charState.name || 'Personagem')}</title>
+      <style>
+        @page{size:A4;margin:12mm}*{box-sizing:border-box}body{font-family:Inter,Segoe UI,Arial,sans-serif;color:#111;background:#fff;margin:0;font-size:11px;line-height:1.35}.sheet{max-width:190mm;margin:0 auto}.header{border:2px solid #111;padding:10px 12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:flex-end;background:linear-gradient(135deg,#f4f7fb,#fff)}.brand{font-size:22px;font-weight:900;letter-spacing:.18em}.sub{font-size:10px;text-transform:uppercase;color:#555}.section{border:1px solid #222;margin-bottom:8px;break-inside:avoid}.section h2{margin:0;padding:5px 8px;background:#111;color:#fff;font-size:12px;text-transform:uppercase;letter-spacing:.12em}.content{padding:8px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px 10px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.field{border-bottom:1px solid #bbb;padding:2px 0}.label{font-size:8px;text-transform:uppercase;color:#666;letter-spacing:.08em}.value{font-weight:700;font-size:11px}table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid #ddd;padding:4px;text-align:left;vertical-align:top}th{background:#eee;text-transform:uppercase;font-size:8px;letter-spacing:.06em}.attrs .box{text-align:center;border:1px solid #111;padding:5px}.attrs .box b{display:block;font-size:18px}.pill{display:inline-block;border:1px solid #333;padding:2px 5px;margin:2px 3px 2px 0}.twocol{columns:2;column-gap:18px}.notes{white-space:normal}.muted{color:#555}.footer{font-size:8px;color:#666;text-align:center;margin-top:8px}@media print{button{display:none}}
+      </style></head><body><div class="sheet">
+        <div class="header"><div><div class="brand">ASCENSÃO</div><div class="sub">Ficha oficial de personagem — CRA</div></div><div class="sub">Gerado em ${new Date().toLocaleString('pt-BR')}</div></div>
+        <div class="section"><h2>Identidade</h2><div class="content grid"><div class="field"><div class="label">Nome</div><div class="value">${escapeHTML(charState.name)}</div></div><div class="field"><div class="label">Codenome</div><div class="value">${escapeHTML(charState.codename)}</div></div><div class="field"><div class="label">Arquétipo</div><div class="value">${escapeHTML(archLabel)}</div></div><div class="field"><div class="label">Facção</div><div class="value">${escapeHTML(factionName)}</div></div><div class="field" style="grid-column:1/-1"><div class="label">Conceito</div><div class="value">${escapeHTML(charState.concept)}</div></div><div class="field" style="grid-column:1/-1"><div class="label">Lore / Objetivos da Facção</div><div>${textToHTML(charState.factionLore)}</div></div></div></div>
+        <div class="section"><h2>Recursos</h2><div class="content grid4"><div class="field"><div class="label">Vida</div><div class="value">${charState.hp.current}/${getVidaMaxima()}</div></div><div class="field"><div class="label">Sincronia</div><div class="value">${charState.sinc.current}/${getSincroniaMaxima()}</div></div><div class="field"><div class="label">PX Total</div><div class="value">${charState.px.total}</div></div><div class="field"><div class="label">PX Disponíveis</div><div class="value">${getAvailablePX()}</div></div></div></div>
+        <div class="section"><h2>Atributos</h2><div class="content attrs grid4">${Object.entries({for:'Força',agi:'Agilidade',res:'Resistência',int:'Intelecto',per:'Percepção',pre:'Presença',tec:'Tecnologia',ess:'Essência'}).map(([k,n])=>`<div class="box"><span>${n}</span><b>${attrs[k]}</b><small>${k.toUpperCase()}</small></div>`).join('')}</div></div>
+        <div class="section"><h2>Perícias</h2><div class="content"><table><thead><tr><th>Perícia</th><th>Atributo</th><th>Especialização</th><th>Rolagem</th></tr></thead><tbody>${skills || '<tr><td colspan="4" class="muted">Nenhuma perícia treinada.</td></tr>'}</tbody></table></div></div>
+        <div class="section"><h2>Poderes</h2><div class="content">${powers.length ? powers.map(p=>`<div class="field"><div class="value">${escapeHTML(p.name)} <span class="muted">(${escapeHTML(p.category || p.tree || '')})</span></div><div>${textToHTML(p.desc || p.efeito || '')}</div></div>`).join('') : '<span class="muted">Nenhum poder adquirido.</span>'}</div></div>
+        <div class="section"><h2>Equipamentos</h2><div class="content"><ul>${inv.map(({entry,item})=>`<li><strong>${escapeHTML(item.name)}</strong>${entry.quantidade>1?' x'+entry.quantidade:''}${entry.customDescription ? ' — '+textToHTML(entry.customDescription) : ''}</li>`).join('') || '<li class="muted">Inventário vazio.</li>'}</ul>${charState.customEquipmentText ? `<h3>Personalizados</h3><div>${textToHTML(charState.customEquipmentText)}</div>` : ''}</div></div>
+        <div class="section"><h2>Vantagens</h2><div class="content notes">${advantages.length ? advantages.map(t=>`<span class="pill">${escapeHTML(t.descricao)}</span>`).join('') : '<span class="muted">Nenhuma.</span>'}</div></div>
+        <div class="section"><h2>Desvantagens</h2><div class="content notes">${disadvantages.length ? disadvantages.map(t=>`<span class="pill">${escapeHTML(t.descricao)}</span>`).join('') : '<span class="muted">Nenhuma.</span>'}</div></div>
+        <div class="section"><h2>Objetivos e História</h2><div class="content grid"><div><strong>Objetivo pessoal</strong><br>${textToHTML(charState.personalGoal)}</div><div><strong>Motivação</strong><br>${textToHTML(charState.motivation)}</div><div style="grid-column:1/-1"><strong>Biografia</strong><br>${textToHTML(charState.backstory)}</div></div></div>
+        ${charState.archetype === 'Personalizado' && charState.customArchetype ? `<div class="section"><h2>Arquétipo Personalizado — Dados</h2><div class="content"><strong>${escapeHTML(charState.customArchetype.name)}</strong><br>${textToHTML(charState.customArchetype.description)}<br><strong>Equipamentos:</strong><br>${textToHTML(charState.customArchetype.equipment)}<br><strong>Poderes:</strong><br>${textToHTML(charState.customArchetype.powers)}</div></div>` : ''}
+        <div class="footer">Ascensão — documento oficial gerado pela ficha web. Dados antigos preservados; novos campos são aditivos.</div>
+      </div><script>setTimeout(()=>{window.print();},250)<\/script></body></html>`;
+    }
+
+    function exportOfficialPDF() {
+      playBeep(900, 0.05);
+      const html = buildOfficialPDFHTML();
+      const w = window.open('', '_blank');
+      if (!w) {
+        const area = document.getElementById('export-textarea');
+        if (area) area.value = html;
+        alert('O navegador bloqueou a janela de impressão. O HTML do PDF foi colocado na área de exportação.');
+        return;
+      }
+      w.document.open();
+      w.document.write(html);
+      w.document.close();
+      addLog('CRA', 'PDF oficial estruturado enviado para impressão/salvamento.');
+    }
+
     function generateJSONExport() {
       playBeep(900, 0.05);
       const json = JSON.stringify(charState, null, 2);
@@ -5041,7 +5481,7 @@ Deseja continuar?`;
       md += `- **Nome**: ${charState.name}\n`;
       md += `- **Codenome**: ${charState.codename}\n`;
       md += `- **Arquétipo**: ${charState.archetype}\n`;
-      md += `- **Facção**: ${charState.faction}\n`;
+      md += `- **Facção**: ${getFactionDisplayName()}\n`;
       md += `- **Conceito**: *"${charState.concept}"*\n\n`;
       md += `## 📊 ATRIBUTOS CORE\n`;
       md += `| FOR | AGI | RES | INT | PER | PRE | TEC | ESS |\n`;
@@ -5368,6 +5808,8 @@ Deseja continuar?`;
           charState.codename = valueOf('char-codename', charState.codename);
           charState.archetype = valueOf('char-archetype', charState.archetype);
           charState.faction = valueOf('char-faction', charState.faction);
+          charState.factionOtherName = valueOf('char-faction-other', charState.factionOtherName || '');
+          charState.factionLore = valueOf('char-faction-lore', charState.factionLore || '');
           charState.concept = valueOf('char-concept', charState.concept);
           // Legacy textareas are kept in sync by renderTraits(); preserve structured traits array.
           charState.traits = charState.traits || [];
@@ -5397,6 +5839,10 @@ Deseja continuar?`;
 
           charState.px = charState.px || { total: 0, spent: 0 };
           charState.px.total = Math.max(0, numberOf('px-total-input', charState.px.total || 0));
+          if (charState.px.availableOverride !== null && charState.px.availableOverride !== undefined) {
+            charState.px.availableOverride = Math.max(0, numberOf('px-available-input', charState.px.availableOverride || 0));
+          }
+          charState.customEquipmentText = valueOf('equipment-custom-text', charState.customEquipmentText || '');
           charState.marcosNarrativos = Math.max(0, numberOf('marcos-input', charState.marcosNarrativos || 0));
 
           if (window.ASC_AUTH?.isMaster) {
@@ -5413,6 +5859,7 @@ Deseja continuar?`;
           document.getElementById('hud-char-name').innerText = charState.name || "Sem Nome";
           document.getElementById('hud-char-codename').innerText = `CODENOME: ${charState.codename || "N/A"}`;
           document.getElementById('hud-char-archetype').innerText = `ARQUÉTIPO: ${(charState.archetype || 'N/A').toUpperCase()}`;
+          charState.customEquipmentText = valueOf('equipment-custom-text', charState.customEquipmentText || '');
           if (!options.noRecalculate) recalculateAll();
         } catch (err) {
           console.warn('Falha ao sincronizar DOM da ficha:', err);
@@ -5440,6 +5887,37 @@ Deseja continuar?`;
           if (document.getElementById('master-tab')?.classList.contains('active')) switchTab('identidade-tab');
         }
       }
+
+
+
+    // Salvamento local imediato para qualquer alteração de campo, inclusive campos sem handler próprio.
+    // Supabase é tratado por js/sheet-app.js com debounce curto; aqui preservamos o fallback local.
+    (function installImmediateLocalAutosave(){
+      let localTimer = null;
+      function scheduleLocalSync() {
+        clearTimeout(localTimer);
+        localTimer = setTimeout(() => {
+          try {
+            if (window.ASCENSAO_SHEET?.syncFromDom) window.ASCENSAO_SHEET.syncFromDom({ noRecalculate: true });
+            autoSave();
+          } catch (err) {
+            console.warn('Falha no autosave local imediato:', err);
+          }
+        }, 120);
+      }
+      document.addEventListener('input', (event) => {
+        const el = event.target;
+        if (el?.matches?.('input, textarea, select') && !el.closest('.asc-app-controls')) scheduleLocalSync();
+      }, true);
+      document.addEventListener('change', (event) => {
+        const el = event.target;
+        if (el?.matches?.('input, textarea, select') && !el.closest('.asc-app-controls')) scheduleLocalSync();
+      }, true);
+      document.addEventListener('click', (event) => {
+        const el = event.target;
+        if (el?.closest?.('button') && !el.closest('.asc-app-controls')) scheduleLocalSync();
+      }, true);
+    })();
 
       window.ASCENSAO_SHEET = {
         getState() {
@@ -5469,6 +5947,10 @@ Deseja continuar?`;
             charState.concept = '';
             charState.advantages = '';
             charState.disadvantages = '';
+            charState.factionOtherName = '';
+            charState.factionLore = '';
+            charState.customEquipmentText = '';
+            charState.customArchetype = null;
             charState.clues = { dream: '', name: '', place: '', object: '', phrase: '' };
             charState.connections = { strong: '', complex: '' };
             charState.centralQuestion = 'Sou eu quem escolhe, ou já estava escrito?';

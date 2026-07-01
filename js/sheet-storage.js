@@ -171,7 +171,7 @@ export function buildSheetSummary(data = {}) {
     personagem: data['char-name'] || state.name || 'Personagem sem nome',
     codinome: data['char-codename'] || state.codename || '',
     arquetipo: data['char-archetype'] || state.archetype || '',
-    faccao: data['char-faction'] || state.faction || '',
+    faccao: data['char-faction'] === 'Outra' ? (data['char-faction-other'] || state.factionOtherName || 'Outra') : (data['char-faction'] === 'Nenhuma' ? 'Nenhuma dessas' : (data['char-faction'] || state.faction || '')),
     px: Number(px) || 0,
     hp_current: Number(hpCurrent) || 0,
     hp_max: Number(hpMax) || 0,

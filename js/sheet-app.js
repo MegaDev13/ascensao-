@@ -22,6 +22,7 @@ const app = {
   saving: false,
   subscription: null,
   autosaveTimer: null,
+  autosaveDebounce: null,
   sheets: []
 };
 
@@ -42,10 +43,20 @@ function log(source, message) {
   else console.log(`[${source}] ${message}`);
 }
 
+function scheduleImmediateAutosave() {
+  if (app.previewHistory || app.readonly || !app.supabase || !app.user) return;
+  if (app.autosaveDebounce) clearTimeout(app.autosaveDebounce);
+  app.autosaveDebounce = setTimeout(() => {
+    app.autosaveDebounce = null;
+    if (app.dirty && !app.saving) saveSheet({ reason: 'autosave' });
+  }, 800);
+}
+
 function setDirty(value = true) {
   if (app.previewHistory || app.readonly) return;
   app.dirty = value;
   setStatus(value ? 'Alterações pendentes' : 'Sincronizado', value ? 'dirty' : 'ok');
+  if (value) scheduleImmediateAutosave();
 }
 
 function setUserChip() {
@@ -260,6 +271,10 @@ async function saveSheet({ reason = 'manual' } = {}) {
   }
   if (app.saving) return;
 
+  if (app.autosaveDebounce) {
+    clearTimeout(app.autosaveDebounce);
+    app.autosaveDebounce = null;
+  }
   app.saving = true;
   setStatus(reason === 'autosave' ? 'Autosave...' : 'Salvando...', 'saving');
 
@@ -332,6 +347,7 @@ async function saveSheet({ reason = 'manual' } = {}) {
     log('CRA', `Falha de sincronização: ${err.message}`);
   } finally {
     app.saving = false;
+    if (app.dirty && reason === 'autosave') scheduleImmediateAutosave();
   }
 }
 
